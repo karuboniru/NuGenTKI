@@ -1,7 +1,7 @@
-export GFS0PIa9nuCH="list/Filelist_GENIE_V3test_BeamNu_EnuMINERvA_TargetCarbon.txt"
+export GFS0PIa9nuCH="list/Filelist_GENIE_v3OOB_BeamNu_EnuMINERvA_TargetCarbon.list"
 #"list/Filelist_GENIE_v2TJ_BeamNu_EnuMINERvA_TargetCarbon.list"
 #"list/Filelist_GENIE_v2DC_BeamNu_EnuMINERvA_TargetCarbon.list"
-#"list/Filelist_GENIE_v3OOB_BeamNu_EnuMINERvA_TargetCarbon.list"
+#"list/Filelist_GENIE_V3test_BeamNu_EnuMINERvA_TargetCarbon.txt"
 #"list/Filelist_GENIE_V2RG_BeamNu_EnuMINERvA_TargetCarbon.list"
 export GFSPIZEROa7nuCH=${GFS0PIa9nuCH}
 
@@ -24,7 +24,7 @@ export NUGASa8nubar=
 ntostop=
 #10000000
 
-tag=MINERvAGENIE_V3test_
+tag=MINERvAGENIE_V3OOB_LE_test2_
 #MINERvAGENIE_v2TJ_LE_
 #MINERvAGENIE_v2DC_LE_
 #MINERvAGENIE_v3OOB_LE_

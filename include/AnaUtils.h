@@ -339,8 +339,8 @@ void AnaUtils::Calc()
   const int localA = AnaFunctions::getTargetA(localZ);
   const TLorentzVector neutrinofullp(0,0,1,1);
   double dummymu, dummybaryon;
-  //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *neutrinofullp, const TLorentzVector *muonfullp, const TLorentzVector *baryonfullp, double & dalphat, double & dphit, double & dpt, double & neutronmomentum, double & dpTT, double & muontheta, double & baryontheta)
-  AnaFunctions::getCommonTKI(localA, localZ, &neutrinofullp, muonfullp, baryonfullp, dalphat, dphit, dpt, neutronmomentum, dpTT, dummymu, dummybaryon);
+  //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *neutrinofullp, const TLorentzVector *muonfullp, const TLorentzVector *baryonfullp, double & dalphat, double & dphit, double & dpt, double & neutronmomentum, double & dpTT, double & muontheta, double & baryontheta, double & beamEnergy)
+  AnaFunctions::getCommonTKI(localA, localZ, &neutrinofullp, muonfullp, baryonfullp, dalphat, dphit, dpt, neutronmomentum, dpTT, dummymu, dummybaryon, beamEnergy);
   
   /*
     protonTT = protonfullp->Vect().Dot(ztt);
