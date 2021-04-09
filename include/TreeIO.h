@@ -95,7 +95,8 @@ namespace TreeIO
   double dalphat;
   double neutronmomentum;
   double dpTT;
-  double beamMomentum;
+  double pBeam;
+  double Mx2; 
   
  /*
    double muoncostheta;
@@ -272,7 +273,8 @@ TTree * GetTree(const analysis ana, const experiment exp)
   tout->Branch("dalphat",&dalphat);
   tout->Branch("neutronmomentum",&neutronmomentum);  
   tout->Branch("dpTT",&dpTT);
-  tout->Branch("beamMomentum",&beamMomentum);
+  tout->Branch("pBeam",&pBeam);
+  tout->Branch("Mx2",&Mx2);
 #endif
 
 #if __OPENCLR__
