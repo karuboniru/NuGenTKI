@@ -490,7 +490,7 @@ void ProceedMINERvAGFS0PI()
     AddABit(totparcount, BKGBIT);
     AddABit(npar, BKGBIT);
   }
-  else if(!IsNeutron()){
+  else if(!IsNeutron() && lineRawID!=-9990001){//allow antiproton
     printf("GFS0PI strange background! linePID %d lineRawID %d\n", linePID, lineRawID); exit(1);
   }
 }
