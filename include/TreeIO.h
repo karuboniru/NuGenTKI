@@ -96,7 +96,7 @@ namespace TreeIO
   double neutronmomentum;
   double dpTT;
   double pBeam;
-  double Mx2; 
+  double Mx; 
   
  /*
    double muoncostheta;
@@ -274,7 +274,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
   tout->Branch("neutronmomentum",&neutronmomentum);  
   tout->Branch("dpTT",&dpTT);
   tout->Branch("pBeam",&pBeam);
-  tout->Branch("Mx2",&Mx2);
+  tout->Branch("Mx",&Mx);
 #endif
 
 #if __OPENCLR__
