@@ -255,7 +255,7 @@ bool GiBUUProceed(const int tmpfilecount, const int tmprun, const int tmpevent, 
 
     prod = tmpprod;
 
-    lineenu = tmpenu;
+    lineBeamEnergy = tmpenu;
 
     lineCharge = tmpcharge;
     GiBUUSetID(tmpid, tmptote);
@@ -521,17 +521,18 @@ void GENIESetID(const int pdg, const double tmptote)
   }
 }
 
-bool GEANT4Proceed(const int idx, const int tmpMode, const int tmppdg, const double tmppx, const double tmppy, const double tmppz, const double tmpE, const int tmpZ)
+bool GEANT4Proceed(const int ientry, const int tmpMode, const int tmppdg, const double tmppx, const double tmppy, const double tmppz, const double tmpE, const int tmpZ)
 {
   //missing iniN
 
-  if(lineenu<0){//not initialized
-    lineenu = PionMass() + 1;
+  if(lineBeamEnergy<0){//not initialized
+    lineBeamEnergy = PionMass() + 1;
   }
 
   lineFullMom->SetXYZT(tmppx, tmppy, tmppz, tmpE);//input unit is MeV
   (*lineFullMom) *= 1E-3;
-  
+
+  event = ientry;
   evtMode = tmpMode;
   GEANT4SetID(tmppdg);
 
@@ -566,7 +567,7 @@ bool GENIEProceed(const dtype IniOrFinaltype, const dtype RESdtype, const TStrin
       
       prod = tmpprod;
       
-      lineenu = tmpenu;      
+      lineBeamEnergy = tmpenu;      
       CLR_lineKNsource = tmpKNsrc;
       
       GENIESetID(tmpid, tmptote);

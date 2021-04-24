@@ -52,7 +52,7 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, const int nEntryToStop = -999)
       }
       //printf("test ii %d %d %d\n", ii, tmpnp, (*ReadGEANT4::PDGcode)[ii]);
 
-      if(GeneratorIO::GEANT4Proceed(ii, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii], tmpz)){
+      if(GeneratorIO::GEANT4Proceed(ientry, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii], tmpz)){
         AnaUtils::MainProceed();
       }
     }//loop over particle

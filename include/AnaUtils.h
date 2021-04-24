@@ -313,10 +313,10 @@ TLorentzVector AnaUtils::GetBeamFullP()
     beamMass = PionMass();
   }
 
-  const double pz = TMath::Sqrt(lineenu*lineenu-beamMass*beamMass);
-  //printf("debug testgetbeam %f %f %f\n", beamMass, lineenu, pz);
+  const double pz = TMath::Sqrt(lineBeamEnergy*lineBeamEnergy-beamMass*beamMass);
+  //printf("debug testgetbeam %f %f %f\n", beamMass, lineBeamEnergy, pz);
   
-  TLorentzVector beamp(0,0,pz,lineenu);
+  TLorentzVector beamp(0,0,pz,lineBeamEnergy);
 
   return beamp;
 }

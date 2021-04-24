@@ -618,9 +618,9 @@ void ProceedMINERvALOWRECOIL()
   //static int icounter=0;
   AddEav();//(icounter++)<50);
 
-  //add Lineenu cut in case of GENIE; for GiBUU the cut is granted by flux cut in job card
+  //add LineBeamEnergy cut in case of GENIE; for GiBUU the cut is granted by flux cut in job card
   if(IsMuon() && tmptheta<20 &&
-     lineenu > 2 && lineenu < 6
+     lineBeamEnergy > 2 && lineBeamEnergy < 6
      ){
     double kk = -999;
     if(lineCharge<0){//nu
@@ -632,7 +632,7 @@ void ProceedMINERvALOWRECOIL()
     if(kk > 1.5){
       (*muonfullp)=(*lineFullMom);
 
-      const TLorentzVector dummyNu(0,0,lineenu, lineenu);
+      const TLorentzVector dummyNu(0,0,lineBeamEnergy, lineBeamEnergy);
       const TLorentzVector lvq= dummyNu - (*muonfullp);
       LOWRECOIL_q3 = lvq.P();
 
@@ -682,9 +682,9 @@ void ProceedMINERvANUBAR1PI()
   const double tmptheta = lineFullMom->Theta()*TMath::RadToDeg();
   const double tmpmom = lineFullMom->P();
 
-  //add Lineenu cut in case of GENIE; for GiBUU the cut is granted by flux cut in job card 
+  //add LineBeamEnergy cut in case of GENIE; for GiBUU the cut is granted by flux cut in job card 
   if(IsMuon() && tmptheta<25 &&
-     lineenu > 1.5 && lineenu < 10
+     lineBeamEnergy > 1.5 && lineBeamEnergy < 10
      ){
     (*muonfullp)=(*lineFullMom);
     npar+= MUONBIT;
