@@ -14,9 +14,47 @@
 #include "TChain.h"
 #include "AnaUtils.h"
 #include "ReadGENIE.h"
+#include "ReadGEANT4.h"
 
 using namespace std;
 using namespace ReadGENIE;
+
+void GEANT4ReadChain(TChain * ch, TTree * tout, const int nEntryToStop = -999)
+{
+  ReadGEANT4::SetChain(ch);
+
+  int ientry = 0;
+  while(ch->GetEntry(ientry)){
+    if(ientry%100000==0){
+      printf("myEntries %d\n", ientry);
+    }
+
+    if(nEntryToStop>0){
+      if(ientry>=nEntryToStop){
+        printf("\n\n\n************************  GEANT4 Breaking after %d entries ***********************************************\n\n", nEntryToStop);
+        break;
+      }
+    }
+
+    //do it before the loop continues for any reason
+    ientry++;
+    
+    //===========================================================================
+    const int tmpnp = ReadGEANT4::PDGcode->size();
+    for(int ii=0; ii<tmpnp; ii++){
+      printf("test ii %d %d %d\n", ii, tmpnp, (*ReadGEANT4::PDGcode)[ii]);
+      /*
+      if(GeneratorIO::GEANT4Proceed()){
+        AnaUtils::MainProceed();
+        }
+*/
+    }//loop over particle
+
+    //test AnaUtils::DoFill(tout);
+  }//loop over event
+  
+  cout<<"All entries "<<ientry<<endl;
+}
 
 void GENIEReadChain(TChain * ch, TTree * tout, TH1F * &hCCrate, const int nEntryToStop = -999)
 {
@@ -243,15 +281,32 @@ void anaGenerator(const TString tag, const TString filelist, const int tmpana, c
 
   //_________________________________________________________________________________________________
   //_________________________________________________________________________________________________
-  TChain * genieinput = AnaUtils::InputROOTFiles(filelist, "gRooTracker");
   TH1F * hCCrate = 0x0; 
   int nrun = -999;
-  if(genieinput){
-    GENIEReadChain(genieinput, tout, hCCrate, nToStop);
+  if(filelist.Contains("GENIE")){
+    TChain * rootFileInput = AnaUtils::InputROOTFiles(filelist, "gRooTracker");
+    if(rootFileInput){
+      GENIEReadChain(rootFileInput, tout, hCCrate, nToStop);
+    }
+    else{
+      cout<<"No generator identified for GENIE!! "<<filelist<<endl;
+      exit(1);
+    }
+  }
+  else if(filelist.Contains("GEANT4")){
+    TChain * rootFileInput = AnaUtils::InputROOTFiles(filelist, "PartInfo");
+    if(rootFileInput){
+      GEANT4ReadChain(rootFileInput, tout, nToStop);
+    }
+    else{
+      cout<<"No generator identified for GEANT4!! "<<filelist<<endl;
+      exit(1);
+    }
   }
   else{
     nrun = GiBUUReadFile(filelist, tout, nToStop);
   }
+
 
   //_________________________________________________________________________________________________
   //_________________________________________________________________________________________________
