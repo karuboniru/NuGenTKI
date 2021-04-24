@@ -21,6 +21,9 @@ using namespace ReadGENIE;
 
 void GEANT4ReadChain(TChain * ch, TTree * tout, const int nEntryToStop = -999)
 {
+  const int tmpz = 18;
+  printf("\nanaGenerator::GEANT4ReadChain setting targetZ as 18 for argon only!\n\n");
+
   ReadGEANT4::SetChain(ch);
 
   int ientry = 0;
@@ -40,17 +43,21 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, const int nEntryToStop = -999)
     ientry++;
     
     //===========================================================================
+    AnaUtils::Ini();
+
     const int tmpnp = ReadGEANT4::PDGcode->size();
     for(int ii=0; ii<tmpnp; ii++){
-      printf("test ii %d %d %d\n", ii, tmpnp, (*ReadGEANT4::PDGcode)[ii]);
-      /*
-      if(GeneratorIO::GEANT4Proceed()){
+      if((*ReadGEANT4::PDGcode)[ii]>1000000 || (*ReadGEANT4::PDGcode)[ii]>3000){//don't care remnant or strangeness 3122 is Lambda
+        continue;
+      }
+      //printf("test ii %d %d %d\n", ii, tmpnp, (*ReadGEANT4::PDGcode)[ii]);
+
+      if(GeneratorIO::GEANT4Proceed(ii, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii], tmpz)){
         AnaUtils::MainProceed();
-        }
-*/
+      }
     }//loop over particle
 
-    //test AnaUtils::DoFill(tout);
+    AnaUtils::DoFill(tout);
   }//loop over event
   
   cout<<"All entries "<<ientry<<endl;

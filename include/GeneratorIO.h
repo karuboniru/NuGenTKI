@@ -361,6 +361,44 @@ void SetGENIETarget(const TString evtcode)
     }
 }
 
+void GEANT4SetID(const int pdg)
+{
+  lineCharge = (pdg>0) ? 1 : -1;
+
+  if(abs(pdg)==211){
+    linePID = PIONBIT;
+    lineMass = PionMass();
+  }
+  else if(pdg==2212){
+    linePID = PROTONBIT;
+    lineMass = ProtonMass();
+  }
+  else if(pdg==111){
+    lineCharge = 0;
+    linePID = PIZEROBIT;
+    lineMass = PiZeroMass();
+  }
+  else if(pdg==2112){
+    lineCharge = 0;
+    linePID = NEUTRONBIT;
+    lineMass = NeutronMass();
+  }
+  else if(pdg==22){
+    lineCharge = 0;
+    linePID = GAMMABIT;
+  }
+  else if(pdg==321){
+    linePID = KAONBIT;
+  }
+  else if(pdg==130||pdg==310||pdg==311){
+    lineCharge = 0;
+    linePID = KAONBIT;
+  }
+  else{
+    printf("GeneratorIO::GEANT4SetID not known pdg %d\n", pdg); exit(1);
+  }
+}
+
 void GENIESetID(const int pdg, const double tmptote)
 {
   //GiBUU: tmpid, lineCharge -> lineIsBkgParticle, lineMass, linePID, globalMuonCharge, LOWRECOIL_parbit, lineRawID
@@ -481,6 +519,25 @@ void GENIESetID(const int pdg, const double tmptote)
     linePID = GAMMABIT;
     LOWRECOIL_parbit += GAMMABIT;
   }
+}
+
+bool GEANT4Proceed(const int idx, const int tmpMode, const int tmppdg, const double tmppx, const double tmppy, const double tmppz, const double tmpE, const int tmpZ)
+{
+  //missing iniN
+
+  if(lineenu<0){//not initialized
+    lineenu = PionMass() + 1;
+  }
+
+  lineFullMom->SetXYZT(tmppx, tmppy, tmppz, tmpE);//input unit is MeV
+  (*lineFullMom) *= 1E-3;
+  
+  evtMode = tmpMode;
+  GEANT4SetID(tmppdg);
+
+  targetZ = tmpZ;
+  
+  return true;
 }
 
 bool GENIEProceed(const dtype IniOrFinaltype, const dtype RESdtype, const TString code, const int tmpevent, const int tmpprod, const double tmpenu, const double tmppw, const double tmpmom1, const double tmpmom2, const double tmpmom3, const double tmptote, const int tmpid, const double tmpKNsrc)

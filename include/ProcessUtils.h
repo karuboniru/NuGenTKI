@@ -283,6 +283,25 @@ void ProceedRESPS()
   }
 }
 
+void ProceedGEANT4PIPLUSKE1GEV()
+{
+  if(IsPion()&&lineCharge==1){
+    (*pionfullp)=(*lineFullMom);
+    npar += PIONBIT;
+  }
+  else if(IsProton()){
+    (*protonfullp)=(*lineFullMom);
+    npar += PROTONBIT;
+  }
+  //else if(linePID!=100000 && && linePID!=1000000 && linePID!=1000 && linePID!=10){//pi0, gamma, kaon, pi-
+  else if(linePID==100000 || linePID==1000 || linePID==10){//pi0, kaon, pi-
+    npar += BKGBIT;
+  }
+  else if(linePID!=10000000 && linePID!=1000000 ){//found neutron, gamma
+    printf("ProceesUtils::ProceedGEANT4 not pion or proton! linePID %d\n", linePID); exit(1);
+  }
+}
+
 void ProceedNUGAS()
 {
   const double tmpmom = lineFullMom->P();

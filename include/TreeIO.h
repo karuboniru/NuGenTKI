@@ -27,7 +27,8 @@ namespace TreeIO
     GFSPIZERO =7,
     NUGAS     =8,
     GFS0PI    =9,
-    EXCL3 = 10
+    EXCL3 = 10,
+    GEANT4PIPLUSKE1GEV = 11
   };
   
   enum experiment{

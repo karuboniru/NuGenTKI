@@ -1,9 +1,9 @@
-export PIPLUS1GEV="list/Filelist_GEANT4_v0test.txt"
+export GEANT4PIPLUSKE1GEV="list/Filelist_GEANT4_v0test.txt"
 
 ntostop=
 #10000000
 
-tag=GEANT4_test0_
+tag=GEANT4PIPLUSKE1GEV_test0_
 
 ####################################
 
@@ -11,7 +11,7 @@ mkexe.sh anaGenerator -I${NUGENTKI}/include
 
 #exit
 
-#GFS 9 : 0PI
-opt=${tag}PIPUS1GEV;          nohup ./doAna.sh $PIPLUS1GEV         ${opt} 0 ${ntostop} > see${opt}.log &
+# GEANT4PIPLUSKE1GEV = 11
+opt=${tag}GEANT4PIPLUSKE1GEV;          nohup ./doAna.sh $GEANT4PIPLUSKE1GEV         ${opt} 11 ${ntostop} > see${opt}.log &
 
 #exit
