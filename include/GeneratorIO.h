@@ -394,6 +394,9 @@ void GEANT4SetID(const int pdg)
     lineCharge = 0;
     linePID = KAONBIT;
   }
+  else if(pdg>3000){//strangeness and charm etc.  3122 is Lambda
+    linePID = KAONBIT;
+  }
   else{
     printf("GeneratorIO::GEANT4SetID not known pdg %d\n", pdg); exit(1);
   }

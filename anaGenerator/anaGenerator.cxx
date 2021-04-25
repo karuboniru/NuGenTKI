@@ -47,7 +47,7 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, const int nEntryToStop = -999)
 
     const int tmpnp = ReadGEANT4::PDGcode->size();
     for(int ii=0; ii<tmpnp; ii++){
-      if((*ReadGEANT4::PDGcode)[ii]>1000000 || (*ReadGEANT4::PDGcode)[ii]>3000){//don't care remnant or strangeness 3122 is Lambda
+      if((*ReadGEANT4::PDGcode)[ii]>1000000){//don't care remnant
         continue;
       }
       //printf("test ii %d %d %d\n", ii, tmpnp, (*ReadGEANT4::PDGcode)[ii]);
