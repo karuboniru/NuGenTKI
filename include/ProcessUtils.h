@@ -285,6 +285,7 @@ void ProceedRESPS()
 
 void ProceedGEANT4PIPLUSKE1GEV()
 {
+  /*
   if(IsPion()&&lineCharge==1){
     (*pionfullp)=(*lineFullMom);
     npar += PIONBIT;
@@ -300,6 +301,10 @@ void ProceedGEANT4PIPLUSKE1GEV()
   else if(linePID!=10000000 && linePID!=1000000 ){//found neutron, gamma
     printf("ProceesUtils::ProceedGEANT4 not pion or proton! linePID %d\n", linePID); exit(1);
   }
+  */
+  //test by adding up all line momentum
+  (*protonfullp)=(*lineFullMom);
+  npar += PROTONBIT;
 }
 
 void ProceedNUGAS()

@@ -288,6 +288,7 @@ bool AnaUtils::IsGood()
     return true;
   }
   else if(anamode==GEANT4PIPLUSKE1GEV){
+    /*
     //accept Npmpi
     //1p
     if( GetNProtons()<1 || GetNProtons()>9){
@@ -298,6 +299,8 @@ bool AnaUtils::IsGood()
     if( GetNPions()<1 || GetNPions()>9 ){
       return false;
     }
+    */
+    //test by accepting all
     
     return true;
   }

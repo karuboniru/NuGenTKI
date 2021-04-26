@@ -27,6 +27,10 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, const int nEntryToStop = -999)
   ReadGEANT4::SetChain(ch);
 
   int ientry = 0;
+  int isInteractionCounter = 0;
+  int zeroNucleiCounter = 0;
+  int singleNucleiCounter = 0;
+  int multiNucleiCounter = 0;
   while(ch->GetEntry(ientry)){
     if(ientry%100000==0){
       printf("myEntries %d\n", ientry);
@@ -46,21 +50,47 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, const int nEntryToStop = -999)
     AnaUtils::Ini();
 
     const int tmpnp = ReadGEANT4::PDGcode->size();
-    for(int ii=0; ii<tmpnp; ii++){
-      if((*ReadGEANT4::PDGcode)[ii]>1000000){//don't care remnant
-        continue;
-      }
-      //printf("test ii %d %d %d\n", ii, tmpnp, (*ReadGEANT4::PDGcode)[ii]);
+    //printf("test0 PDGcode size %d\n", tmpnp);
+    if(tmpnp==0){//skip non-interacting events
+      continue;
+    }
 
-      if(GeneratorIO::GEANT4Proceed(ientry, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii], tmpz)){
+    int failCounter = 0;
+    for(int ii=0; ii<tmpnp; ii++){
+      //printf("test ii %d %d %d\n", ii, tmpnp, (*ReadGEANT4::PDGcode)[ii]);
+      
+      const bool kProceed = GeneratorIO::GEANT4Proceed(ientry, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii], tmpz);
+      if(kProceed){
         AnaUtils::MainProceed();
       }
+      else{
+        failCounter++;
+      }
     }//loop over particle
-
+    
     AnaUtils::DoFill(tout);
+    isInteractionCounter++;
+
+    if(failCounter==0){//nuclei below GEANT4 tracking threshold and not saved
+      zeroNucleiCounter++;
+
+      /*
+printf("anaGenerator bad failCounter %d\n", failCounter);
+      for(int kk=0; kk<tmpnp; kk++){
+        printf("ientry %d %d/%d type %d pdg %d\n", ientry, kk,tmpnp, (*ReadGEANT4::interType)[kk], (*ReadGEANT4::PDGcode)[kk]);
+      }
+      exit(1);
+       */
+    }
+    else if(failCounter==1){
+      singleNucleiCounter++;
+    }
+    else{//>=2
+      multiNucleiCounter++;
+    }
   }//loop over event
   
-  cout<<"All entries "<<ientry<<endl;
+  cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;
 }
 
 void GENIEReadChain(TChain * ch, TTree * tout, TH1F * &hCCrate, const int nEntryToStop = -999)

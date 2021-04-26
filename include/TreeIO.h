@@ -55,6 +55,7 @@ namespace TreeIO
   int event;
   int targetZ;
   int prod;
+  int AstarPDG;
   double lineBeamEnergy;
   
   int LOWRECOIL_parbit;
@@ -174,6 +175,7 @@ void IniTreeIO()
   event = -999;
   targetZ = -999;
   prod = -999;
+  AstarPDG = -999;
   lineBeamEnergy = -999;
 
   //has to be 0
@@ -215,6 +217,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
   tout->Branch("event",&event);
   tout->Branch("targetZ",&targetZ);
   tout->Branch("prod",&prod);
+  tout->Branch("AstarPDG",&AstarPDG);
   tout->Branch("enu",&lineBeamEnergy);
 
   tout->Branch("evtMode",&evtMode);

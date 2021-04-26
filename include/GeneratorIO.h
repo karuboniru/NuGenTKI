@@ -526,21 +526,38 @@ void GENIESetID(const int pdg, const double tmptote)
 
 bool GEANT4Proceed(const int ientry, const int tmpMode, const int tmppdg, const double tmppx, const double tmppy, const double tmppz, const double tmpE, const int tmpZ)
 {
-  //missing iniN
+  //missing iniN-->
+  //<---
 
   if(lineBeamEnergy<0){//not initialized
     lineBeamEnergy = PionMass() + 1;
+
+    targetZ = tmpZ;
+    event = ientry;
+    //interType==1 is inelastic scattering, =2 is elastic scattering, no other values
+    evtMode = tmpMode;
   }
 
+  if(tmppdg>1000000){//should encounter once per event
+    if(AstarPDG==-999){
+      AstarPDG = tmppdg;
+    }
+    else{
+      const int oldA = AstarPDG%1000;
+      const int newA = tmppdg%1000;
+      if(newA>oldA){//take the highest
+        printf("GeneratorIO::GEANT4Proceed replacing AstarPDg %d by %d, oldA %d newA %d\n", AstarPDG, tmppdg, oldA, newA);
+        AstarPDG = tmppdg;
+      }
+    }
+    return false;
+  }
+
+  //now only for non-nuclear particle  
   lineFullMom->SetXYZT(tmppx, tmppy, tmppz, tmpE);//input unit is MeV
   (*lineFullMom) *= 1E-3;
 
-  event = ientry;
-  evtMode = tmpMode;
   GEANT4SetID(tmppdg);
-
-  targetZ = tmpZ;
-  
   return true;
 }
 
