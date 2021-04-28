@@ -19,7 +19,7 @@
 using namespace std;
 using namespace ReadGENIE;
 
-void GEANT4ReadChain(TChain * ch, TTree * tout, const int nEntryToStop = -999)
+void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntryToStop = -999)
 {
   const int tmpz = 18;
   printf("\nanaGenerator::GEANT4ReadChain setting targetZ as 18 for argon only!\n\n");
@@ -28,9 +28,11 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, const int nEntryToStop = -999)
 
   int ientry = 0;
   int isInteractionCounter = 0;
+  int isInelas = 0;
   int zeroNucleiCounter = 0;
   int singleNucleiCounter = 0;
   int multiNucleiCounter = 0;
+
   while(ch->GetEntry(ientry)){
     if(ientry%100000==0){
       printf("myEntries %d\n", ientry);
@@ -45,20 +47,34 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, const int nEntryToStop = -999)
 
     //do it before the loop continues for any reason
     ientry++;
+    hcounter->Fill(1);//any event
     
     //===========================================================================
     AnaUtils::Ini();
 
-    const int tmpnp = ReadGEANT4::PDGcode->size();
+    const int tmpnp = ReadGEANT4::interType->size();
     //printf("test0 PDGcode size %d\n", tmpnp);
     if(tmpnp==0){//skip non-interacting events
       continue;
     }
+    isInteractionCounter++;
+    hcounter->Fill(2);//interacting including elastic and inelastic
+    
+    const int interType = (*ReadGEANT4::interType)[0];
+    if(interType!=1){
+      if(interType!=2){
+        printf("anaGenerator bad interType! should only have 1 or 2: %d\n", interType);exit(1);
+      }
+      continue;
+    }
+    isInelas++;
+    hcounter->Fill(3);//only inelastic
+    
+    TreeIO::nAllPart = tmpnp;
 
     int failCounter = 0;
     for(int ii=0; ii<tmpnp; ii++){
-      //printf("test ii %d %d %d\n", ii, tmpnp, (*ReadGEANT4::PDGcode)[ii]);
-      
+      //printf("test all ientry %d ii %d/%d interType %d pdg %d x %f y %f z %f e %f\n", ientry, ii, tmpnp, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii]);
       const bool kProceed = GeneratorIO::GEANT4Proceed(ientry, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii], tmpz);
       if(kProceed){
         AnaUtils::MainProceed();
@@ -67,20 +83,16 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, const int nEntryToStop = -999)
         failCounter++;
       }
     }//loop over particle
-    
-    AnaUtils::DoFill(tout);
-    isInteractionCounter++;
 
     if(failCounter==0){//nuclei below GEANT4 tracking threshold and not saved
       zeroNucleiCounter++;
-
-      /*
-printf("anaGenerator bad failCounter %d\n", failCounter);
+      
+      printf("anaGenerator bad failCounter %d\n", failCounter);
       for(int kk=0; kk<tmpnp; kk++){
-        printf("ientry %d %d/%d type %d pdg %d\n", ientry, kk,tmpnp, (*ReadGEANT4::interType)[kk], (*ReadGEANT4::PDGcode)[kk]);
+        printf("test failCounter ientry %d kk %d/%d interType %d pdg %d x %f y %f z %f e %f\n", ientry, kk, tmpnp, (*ReadGEANT4::interType)[kk], (*ReadGEANT4::PDGcode)[kk], (*ReadGEANT4::Px)[kk], (*ReadGEANT4::Py)[kk], (*ReadGEANT4::Pz)[kk], (*ReadGEANT4::E)[kk]);
       }
-      exit(1);
-       */
+
+      //exit(1);
     }
     else if(failCounter==1){
       singleNucleiCounter++;
@@ -88,9 +100,35 @@ printf("anaGenerator bad failCounter %d\n", failCounter);
     else{//>=2
       multiNucleiCounter++;
     }
+    TreeIO::nNuclei=failCounter;
+    //hcounter->Fill(4);//only no nuclei or 1 nuclei, reject multi-nuclei, i.e. breakup
+
+    /*
+    if( (TreeIO::AstarPDG%1000)/10 == 39){
+      for(int kk=0; kk<tmpnp; kk++){
+        printf("test Cl/Ar39 ientry %d kk %d/%d interType %d pdg %d x %f y %f z %f e %f\n", ientry, kk, tmpnp, (*ReadGEANT4::interType)[kk], (*ReadGEANT4::PDGcode)[kk], (*ReadGEANT4::Px)[kk], (*ReadGEANT4::Py)[kk], (*ReadGEANT4::Pz)[kk], (*ReadGEANT4::E)[kk]);
+      }
+    }
+test Cl/Ar39 ientry 190499 kk 0/6 interType 1 pdg 211 x 431.087456 y 339.823754 z 767.199259 e 953.619995
+test Cl/Ar39 ientry 190499 kk 1/6 interType 1 pdg 2212 x -426.430196 y -277.459398 z 291.563354 e 1106.431195
+test Cl/Ar39 ientry 190499 kk 2/6 interType 1 pdg 22 x -1.171083 y 3.678978 z 1.844162 e 4.278697
+test Cl/Ar39 ientry 190499 kk 3/6 interType 1 pdg 22 x 0.180470 y 0.222846 z 0.031460 e 0.288478
+test Cl/Ar39 ientry 190499 kk 4/6 interType 1 pdg 22 x -0.019291 y 0.173310 z 0.068713 e 0.187430
+test Cl/Ar39 ientry 190499 kk 5/6 interType 1 pdg 1000170390 x -1.026815 y -66.109551 z 69.926137 e 36289.920122
+
+test Cl/Ar39 ientry 189 kk 0/5 interType 1 pdg 111 x 35.345009 y -599.181520 z 472.315098 e 775.608147
+test Cl/Ar39 ientry 189 kk 1/5 interType 1 pdg 2212 x 171.966526 y 573.838089 z 649.373338 e 1288.760157
+test Cl/Ar39 ientry 189 kk 2/5 interType 1 pdg 22 x -1.951103 y -0.375384 z -1.299820 e 2.374289
+test Cl/Ar39 ientry 189 kk 3/5 interType 1 pdg 22 x 0.708164 y 0.604643 z 0.428463 e 1.025022
+test Cl/Ar39 ientry 189 kk 4/5 interType 1 pdg 1000180390 x -209.351213 y 28.246665 z 9.275568 e 36286.457472
+    */
+    
+    
+    AnaUtils::DoFill(tout);
+
   }//loop over event
   
-  cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;
+  cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<isInelas<<" are inelastic interaction, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;
 }
 
 void GENIEReadChain(TChain * ch, TTree * tout, TH1F * &hCCrate, const int nEntryToStop = -999)
@@ -318,7 +356,8 @@ void anaGenerator(const TString tag, const TString filelist, const int tmpana, c
 
   //_________________________________________________________________________________________________
   //_________________________________________________________________________________________________
-  TH1F * hCCrate = 0x0; 
+  TH1F * hCCrate = 0x0;
+  TH1I * hcounter = 0x0;
   int nrun = -999;
   if(filelist.Contains("GENIE")){
     TChain * rootFileInput = AnaUtils::InputROOTFiles(filelist, "gRooTracker");
@@ -333,7 +372,8 @@ void anaGenerator(const TString tag, const TString filelist, const int tmpana, c
   else if(filelist.Contains("GEANT4")){
     TChain * rootFileInput = AnaUtils::InputROOTFiles(filelist, "PartInfo");
     if(rootFileInput){
-      GEANT4ReadChain(rootFileInput, tout, nToStop);
+      hcounter=new TH1I("hcounter","",20,0,20);
+      GEANT4ReadChain(rootFileInput, tout, hcounter, nToStop);
     }
     else{
       cout<<"No generator identified for GEANT4!! "<<filelist<<endl;
@@ -354,6 +394,10 @@ void anaGenerator(const TString tag, const TString filelist, const int tmpana, c
     hCCrate->Write();
   }
 
+  if(hcounter){
+    hcounter->Write();
+  }
+  
   TTree *theader = new TTree("header","header");
   theader->Branch("nrun",&nrun);
   theader->Fill();

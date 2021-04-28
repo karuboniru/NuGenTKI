@@ -303,7 +303,7 @@ void ProceedGEANT4PIPLUSKE1GEV()
   }
   */
   //test by adding up all line momentum
-  (*protonfullp)=(*lineFullMom);
+  (*protonfullp) += (*lineFullMom);
   npar += PROTONBIT;
 }
 

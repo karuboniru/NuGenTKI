@@ -546,7 +546,7 @@ bool GEANT4Proceed(const int ientry, const int tmpMode, const int tmppdg, const 
       const int oldA = AstarPDG%1000;
       const int newA = tmppdg%1000;
       if(newA>oldA){//take the highest
-        printf("GeneratorIO::GEANT4Proceed replacing AstarPDg %d by %d, oldA %d newA %d\n", AstarPDG, tmppdg, oldA, newA);
+        //printf("GeneratorIO::GEANT4Proceed replacing AstarPDg %d by %d, oldA %d newA %d\n", AstarPDG, tmppdg, oldA, newA);
         AstarPDG = tmppdg;
       }
     }

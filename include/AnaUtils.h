@@ -357,8 +357,8 @@ void AnaUtils::Calc()
   //pionEk = pionfullp->E()-PionMass();
   pionEk = Ekin(pionfullp, PionMass()); //only use experimental momentum
 
-  //(*baryonfullp) = (*protonfullp) + (*pionfullp);
-  baryonfullp->SetXYZT(protonfullp->X()+pionfullp->X(), protonfullp->Y()+pionfullp->Y(), protonfullp->Z()+pionfullp->Z(), Energy(protonfullp, ProtonMass())+Energy(pionfullp, pionfullp->P()>1E-10? PionMass():0));//need to use experimental momentum only
+  (*baryonfullp) = (*protonfullp) + (*pionfullp);//this is more logical
+  //this will cause delta<0 in GEANT4: baryonfullp->SetXYZT(protonfullp->X()+pionfullp->X(), protonfullp->Y()+pionfullp->Y(), protonfullp->Z()+pionfullp->Z(), Energy(protonfullp, ProtonMass())+Energy(pionfullp, pionfullp->P()>1E-10? PionMass():0));//need to use experimental momentum only
   baryonmomentum = baryonfullp->P();
   baryontheta = baryonfullp->Theta()*TMath::RadToDeg();
   baryonmass = baryonfullp->M();
@@ -376,7 +376,17 @@ void AnaUtils::Calc()
   const int localA = AnaFunctions::getTargetA(localZ);
   double dummymu, dummybaryon;
   AnaFunctions::getCommonTKI(localA, localZ, &dummyBeam, muonfullp, baryonfullp, dalphat, dphit, dpt, neutronmomentum, dpTT, dummymu, dummybaryon, pBeam, Mx);
-  
+
+  //test
+  /*
+  if(neutronmomentum<0){
+    printf("debug event %d evtMode %d AstarPDG %d\n", event, evtMode, AstarPDG);
+    muonfullp->Print();
+    baryonfullp->Print();
+    printf("debug done for event %d\n", event);
+    exit(1);
+  }
+  */
   /*
     protonTT = protonfullp->Vect().Dot(ztt);
     pionTT = pionfullp->Vect().Dot(ztt);
