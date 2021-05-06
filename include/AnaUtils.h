@@ -327,8 +327,8 @@ TLorentzVector AnaUtils::GetBeamFullP()
 
 void AnaUtils::Calc()
 {
-  const TLorentzVector dummyBeam=GetBeamFullP();
-  const TLorentzVector lvq= dummyBeam - (*muonfullp);
+  const TLorentzVector beamFullP=GetBeamFullP();
+  const TLorentzVector lvq= beamFullP - (*muonfullp);
 
 #if __OPENCALC__
   //---muon: 2
@@ -375,8 +375,9 @@ void AnaUtils::Calc()
 
   const int localA = AnaFunctions::getTargetA(localZ);
   double dummymu, dummybaryon;
-  AnaFunctions::getCommonTKI(localA, localZ, &dummyBeam, muonfullp, baryonfullp, dalphat, dphit, dpt, neutronmomentum, dpTT, dummymu, dummybaryon, pBeam, Mx);
-
+  //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *reoilfullp, double & dalphat, double & dphit, double & dpt, double & iniNcalcP, double & dpTT, double & scatterTheta, double & recoilTheta, double & beamcalcP, double & Mx)
+  AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, baryonfullp, dalphat, dphit, dpt, neutronmomentum, dpTT, dummymu, dummybaryon, pBeam, Mx);
+  
   //test
   /*
   if(neutronmomentum<0){
@@ -396,7 +397,7 @@ void AnaUtils::Calc()
 #endif
 
 #if __OPENCLR__
-  const TVector3 ztt = (dummyBeam.Vect().Cross(muonfullp->Vect())).Unit();    
+  const TVector3 ztt = (beamFullP.Vect().Cross(muonfullp->Vect())).Unit();    
 
   const double ares = -0.3; //0.2
 
@@ -419,11 +420,11 @@ void AnaUtils::Calc()
     RESmass = ressum.M();
     
     //double GetAdlerPhi(TLorentzVector nufull, TLorentzVector muonfull, TLorentzVector pifull, TLorentzVector nucleonfull, TLorentzVector iniNfull)
-    adlerPhi = GetOneBoostAdlerPhi(dummyBeam, *muonfullp, *RESpifullp, *RESnucleonfullp, *iniNfullp);
+    adlerPhi = GetOneBoostAdlerPhi(beamFullP, *muonfullp, *RESpifullp, *RESnucleonfullp, *iniNfullp);
 
     /*
     //->test
-    const double tbadler = GetTwoBoostAdlerPhi(dummyBeam, *muonfullp, *RESpifullp, *RESnucleonfullp, *iniNfullp);
+    const double tbadler = GetTwoBoostAdlerPhi(beamFullP, *muonfullp, *RESpifullp, *RESnucleonfullp, *iniNfullp);
     if(fabs(adlerPhi-tbadler)>1e-10){
       printf("one-boost and two-boost not consistent!\n");
       exit(1);
@@ -437,12 +438,12 @@ void AnaUtils::Calc()
     lrsign *= w2;
 
     //============= repeat incorrect calculation in CLR paper first version =====>
-    pseudoPhi = GetPseudoPhi(dummyBeam, *muonfullp, *RESpifullp, *RESnucleonfullp);
+    pseudoPhi = GetPseudoPhi(beamFullP, *muonfullp, *RESpifullp, *RESnucleonfullp);
     wpseudo2 = GetW2(pseudoPhi, ares);
     pseudosign *= wpseudo2;
   }
 
-  cosNuIniNAngle = ((dummyBeam.Vect()).Unit()).Dot((iniNfullp->Vect()).Unit());
+  cosNuIniNAngle = ((beamFullP.Vect()).Unit()).Dot((iniNfullp->Vect()).Unit());
   cosQIniNAngle = ((lvq.Vect()).Unit()).Dot((iniNfullp->Vect()).Unit());
 #endif
 

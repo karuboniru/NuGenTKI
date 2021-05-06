@@ -3,7 +3,7 @@ export GEANT4PIPLUSKE1GEV="list/Filelist_GEANT4_v0test_1000xstat.txt"
 ntostop=
 #10000000
 
-tag=GEANT4PIPLUSKE1GEV_test0_1000xstat_0threshold
+tag=GEANT4PIPLUSKE1GEV_test2_1000xstat_0threshold
 
 ####################################
 
