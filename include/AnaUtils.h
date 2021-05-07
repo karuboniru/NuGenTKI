@@ -372,11 +372,10 @@ void AnaUtils::Calc()
 
   //pretend hydrogen is carbon, same as experiment
   const int localZ = (targetZ==1 ? 6 : targetZ);
-
   const int localA = AnaFunctions::getTargetA(localZ);
-  double dummymu, dummybaryon;
-  //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *reoilfullp, double & dalphat, double & dphit, double & dpt, double & iniNcalcP, double & dpTT, double & scatterTheta, double & recoilTheta, double & beamcalcP, double & Mx)
-  AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, baryonfullp, dalphat, dphit, dpt, neutronmomentum, dpTT, dummymu, dummybaryon, pBeam, Mx);
+  //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *recoilfullp, double & dalphat, double & dphit, double & dpt, double & dpTT, double & beamcalcP, double & iniNcalcP, double & AStarTrueM, double & iniNTrueP)
+  double iniNTrueP = -999;
+  AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, baryonfullp, dalphat, dphit, dpt, dpTT, pBeam, neutronmomentum, Mx, iniNTrueP);
   
   //test
   /*
