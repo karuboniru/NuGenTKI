@@ -97,11 +97,15 @@ namespace TreeIO
   double dpt;
   double dphit;
   double dalphat;
-  double IApN;
-  double recoilP;
   double dpTT;
   double beamCalcP;
-  double recoilM; 
+  double IApN;
+  double recoilM;
+  double recoilP;
+  double event_beamCalcP;
+  double event_IApN;
+  double event_recoilM;
+  double event_recoilP;
   
  /*
    double muoncostheta;
@@ -282,11 +286,15 @@ TTree * GetTree(const analysis ana, const experiment exp)
   tout->Branch("dpt",&dpt);
   tout->Branch("dphit",&dphit);
   tout->Branch("dalphat",&dalphat);
-  tout->Branch("IApN",&IApN);
-  tout->Branch("recoilP",&recoilP);
   tout->Branch("dpTT",&dpTT);
   tout->Branch("beamCalcP",&beamCalcP);
+  tout->Branch("IApN",&IApN);
   tout->Branch("recoilM",&recoilM);
+  tout->Branch("recoilP",&recoilP);
+  tout->Branch("event_beamCalcP",&event_beamCalcP);
+  tout->Branch("event_IApN",&event_IApN);
+  tout->Branch("event_recoilM",&event_recoilM);
+  tout->Branch("event_recoilP",&event_recoilP);
 #endif
 
 #if __OPENCLR__

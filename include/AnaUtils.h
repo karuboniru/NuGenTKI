@@ -374,6 +374,8 @@ void AnaUtils::Calc()
     const int localA = AnaFunctions::getTargetA(localZ);
     //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *recoilfullp, double & dalphat, double & dphit, double & dpt, double & dpTT, double & beamCalcP, double & IApN, double & recoilM, double & recoilP)
     AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, baryonfullp, dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
+    double dummy = -999;
+    AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, 0x0,       eventfullp,  dummy, dummy, dummy,dummy, event_beamCalcP, event_IApN, event_recoilM, event_recoilP);
   }
   
   //test

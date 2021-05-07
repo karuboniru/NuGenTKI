@@ -14,7 +14,8 @@ namespace ProcessUtils
   TLorentzVector * muonfullp= new TLorentzVector;
   TLorentzVector * protonfullp= new TLorentzVector;
   TLorentzVector * pionfullp= new TLorentzVector;
-  TLorentzVector * neutronFSfullp= new TLorentzVector;  
+  TLorentzVector * neutronFSfullp= new TLorentzVector;
+  TLorentzVector * eventfullp = new TLorentzVector;
 
 void IniProcessUtils()
 {
@@ -22,6 +23,7 @@ void IniProcessUtils()
   protonfullp->SetXYZT(0,0,0,0);
   pionfullp->SetXYZT(0,0,0,0);
   neutronFSfullp->SetXYZT(0,0,0,0);
+  eventfullp->SetXYZT(0,0,0,0);
 }
 
 //=======================================================================================================================
@@ -304,6 +306,8 @@ void ProceedGEANT4PIPLUSKE1GEV()
   */
   //test by adding up all line momentum
   (*protonfullp) += (*lineFullMom);
+
+  (*eventfullp) += (*lineFullMom);
   npar += PROTONBIT;
 }
 
