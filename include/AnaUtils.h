@@ -145,6 +145,7 @@ void AnaUtils::Ini()
 
   IniProcessUtils();
 
+  //defined in AnaUtils
   baryonfullp->SetXYZT(0,0,0,0);
 }
 
@@ -332,49 +333,48 @@ void AnaUtils::Calc()
 
 #if __OPENCALC__
   //---muon: 2
-  muonmomentum = muonfullp->P();
-  muontheta = muonfullp->Theta()*TMath::RadToDeg();
-
-  //---W: 5
-  //not used q3 = lvq.P();
-  Q2 = -lvq.M2();
-  TLorentzVector dummyP, dummyW;
-  //assum proton target
-  dummyP.SetXYZM(0,0,0,ProtonMass());
-  dummyW = lvq+dummyP;
-  Wrest = dummyW.M();
-  xrest = Q2/2/(dummyP.Dot(lvq));
-
-  dummyW = lvq+(*iniNfullp);
-  Wtrue = dummyW.M();
-  xBj = Q2/2/(iniNfullp->Dot(lvq));
-
-  //---hadron: 8; baryonfullp is intermediate locally
-  protonmomentum = protonfullp->P();
-  protontheta = protonfullp->Theta()*TMath::RadToDeg();
-  pionmomentum = pionfullp->P();
-  piontheta = pionfullp->Theta()*TMath::RadToDeg();
-  //pionEk = pionfullp->E()-PionMass();
-  pionEk = Ekin(pionfullp, PionMass()); //only use experimental momentum
-
-  (*baryonfullp) = (*protonfullp) + (*pionfullp);//this is more logical
-  //this will cause delta<0 in GEANT4: baryonfullp->SetXYZT(protonfullp->X()+pionfullp->X(), protonfullp->Y()+pionfullp->Y(), protonfullp->Z()+pionfullp->Z(), Energy(protonfullp, ProtonMass())+Energy(pionfullp, pionfullp->P()>1E-10? PionMass():0));//need to use experimental momentum only
-  baryonmomentum = baryonfullp->P();
-  baryontheta = baryonfullp->Theta()*TMath::RadToDeg();
-  baryonmass = baryonfullp->M();
-
-  //---TKI: 4+1
-  /*//allow heavier nuclei
-  if(targetZ!=6 && targetZ!=1){
-    printf("AnaUtils::Calc targetZ not 1 nor 6! %d\n", targetZ); exit(1);
+  {//use blocks to isolate calculations
+    muonmomentum = muonfullp->P();
+    muontheta = muonfullp->Theta()*TMath::RadToDeg();
+    
+    //---W: 5
+    //not used q3 = lvq.P();
+    Q2 = -lvq.M2();
+    TLorentzVector dummyP, dummyW;
+    //assum proton target
+    dummyP.SetXYZM(0,0,0,ProtonMass());
+    dummyW = lvq+dummyP;
+    Wrest = dummyW.M();
+    xrest = Q2/2/(dummyP.Dot(lvq));
+    
+    dummyW = lvq+(*iniNfullp);
+    Wtrue = dummyW.M();
+    xBj = Q2/2/(iniNfullp->Dot(lvq));
   }
-  */
 
-  //pretend hydrogen is carbon, same as experiment
-  const int localZ = (targetZ==1 ? 6 : targetZ);
-  const int localA = AnaFunctions::getTargetA(localZ);
-  //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *recoilfullp, double & dalphat, double & dphit, double & dpt, double & dpTT, double & beamCalcP, double & IApN, double & recoilM, double & recoilP)
-  AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, baryonfullp, dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
+  {
+    //---hadron: 8; baryonfullp is intermediate locally
+    protonmomentum = protonfullp->P();
+    protontheta = protonfullp->Theta()*TMath::RadToDeg();
+    pionmomentum = pionfullp->P();
+    piontheta = pionfullp->Theta()*TMath::RadToDeg();
+    //pionEk = pionfullp->E()-PionMass();
+    pionEk = Ekin(pionfullp, PionMass()); //only use experimental momentum
+    
+    (*baryonfullp) = (*protonfullp) + (*pionfullp);//this is more logical
+    //this will cause delta<0 in GEANT4: baryonfullp->SetXYZT(protonfullp->X()+pionfullp->X(), protonfullp->Y()+pionfullp->Y(), protonfullp->Z()+pionfullp->Z(), Energy(protonfullp, ProtonMass())+Energy(pionfullp, pionfullp->P()>1E-10? PionMass():0));//need to use experimental momentum only
+    baryonmomentum = baryonfullp->P();
+    baryontheta = baryonfullp->Theta()*TMath::RadToDeg();
+    baryonmass = baryonfullp->M();
+  }
+  
+  {
+    //pretend hydrogen is carbon, same as experiment
+    const int localZ = (targetZ==1 ? 6 : targetZ);
+    const int localA = AnaFunctions::getTargetA(localZ);
+    //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *recoilfullp, double & dalphat, double & dphit, double & dpt, double & dpTT, double & beamCalcP, double & IApN, double & recoilM, double & recoilP)
+    AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, baryonfullp, dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
+  }
   
   //test
   /*

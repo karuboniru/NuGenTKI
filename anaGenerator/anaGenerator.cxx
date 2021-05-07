@@ -84,7 +84,7 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
       }
     }//loop over particle
 
-    if(failCounter==0){//nuclei below GEANT4 tracking threshold and not saved
+    if(failCounter==0){//all are processed and therefore there is no nuclei skipped. nuclei below GEANT4 tracking threshold and not saved. So far only found 1 such event.
       zeroNucleiCounter++;
       
       printf("anaGenerator bad failCounter %d\n", failCounter);
