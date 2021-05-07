@@ -373,13 +373,12 @@ void AnaUtils::Calc()
   //pretend hydrogen is carbon, same as experiment
   const int localZ = (targetZ==1 ? 6 : targetZ);
   const int localA = AnaFunctions::getTargetA(localZ);
-  //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *recoilfullp, double & dalphat, double & dphit, double & dpt, double & dpTT, double & beamcalcP, double & iniNcalcP, double & AStarTrueM, double & iniNTrueP)
-  double iniNTrueP = -999;
-  AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, baryonfullp, dalphat, dphit, dpt, dpTT, pBeam, neutronmomentum, Mx, iniNTrueP);
+  //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *recoilfullp, double & dalphat, double & dphit, double & dpt, double & dpTT, double & beamCaclP, double & enm_pn, double & recoilM, double & recoilP)
+  AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, baryonfullp, dalphat, dphit, dpt, dpTT, beamCaclP, enm_pn, recoilM, recoilP);
   
   //test
   /*
-  if(neutronmomentum<0){
+  if(enm_pn<0){
     printf("debug event %d evtMode %d AstarPDG %d\n", event, evtMode, AstarPDG);
     muonfullp->Print();
     baryonfullp->Print();
