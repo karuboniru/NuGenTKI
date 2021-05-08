@@ -66,6 +66,9 @@ namespace TreeIO
   int nNeutron;
   int nBkg;
 
+  int AstarPDG;
+  int AstarA;
+
   double CLR_KNsrc;
   
   double MMECCQE_Erecoil;
@@ -74,8 +77,6 @@ namespace TreeIO
   double LOWRECOIL_Eav;
   double LOWRECOIL_q3;
 
-  int GEANT4_AstarPDG;
-  int GEANT4_AstarA;
   double GEANT4_gammaE;
 
   //--- Calc, all will be set by = no need to Ini()
@@ -178,6 +179,9 @@ void IniTreeIO()
   nNeutron = -999;
   nBkg = -999;
 
+  AstarPDG = -999;
+  AstarA = -999;
+
   CLR_KNsrc = 0;
 
   MMECCQE_Erecoil = 0;
@@ -186,8 +190,6 @@ void IniTreeIO()
   LOWRECOIL_parbit=0;
   LOWRECOIL_Eav = 0;
 
-  GEANT4_AstarPDG = -999;
-  GEANT4_AstarA = -999;
   //has to start from 0
   GEANT4_gammaE = 0;
   //--- EOF
@@ -229,6 +231,9 @@ TTree * GetTree(const analysis ana, const experiment exp)
   tout->Branch("nNeutron",&nNeutron);
   tout->Branch("nBkg",&nBkg);
 
+  tout->Branch("AstarPDG",&AstarPDG);
+  tout->Branch("AstarA",&AstarA);
+
   //---
   if(anamode==CLR||anamode==RESPS){
     tout->Branch("CLR_KNsrc",&CLR_KNsrc);
@@ -242,8 +247,6 @@ TTree * GetTree(const analysis ana, const experiment exp)
     tout->Branch("LOWRECOIL_Eav",&LOWRECOIL_Eav);
   }
   else if(anamode==GEANT4PIPLUSKE1GEV){
-    tout->Branch("GEANT4_AstarPDG",&GEANT4_AstarPDG);
-    tout->Branch("GEANT4_AstarA",&GEANT4_AstarA);
     tout->Branch("GEANT4_gammaE",&GEANT4_gammaE);
   }
 

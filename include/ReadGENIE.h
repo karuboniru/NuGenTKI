@@ -119,6 +119,14 @@ GeneratorIO::dtype GetIniOrFinalType(const int ii, const bool isHydrogen, const 
     IniOrFinaltype=GeneratorIO::kFINAL;
   }
   
+  if(StdHepStatus[ii]==2){
+    const double bit9 = tmpid/1E9;
+    if(bit9<=1 || bit9 >=2){//there is large pid like 2000000001 with status 12, nu:14;tgt:1000060120;N:2212;q:1(v);proc:Weak[CC],DIS; 2000000001 12
+      printf("ReadGENIE GetIniOrFinalType wrong id %d %f status %d\n", tmpid, bit9, StdHepStatus[ii]);exit(1);
+    }
+    IniOrFinaltype=GeneratorIO::kFINAL;
+  }    
+
   return IniOrFinaltype;
 }
 

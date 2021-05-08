@@ -298,39 +298,39 @@ void ProceedRESPS()
 void ProceedGEANT4PIPLUSKE1GEV()
 {
   if(IsPion()&&lineCharge==1){
-    totparcount += PIONBIT;
+    AddABit(totparcount,  PIONBIT);
     
     if(lineFullMom->P()>0.1){//100 MeV pion threshold
       (*pionfullp) += (*lineFullMom);
-      npar += PIONBIT;
+      AddABit(npar,  PIONBIT);
     }
   }
   else if(IsProton()){
-    totparcount += PROTONBIT;
+    AddABit(totparcount,  PROTONBIT);
     
     if(lineFullMom->P()>0.3){//300 MeV proton threshold
       (*protonfullp) += (*lineFullMom);
-      npar += PROTONBIT;
+      AddABit(npar,  PROTONBIT);
     }
   }
   else if(IsPiZero()){//no pi0 threshold
     (*pionfullp) += (*lineFullMom);
-    npar += PIZEROBIT;
-    totparcount += PIZEROBIT;
+    AddABit(npar,  PIZEROBIT);
+    AddABit(totparcount,  PIZEROBIT);
   }
   else if(IsNeutron()){
-    npar += NEUTRONBIT;
-    totparcount += NEUTRONBIT;
+    AddABit(npar,  NEUTRONBIT);
+    AddABit(totparcount,  NEUTRONBIT);
   }
   else if(IsGamma()){
-    npar += GAMMABIT;
-    totparcount += GAMMABIT;
+    AddABit(npar,  GAMMABIT);
+    AddABit(totparcount,  GAMMABIT);
 
     GEANT4_gammaE += lineFullMom->E();
   }
   else if(linePID==1000 || linePID==10){//kaon, pi-
-    npar += BKGBIT;
-    totparcount += BKGBIT;
+    AddABit(npar,  BKGBIT);
+    AddABit(totparcount,  BKGBIT);
   }
   else{
     printf("ProceesUtils::ProceedGEANT4 not pion or proton! linePID %d\n", linePID); exit(1);
@@ -544,7 +544,7 @@ void ProceedMINERvAGFS0PI()
     AddABit(totparcount, BKGBIT);
     AddABit(npar, BKGBIT);
   }
-  else if(!IsNeutron() && lineRawID!=-9990001){//allow antiproton
+  else if(!IsNeutron() && lineRawID!=-9990001 && lineRawID<1E9){//allow antiproton and nuclei
     printf("GFS0PI strange background! linePID %d lineRawID %d\n", linePID, lineRawID); exit(1);
   }
 }
@@ -601,7 +601,7 @@ void ProceedMINERvAGFSPIZERO()
     AddABit(npar, BKGBIT);
   }
   else if(!IsNeutron()){
-    if(lineRawID!= -9990001){//GiBUU has large antiproton
+    if(lineRawID!= -9990001 && lineRawID<1E9){//GiBUU has large antiproton, allow GENIE NUCLEI
       //printf("GFSPIZERO strange background! linePID %d lineRawID %d run %d event %d\n", linePID, lineRawID, run, event); exit(1);
       printf("GFSPIZERO strange background! linePID %d lineRawID %d\n", linePID, lineRawID); exit(1);
     }

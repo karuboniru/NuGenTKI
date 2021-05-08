@@ -21,7 +21,7 @@ using namespace ReadGENIE;
 
 void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntryToStop = -999)
 {
-  const int tmpz = 18;
+  targetZ = 18;
   printf("\nanaGenerator::GEANT4ReadChain setting targetZ as 18 for argon only!\n\n");
 
   ReadGEANT4::SetChain(ch);
@@ -73,7 +73,7 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
     int failCounter = 0;
     for(int ii=0; ii<tmpnp; ii++){
       //printf("test all ientry %d ii %d/%d interType %d pdg %d x %f y %f z %f e %f\n", ientry, ii, tmpnp, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii]);
-      const bool kProceed = GeneratorIO::GEANT4Proceed(ientry, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii], tmpz);
+      const bool kProceed = GeneratorIO::GEANT4Proceed(ientry, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii]);
       if(kProceed){
         AnaUtils::MainProceed();
       }
@@ -175,7 +175,7 @@ void GENIEReadChain(TChain * ch, TTree * tout, TH1F * &hCCrate, const int nEntry
 
     const int tmpnp = StdHepN;
 
-    //printf("\ntest ientry %d tmpevent %d tmpprod %d tmpenu %f tmppw %f tmpnp %d\n", ientry, tmpevent, tmpprod, tmpenu, tmppw, tmpnp);
+    //printf("\ntestbug ientry %d tmpevent %d tmpprod %d tmpenu %f tmppw %f tmpnp %d\n", ientry, tmpevent, tmpprod, tmpenu, tmppw, tmpnp);
     
     AnaUtils::Ini();
 
@@ -185,19 +185,17 @@ void GENIEReadChain(TChain * ch, TTree * tout, TH1F * &hCCrate, const int nEntry
     int idxRESnucleon = -999;
     int idxRESpi = -999;
     int idxDelta = -999;
-    for(int ii=1; ii<tmpnp; ii++){
+    //0 is beam, 1 is target nucleus
+    for(int ii=2; ii<tmpnp; ii++){
       const int tmpid = StdHepPdg[ii];
+
+      //printf("testbug ii %d/%d pdg %d precut\n", ii, tmpnp, tmpid);
 
       if( ( abs(tmpid) == 12 || abs(tmpid) == 14 || abs(tmpid) == 16 ) && StdHepFm[ii]!=0 ){//charm decay to neutrino
         continue;
       }
 
       if( abs(tmpid)==13 && StdHepFm[ii]!=0 ){//skip non CC muon
-        continue;
-
-      }
-
-      if(tmpid>1000000000){//skip nucleus
         continue;
       }
 
@@ -217,6 +215,7 @@ void GENIEReadChain(TChain * ch, TTree * tout, TH1F * &hCCrate, const int nEntry
 
         //if(ecode.Contains("QES")){ cout<<"test event "<<tmpevent<<" ii "<<ii<<" IniOrFinaltype "<<IniOrFinaltype<<" idxIni "<<idxIni<<" ecode "<<ecode<<" status "<<StdHepStatus[ii]<<" pdg "<<StdHepPdg[ii]<<" scat "<<StdHepRescat[ii]<<" StdHepFd "<<StdHepFd[ii]<<" StdHepLd "<<StdHepLd[ii]<<" RESdtype "<<RESdtype<<" "<<endl;}
 
+        //printf("testbug ii %d/%d pdg %d postcut\n", ii, tmpnp, tmpid);
         
         if(GeneratorIO::GENIEProceed(IniOrFinaltype, RESdtype, ecode, tmpevent, tmpprod, tmpenu, tmppw, tmpmom1, tmpmom2, tmpmom3, tmptote, tmpid, tmpKNsrc)){
           //if(ecode.Contains("QES")){printf("test now do Main IniOrFinaltype %d\n", IniOrFinaltype); ch->Show(ientry);}

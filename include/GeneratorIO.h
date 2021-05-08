@@ -433,7 +433,8 @@ void GENIESetID(const int pdg, const double tmptote)
    */
   lineIsBkgParticle = false;
 
-  if(tmppdg>=5000){
+  //ignore nuclei
+  if(tmppdg>=5000 && tmppdg<1E9){
     printf("GeneratorIO::GENIESetID bad pdg %d\n", pdg); exit(1);
   }
 
@@ -524,7 +525,7 @@ void GENIESetID(const int pdg, const double tmptote)
   }
 }
 
-bool GEANT4Proceed(const int ientry, const int tmpMode, const int tmppdg, const double tmppx, const double tmppy, const double tmppz, const double tmpE, const int tmpZ)
+bool GEANT4Proceed(const int ientry, const int tmpMode, const int tmppdg, const double tmppx, const double tmppy, const double tmppz, const double tmpE)
 {
   //missing iniN-->
   //<---
@@ -532,7 +533,6 @@ bool GEANT4Proceed(const int ientry, const int tmpMode, const int tmppdg, const 
   if(beamE<0){//not initialized
     beamE = PionMass() + 1;
 
-    targetZ = tmpZ;
     event = ientry;
     //interType==1 is inelastic scattering, =2 is elastic scattering, no other values
     evtMode = tmpMode;
@@ -544,11 +544,11 @@ bool GEANT4Proceed(const int ientry, const int tmpMode, const int tmppdg, const 
       AstarPDG = tmppdg;
     }
     else{
-      const int oldA = GEANT4_AstarPDG%1000;
+      const int oldA = AstarPDG%1000;
       const int newA = tmppdg%1000;
       if(newA>oldA){//take the highest
-        //printf("GeneratorIO::GEANT4Proceed replacing GEANT4_AstarPDg %d by %d, oldA %d newA %d\n", GEANT4_AstarPDG, tmppdg, oldA, newA);
-        GEANT4_AstarPDG = tmppdg;
+        //printf("GeneratorIO::GEANT4Proceed replacing AstarPDg %d by %d, oldA %d newA %d\n", AstarPDG, tmppdg, oldA, newA);
+        AstarPDG = tmppdg;
       }
     }
     return false;
@@ -557,15 +557,15 @@ bool GEANT4Proceed(const int ientry, const int tmpMode, const int tmppdg, const 
 
   if(tmppdg>1000000){
     const int lineA = (tmppdg%1000)/10;
-    const int targetA = AnaFunctions::getTargetA(tmpZ);
-    //only skip GEANT4_Astar
+    const int targetA = AnaFunctions::getTargetA(targetZ);
+    //only skip Astar
     if(lineA> (targetA/2)){
-      if(GEANT4_AstarPDG==-999){
-        GEANT4_AstarPDG = tmppdg;
-        GEANT4_AstarA = lineA;
+      if(AstarPDG==-999){
+        AstarPDG = tmppdg;
+        AstarA = lineA;
       }
       else{
-        printf("GeneratorIO::GEANT4Proceed multiple large nuclei! %d %d %d %d\n", targetA, lineA, GEANT4_AstarPDG, tmppdg);
+        printf("GeneratorIO::GEANT4Proceed multiple large nuclei! %d %d %d %d\n", targetA, lineA, AstarPDG, tmppdg);
         exit(1);
       }
       return false;
@@ -597,11 +597,30 @@ bool GENIEProceed(const dtype IniOrFinaltype, const dtype RESdtype, const TStrin
     //can be neither ini or final, like intermediate delta
     if(IniOrFinaltype==kFINAL){
 
+      SetGENIETarget(code);
+
+      if(tmpid>1000000){
+        const int lineA = (tmpid%1000)/10;
+        const int targetA = AnaFunctions::getTargetA(targetZ);
+        //only skip Astar
+        if(lineA> (targetA/2)){
+          if(AstarPDG==-999){
+            AstarPDG = tmpid;
+            AstarA = lineA;
+            //printf("testbug %d %d %d %d %s\n", lineA, targetA, tmpZ, tmpid, code.Data());
+          }
+          else{
+            printf("GeneratorIO::GENIEProceed multiple large nuclei! %d %d %d %d\n", targetA, lineA, AstarPDG, tmpid);
+            exit(1);
+          }
+          return false;
+        }
+      }
+
       perweight = tmppw;
       lineFullMom->SetXYZT(tmpmom1, tmpmom2, tmpmom3, tmptote);
       
       event = tmpevent;
-      SetGENIETarget(code);
       
       prod = tmpprod;
       
