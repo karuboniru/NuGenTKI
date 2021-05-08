@@ -61,7 +61,7 @@ namespace TreeIO
   int totparcount;
   int nProton;
   int nPion;
-  int nPizero;
+  int nPiZero;
   int nGamma;
   int nNeutron;
   int nBkg;
@@ -76,6 +76,7 @@ namespace TreeIO
 
   int GEANT4_AstarPDG;
   int GEANT4_AstarA;
+  double GEANT4_gammaE;
 
   //--- Calc, all will be set by = no need to Ini()
 #if __OPENCALC__
@@ -172,7 +173,7 @@ void IniTreeIO()
   totparcount=0;
   nProton = -999;
   nPion = -999;
-  nPizero = -999;
+  nPiZero = -999;
   nGamma = -999;
   nNeutron = -999;
   nBkg = -999;
@@ -187,7 +188,8 @@ void IniTreeIO()
 
   GEANT4_AstarPDG = -999;
   GEANT4_AstarA = -999;
-
+  //has to start from 0
+  GEANT4_gammaE = 0;
   //--- EOF
 }
 
@@ -222,7 +224,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
   tout->Branch("totparcount",&totparcount);
   tout->Branch("nProton",&nProton);
   tout->Branch("nPion",&nPion);
-  tout->Branch("nPizero",&nPizero);
+  tout->Branch("nPiZero",&nPiZero);
   tout->Branch("nGamma",&nGamma);
   tout->Branch("nNeutron",&nNeutron);
   tout->Branch("nBkg",&nBkg);
@@ -242,6 +244,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
   else if(anamode==GEANT4PIPLUSKE1GEV){
     tout->Branch("GEANT4_AstarPDG",&GEANT4_AstarPDG);
     tout->Branch("GEANT4_AstarA",&GEANT4_AstarA);
+    tout->Branch("GEANT4_gammaE",&GEANT4_gammaE);
   }
 
   /*

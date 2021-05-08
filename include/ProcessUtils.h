@@ -115,7 +115,7 @@ void SetNParticles()
 {
   nProton  = (npar%(10*PROTONBIT))  /PROTONBIT;
   nPion    = (npar%(10*PIONBIT))    /PIONBIT;
-  nPizero  = (npar%(10*PIZEROBIT))  /PIZEROBIT;
+  nPiZero  = (npar%(10*PIZEROBIT))  /PIZEROBIT;
   nGamma   = (npar%(10*GAMMABIT))   /GAMMABIT;
   nNeutron = (npar%(10*NEUTRONBIT)) /NEUTRONBIT;
   nBkg     = (npar%(10*BKGBIT))     /BKGBIT;
@@ -325,6 +325,8 @@ void ProceedGEANT4PIPLUSKE1GEV()
   else if(IsGamma()){
     npar += GAMMABIT;
     totparcount += GAMMABIT;
+
+    GEANT4_gammaE += lineFullMom->E();
   }
   else if(linePID==1000 || linePID==10){//kaon, pi-
     npar += BKGBIT;
@@ -333,8 +335,6 @@ void ProceedGEANT4PIPLUSKE1GEV()
   else{
     printf("ProceesUtils::ProceedGEANT4 not pion or proton! linePID %d\n", linePID); exit(1);
   }
-
-  (*eventfullp) += (*lineFullMom);
 }
 
 void ProceedNUGAS()

@@ -65,6 +65,8 @@ TChain * AnaUtils::InputROOTFiles(const TString file, const TString tr)
 
 void AnaUtils::MainProceed()
 {
+  (*eventfullp) += (*lineFullMom);
+  
   if(expmode==kMINERvA || expmode==kNONE){
     if(anamode == GFS){
       ProceedMINERvAGFS();
@@ -283,7 +285,7 @@ bool AnaUtils::IsGood()
   else if(anamode==GEANT4PIPLUSKE1GEV){
     //accept Npmpi
     //1p
-    if( (nPion+nPizero) ==1 && (nProton==1||nProton==2) )    
+    if( (nPion+nPiZero) ==1 && (nProton==1||nProton==2) )    
       return true;
     else
       return false;
@@ -358,13 +360,15 @@ void AnaUtils::Calc()
     const int localA = AnaFunctions::getTargetA(localZ);
     //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *recoilfullp, double & dalphat, double & dphit, double & dpt, double & dpTT, double & beamCalcP, double & IApN, double & recoilM, double & recoilP)
     if(anamode==GEANT4PIPLUSKE1GEV){
-      AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, pionfullp, protonfullp, dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
-      double dummy = -999;
-      AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, 0x0,       eventfullp,  dummy, dummy, dummy,dummy, event_beamCalcP, event_IApN, event_recoilM, event_recoilP);
+      AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, pionfullp, protonfullp,     dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
     }
     else{
       AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, &tmphadronfullp, dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
     }
+
+    double dummy = -999;
+    AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, 0x0,       eventfullp,  dummy, dummy, dummy,dummy, event_beamCalcP, event_IApN, event_recoilM, event_recoilP);
+
   }
   
   //test
