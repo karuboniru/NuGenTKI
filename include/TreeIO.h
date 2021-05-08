@@ -46,34 +46,37 @@ namespace TreeIO
   //                                                  variables
   //=======================================================================================================================
   
-  //--- GeneratorIO: Ini 10
-  int iniNcharge;//--> GiBUU only
-  
-  double perweight;
+  int iniNcharge;//--> GiBUU only  
+  double perweight;//--> GiBUU only
   int filecount;//--> GiBUU only
   int run;//--> GiBUU only
+  int prod;//--> GiBUU only
+  
   int event;
   int targetZ;
-  int prod;
-  int AstarPDG;
-  int nAllPart;
-  int nNuclei;
-  double lineBeamEnergy;
-  
-  int LOWRECOIL_parbit;
-  
   int evtMode;
-  
-  //--- ProcessUtils: Ini 6
+  double beamE;
+
   int npar;
   int totparcount;
-  
+  int nProton;
+  int nPion;
+  int nPizero;
+  int nGamma;
+  int nNeutron;
+  int nBkg;
+
   double CLR_KNsrc;
   
   double MMECCQE_Erecoil;
+
+  int LOWRECOIL_parbit;
   double LOWRECOIL_Eav;
   double LOWRECOIL_q3;
-  
+
+  int GEANT4_AstarPDG;
+  int GEANT4_AstarA;
+
   //--- Calc, all will be set by = no need to Ini()
 #if __OPENCALC__
   double muonmomentum;
@@ -85,14 +88,15 @@ namespace TreeIO
   double xrest;
   double Q2;
   
+  double baryonmomentum;
+  double baryontheta;
+  double baryonmass;
+
   double protonmomentum;
   double protontheta;
   double pionmomentum;
   double piontheta;
   double pionEk;
-  double baryonmomentum;
-  double baryontheta;
-  double baryonmass;
   
   double dpt;
   double dphit;
@@ -152,54 +156,37 @@ namespace TreeIO
 
 void IniTreeIO()
 {
-  /*//original
-
-  npar=0;
-  totparcount=0;
-  iniNcharge = -999;
-  parbit=0;
-
-  iniNfullp->SetXYZT(0,0,0,0);
-  RESpifullp->SetXYZT(0,0,0,0);
-  RESnucleonfullp->SetXYZT(0,0,0,0);
-  muonfullp->SetXYZT(0,0,0,0);
-  protonfullp->SetXYZT(0,0,0,0);
-  neutronFSfullp->SetXYZT(0,0,0,0);
-  pionfullp->SetXYZT(0,0,0,0);
-  baryonfullp->SetXYZT(0,0,0,0);
-
-  Eav = 0;
-  Erecoil = 0;
-  KNsrc = 0;
-   */
-
   //--- GeneratorIO: Ini 10
   iniNcharge = -999;
-
   perweight = -999;
   filecount = -999;
   run = -999;
+  prod = -999;
+  
   event = -999;
   targetZ = -999;
-  prod = -999;
-  AstarPDG = -999;
-  nAllPart = -999;
-  nNuclei = -999;
-  lineBeamEnergy = -999;
-
-  //has to be 0
-  LOWRECOIL_parbit=0;
-
   evtMode = -999;
+  beamE = -999;
 
-  //--- ProcessUtils: Ini 6
   npar=0;
   totparcount=0;
+  nProton = -999;
+  nPion = -999;
+  nPizero = -999;
+  nGamma = -999;
+  nNeutron = -999;
+  nBkg = -999;
 
   CLR_KNsrc = 0;
 
   MMECCQE_Erecoil = 0;
+
+  //has to be 0
+  LOWRECOIL_parbit=0;
   LOWRECOIL_Eav = 0;
+
+  GEANT4_AstarPDG = -999;
+  GEANT4_AstarA = -999;
 
   //--- EOF
 }
@@ -218,26 +205,33 @@ TTree * GetTree(const analysis ana, const experiment exp)
   TTree * tout = new TTree("tree","tree");
   //const Int_t spl = 1;
 
-  tout->Branch("iniNcharge",&iniNcharge);
+  if(anamode!=GEANT4PIPLUSKE1GEV){
+    tout->Branch("iniNcharge",&iniNcharge);
+    tout->Branch("perweight",&perweight);
+    tout->Branch("filecount",&filecount);
+    tout->Branch("run",&run);
+    tout->Branch("prod",&prod);
+  }
 
-  tout->Branch("perweight",&perweight);
-  tout->Branch("filecount",&filecount);
-  tout->Branch("run",&run);
   tout->Branch("event",&event);
   tout->Branch("targetZ",&targetZ);
-  tout->Branch("prod",&prod);
-  tout->Branch("AstarPDG",&AstarPDG);
-  tout->Branch("nAllPart",&nAllPart);
-  tout->Branch("nNuclei",&nNuclei);
-  tout->Branch("enu",&lineBeamEnergy);
-
   tout->Branch("evtMode",&evtMode);
-
+  tout->Branch("beamE",&beamE);
+  
   tout->Branch("npar",&npar);
   tout->Branch("totparcount",&totparcount);
+  tout->Branch("nProton",&nProton);
+  tout->Branch("nPion",&nPion);
+  tout->Branch("nPizero",&nPizero);
+  tout->Branch("nGamma",&nGamma);
+  tout->Branch("nNeutron",&nNeutron);
+  tout->Branch("nBkg",&nBkg);
 
   //---
-  if(anamode==MMECCQE){
+  if(anamode==CLR||anamode==RESPS){
+    tout->Branch("CLR_KNsrc",&CLR_KNsrc);
+  }
+  else if(anamode==MMECCQE){
     tout->Branch("MMECCQE_Erecoil",&MMECCQE_Erecoil);
   }
   else if(anamode==LOWRECOIL){
@@ -245,8 +239,9 @@ TTree * GetTree(const analysis ana, const experiment exp)
     tout->Branch("LOWRECOIL_q3",&LOWRECOIL_q3);
     tout->Branch("LOWRECOIL_Eav",&LOWRECOIL_Eav);
   }
-  else if(anamode==CLR||anamode==RESPS){
-    tout->Branch("CLR_KNsrc",&CLR_KNsrc);
+  else if(anamode==GEANT4PIPLUSKE1GEV){
+    tout->Branch("GEANT4_AstarPDG",&GEANT4_AstarPDG);
+    tout->Branch("GEANT4_AstarA",&GEANT4_AstarA);
   }
 
   /*
@@ -265,23 +260,27 @@ TTree * GetTree(const analysis ana, const experiment exp)
   //tout->Branch("pionTT",&pionTT);
     
 #if __OPENCALC__
-  tout->Branch("muonmomentum",&muonmomentum);
-  tout->Branch("muontheta",&muontheta);
 
-  tout->Branch("Wtrue",&Wtrue);
-  tout->Branch("Wrest",&Wrest);
-  tout->Branch("xBj",&xBj);
-  tout->Branch("xrest",&xrest);
-  tout->Branch("Q2",&Q2);
-
+  if(anamode!=GEANT4PIPLUSKE1GEV){
+    tout->Branch("muonmomentum",&muonmomentum);
+    tout->Branch("muontheta",&muontheta);
+    
+    tout->Branch("Wtrue",&Wtrue);
+    tout->Branch("Wrest",&Wrest);
+    tout->Branch("xBj",&xBj);
+    tout->Branch("xrest",&xrest);
+    tout->Branch("Q2",&Q2);
+    
+    tout->Branch("baryonmomentum",&baryonmomentum);
+    tout->Branch("baryontheta",&baryontheta);
+    tout->Branch("baryonmass",&baryonmass);
+  }
+  
   tout->Branch("protonmomentum",&protonmomentum);
   tout->Branch("protontheta",&protontheta);
   tout->Branch("pionmomentum",&pionmomentum);
   tout->Branch("piontheta",&piontheta);
   tout->Branch("pionEk",&pionEk);
-  tout->Branch("baryonmomentum",&baryonmomentum);
-  tout->Branch("baryontheta",&baryontheta);
-  tout->Branch("baryonmass",&baryonmass);
 
   tout->Branch("dpt",&dpt);
   tout->Branch("dphit",&dphit);

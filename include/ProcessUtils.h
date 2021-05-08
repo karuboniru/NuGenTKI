@@ -111,6 +111,16 @@ int GetNPions()
   return (npar%(10*PIONBIT)) /PIONBIT;
 }
 
+void SetNParticles()
+{
+  nProton  = (npar%(10*PROTONBIT))  /PROTONBIT;
+  nPion    = (npar%(10*PIONBIT))    /PIONBIT;
+  nPizero  = (npar%(10*PIZEROBIT))  /PIZEROBIT;
+  nGamma   = (npar%(10*GAMMABIT))   /GAMMABIT;
+  nNeutron = (npar%(10*NEUTRONBIT)) /NEUTRONBIT;
+  nBkg     = (npar%(10*BKGBIT))     /BKGBIT;
+}
+
 //=======================================================================================================================
 //                                                  Proceed
 //=======================================================================================================================
@@ -287,28 +297,44 @@ void ProceedRESPS()
 
 void ProceedGEANT4PIPLUSKE1GEV()
 {
-  /*
   if(IsPion()&&lineCharge==1){
-    (*pionfullp)=(*lineFullMom);
-    npar += PIONBIT;
+    totparcount += PIONBIT;
+    
+    if(lineFullMom->P()>0.1){//100 MeV pion threshold
+      (*pionfullp) += (*lineFullMom);
+      npar += PIONBIT;
+    }
   }
   else if(IsProton()){
-    (*protonfullp)=(*lineFullMom);
-    npar += PROTONBIT;
+    totparcount += PROTONBIT;
+    
+    if(lineFullMom->P()>0.3){//300 MeV proton threshold
+      (*protonfullp) += (*lineFullMom);
+      npar += PROTONBIT;
+    }
   }
-  //else if(linePID!=100000 && && linePID!=1000000 && linePID!=1000 && linePID!=10){//pi0, gamma, kaon, pi-
-  else if(linePID==100000 || linePID==1000 || linePID==10){//pi0, kaon, pi-
+  else if(IsPiZero()){//no pi0 threshold
+    (*pionfullp) += (*lineFullMom);
+    npar += PIZEROBIT;
+    totparcount += PIZEROBIT;
+  }
+  else if(IsNeutron()){
+    npar += NEUTRONBIT;
+    totparcount += NEUTRONBIT;
+  }
+  else if(IsGamma()){
+    npar += GAMMABIT;
+    totparcount += GAMMABIT;
+  }
+  else if(linePID==1000 || linePID==10){//kaon, pi-
     npar += BKGBIT;
+    totparcount += BKGBIT;
   }
-  else if(linePID!=10000000 && linePID!=1000000 ){//found neutron, gamma
+  else{
     printf("ProceesUtils::ProceedGEANT4 not pion or proton! linePID %d\n", linePID); exit(1);
   }
-  */
-  //test by adding up all line momentum
-  (*protonfullp) += (*lineFullMom);
 
   (*eventfullp) += (*lineFullMom);
-  npar += PROTONBIT;
 }
 
 void ProceedNUGAS()
@@ -629,7 +655,7 @@ void ProceedMINERvALOWRECOIL()
 
   //add LineBeamEnergy cut in case of GENIE; for GiBUU the cut is granted by flux cut in job card
   if(IsMuon() && tmptheta<20 &&
-     lineBeamEnergy > 2 && lineBeamEnergy < 6
+     beamE > 2 && beamE < 6
      ){
     double kk = -999;
     if(lineCharge<0){//nu
@@ -641,7 +667,7 @@ void ProceedMINERvALOWRECOIL()
     if(kk > 1.5){
       (*muonfullp)=(*lineFullMom);
 
-      const TLorentzVector dummyNu(0,0,lineBeamEnergy, lineBeamEnergy);
+      const TLorentzVector dummyNu(0,0,beamE, beamE);
       const TLorentzVector lvq= dummyNu - (*muonfullp);
       LOWRECOIL_q3 = lvq.P();
 
@@ -693,7 +719,7 @@ void ProceedMINERvANUBAR1PI()
 
   //add LineBeamEnergy cut in case of GENIE; for GiBUU the cut is granted by flux cut in job card 
   if(IsMuon() && tmptheta<25 &&
-     lineBeamEnergy > 1.5 && lineBeamEnergy < 10
+     beamE > 1.5 && beamE < 10
      ){
     (*muonfullp)=(*lineFullMom);
     npar+= MUONBIT;

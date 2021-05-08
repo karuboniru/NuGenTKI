@@ -255,7 +255,7 @@ bool GiBUUProceed(const int tmpfilecount, const int tmprun, const int tmpevent, 
 
     prod = tmpprod;
 
-    lineBeamEnergy = tmpenu;
+    beamE = tmpenu;
 
     lineCharge = tmpcharge;
     GiBUUSetID(tmpid, tmptote);
@@ -529,8 +529,8 @@ bool GEANT4Proceed(const int ientry, const int tmpMode, const int tmppdg, const 
   //missing iniN-->
   //<---
 
-  if(lineBeamEnergy<0){//not initialized
-    lineBeamEnergy = PionMass() + 1;
+  if(beamE<0){//not initialized
+    beamE = PionMass() + 1;
 
     targetZ = tmpZ;
     event = ientry;
@@ -538,22 +538,40 @@ bool GEANT4Proceed(const int ientry, const int tmpMode, const int tmppdg, const 
     evtMode = tmpMode;
   }
 
+  /*
   if(tmppdg>1000000){//should encounter once per event
     if(AstarPDG==-999){
       AstarPDG = tmppdg;
     }
     else{
-      const int oldA = AstarPDG%1000;
+      const int oldA = GEANT4_AstarPDG%1000;
       const int newA = tmppdg%1000;
       if(newA>oldA){//take the highest
-        //printf("GeneratorIO::GEANT4Proceed replacing AstarPDg %d by %d, oldA %d newA %d\n", AstarPDG, tmppdg, oldA, newA);
-        AstarPDG = tmppdg;
+        //printf("GeneratorIO::GEANT4Proceed replacing GEANT4_AstarPDg %d by %d, oldA %d newA %d\n", GEANT4_AstarPDG, tmppdg, oldA, newA);
+        GEANT4_AstarPDG = tmppdg;
       }
     }
     return false;
   }
+  */
 
-  //now only for non-nuclear particle  
+  if(tmppdg>1000000){
+    const int lineA = (tmppdg%1000)/10;
+    const int targetA = AnaFunctions::getTargetA(tmpZ);
+    //only skip GEANT4_Astar
+    if(lineA> (targetA/2)){
+      if(GEANT4_AstarPDG==-999){
+        GEANT4_AstarPDG = tmppdg;
+        GEANT4_AstarA = lineA;
+      }
+      else{
+        printf("GeneratorIO::GEANT4Proceed multiple large nuclei! %d %d %d %d\n", targetA, lineA, GEANT4_AstarPDG, tmppdg);
+        exit(1);
+      }
+      return false;
+    }
+  }
+  
   lineFullMom->SetXYZT(tmppx, tmppy, tmppz, tmpE);//input unit is MeV
   (*lineFullMom) *= 1E-3;
 
@@ -587,7 +605,7 @@ bool GENIEProceed(const dtype IniOrFinaltype, const dtype RESdtype, const TStrin
       
       prod = tmpprod;
       
-      lineBeamEnergy = tmpenu;      
+      beamE = tmpenu;      
       CLR_lineKNsource = tmpKNsrc;
       
       GENIESetID(tmpid, tmptote);

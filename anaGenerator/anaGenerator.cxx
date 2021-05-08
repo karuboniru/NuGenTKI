@@ -70,8 +70,6 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
     isInelas++;
     hcounter->Fill(3);//only inelastic
     
-    TreeIO::nAllPart = tmpnp;
-
     int failCounter = 0;
     for(int ii=0; ii<tmpnp; ii++){
       //printf("test all ientry %d ii %d/%d interType %d pdg %d x %f y %f z %f e %f\n", ientry, ii, tmpnp, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii]);
@@ -84,14 +82,17 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
       }
     }//loop over particle
 
-    if(failCounter==0){//all are processed and therefore there is no nuclei skipped. nuclei below GEANT4 tracking threshold and not saved. So far only found 1 such event.
+    if(failCounter==0){//all are processed and therefore there is no nuclei skipped.
+      //nuclei below GEANT4 tracking threshold and not saved. So far only found 1 such event.
+      //now skipping all A<20 nuclei, can be quite often
       zeroNucleiCounter++;
-      
+
+      /*
       printf("anaGenerator bad failCounter %d\n", failCounter);
       for(int kk=0; kk<tmpnp; kk++){
         printf("test failCounter ientry %d kk %d/%d interType %d pdg %d x %f y %f z %f e %f\n", ientry, kk, tmpnp, (*ReadGEANT4::interType)[kk], (*ReadGEANT4::PDGcode)[kk], (*ReadGEANT4::Px)[kk], (*ReadGEANT4::Py)[kk], (*ReadGEANT4::Pz)[kk], (*ReadGEANT4::E)[kk]);
       }
-
+      */
       //exit(1);
     }
     else if(failCounter==1){
@@ -100,7 +101,7 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
     else{//>=2
       multiNucleiCounter++;
     }
-    TreeIO::nNuclei=failCounter;
+
     //hcounter->Fill(4);//only no nuclei or 1 nuclei, reject multi-nuclei, i.e. breakup
 
     /*
@@ -123,9 +124,9 @@ test Cl/Ar39 ientry 189 kk 3/5 interType 1 pdg 22 x 0.708164 y 0.604643 z 0.4284
 test Cl/Ar39 ientry 189 kk 4/5 interType 1 pdg 1000180390 x -209.351213 y 28.246665 z 9.275568 e 36286.457472
     */
     
-    
-    AnaUtils::DoFill(tout);
-
+    if(failCounter==1){
+      AnaUtils::DoFill(tout);
+    }
   }//loop over event
   
   cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<isInelas<<" are inelastic interaction, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;

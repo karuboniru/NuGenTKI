@@ -20,13 +20,7 @@ class AnaUtils
   static bool IsGood();
   static TLorentzVector GetBeamFullP();
   static void Calc();
-
-  //need to Ini-->
-  static TLorentzVector * baryonfullp;
-  //<--
 };
-
-TLorentzVector * AnaUtils::baryonfullp = new TLorentzVector;
 
 TChain * AnaUtils::InputROOTFiles(const TString file, const TString tr)
 {
@@ -122,6 +116,7 @@ void AnaUtils::MainProceed()
 
 void AnaUtils::DoFill(TTree *tt)
 {
+  SetNParticles();
   if(IsGood()){
     Calc();
     tt->Fill();
@@ -144,9 +139,6 @@ void AnaUtils::Ini()
   IniGeneratorIO();
 
   IniProcessUtils();
-
-  //defined in AnaUtils
-  baryonfullp->SetXYZT(0,0,0,0);
 }
 
 bool AnaUtils::IsGood()
@@ -289,21 +281,12 @@ bool AnaUtils::IsGood()
     return true;
   }
   else if(anamode==GEANT4PIPLUSKE1GEV){
-    /*
     //accept Npmpi
     //1p
-    if( GetNProtons()<1 || GetNProtons()>9){
+    if( (nPion+nPizero) ==1 && (nProton==1||nProton==2) )    
+      return true;
+    else
       return false;
-    }
-    
-    //1pi
-    if( GetNPions()<1 || GetNPions()>9 ){
-      return false;
-    }
-    */
-    //test by accepting all
-    
-    return true;
   }
   else{
     printf("unknown anamode %d\n", anamode); exit(1);
@@ -317,10 +300,10 @@ TLorentzVector AnaUtils::GetBeamFullP()
     beamMass = PionMass();
   }
 
-  const double pz = TMath::Sqrt(lineBeamEnergy*lineBeamEnergy-beamMass*beamMass);
-  //printf("debug testgetbeam %f %f %f\n", beamMass, lineBeamEnergy, pz);
+  const double pz = TMath::Sqrt(beamE*beamE-beamMass*beamMass);
+  //printf("debug testgetbeam %f %f %f\n", beamMass, beamE, pz);
   
-  TLorentzVector beamp(0,0,pz,lineBeamEnergy);
+  TLorentzVector beamp(0,0,pz,beamE);
 
   return beamp;
 }
@@ -352,8 +335,11 @@ void AnaUtils::Calc()
     xBj = Q2/2/(iniNfullp->Dot(lvq));
   }
 
+  const TLorentzVector tmphadronfullp = (*protonfullp) + (*pionfullp);//this is more logical
+  //this will cause delta<0 in GEANT4: tmphadronfullp->SetXYZT(protonfullp->X()+pionfullp->X(), protonfullp->Y()+pionfullp->Y(), protonfullp->Z()+pionfullp->Z(), Energy(protonfullp, ProtonMass())+Energy(pionfullp, pionfullp->P()>1E-10? PionMass():0));//need to use experimental momentum only
+
   {
-    //---hadron: 8; baryonfullp is intermediate locally
+    //---hadron: 8; tmphadronfullp is intermediate locally
     protonmomentum = protonfullp->P();
     protontheta = protonfullp->Theta()*TMath::RadToDeg();
     pionmomentum = pionfullp->P();
@@ -361,11 +347,9 @@ void AnaUtils::Calc()
     //pionEk = pionfullp->E()-PionMass();
     pionEk = Ekin(pionfullp, PionMass()); //only use experimental momentum
     
-    (*baryonfullp) = (*protonfullp) + (*pionfullp);//this is more logical
-    //this will cause delta<0 in GEANT4: baryonfullp->SetXYZT(protonfullp->X()+pionfullp->X(), protonfullp->Y()+pionfullp->Y(), protonfullp->Z()+pionfullp->Z(), Energy(protonfullp, ProtonMass())+Energy(pionfullp, pionfullp->P()>1E-10? PionMass():0));//need to use experimental momentum only
-    baryonmomentum = baryonfullp->P();
-    baryontheta = baryonfullp->Theta()*TMath::RadToDeg();
-    baryonmass = baryonfullp->M();
+    baryonmomentum = tmphadronfullp.P();
+    baryontheta = tmphadronfullp.Theta()*TMath::RadToDeg();
+    baryonmass = tmphadronfullp.M();
   }
   
   {
@@ -373,9 +357,14 @@ void AnaUtils::Calc()
     const int localZ = (targetZ==1 ? 6 : targetZ);
     const int localA = AnaFunctions::getTargetA(localZ);
     //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *recoilfullp, double & dalphat, double & dphit, double & dpt, double & dpTT, double & beamCalcP, double & IApN, double & recoilM, double & recoilP)
-    AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, baryonfullp, dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
-    double dummy = -999;
-    AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, 0x0,       eventfullp,  dummy, dummy, dummy,dummy, event_beamCalcP, event_IApN, event_recoilM, event_recoilP);
+    if(anamode==GEANT4PIPLUSKE1GEV){
+      AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, pionfullp, protonfullp, dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
+      double dummy = -999;
+      AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, 0x0,       eventfullp,  dummy, dummy, dummy,dummy, event_beamCalcP, event_IApN, event_recoilM, event_recoilP);
+    }
+    else{
+      AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, &tmphadronfullp, dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
+    }
   }
   
   //test
@@ -383,7 +372,7 @@ void AnaUtils::Calc()
   if(IApN<0){
     printf("debug event %d evtMode %d AstarPDG %d\n", event, evtMode, AstarPDG);
     muonfullp->Print();
-    baryonfullp->Print();
+    tmphadronfullp->Print();
     printf("debug done for event %d\n", event);
     exit(1);
   }
