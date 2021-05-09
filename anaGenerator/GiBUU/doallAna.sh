@@ -31,7 +31,7 @@ export NUGASa8P50=
 
 nfile=
 
-tag=MINERvALE_GiBUU_test4_
+tag=MINERvALE_GiBUU_test4check_
 #MINERvAGiBUU_LE_
 #MINERvAGiBUU_PIZEROrep_${nfile}_
 #DUNEGiBUU_${nfile}_

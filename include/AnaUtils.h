@@ -337,9 +337,6 @@ void AnaUtils::Calc()
     xBj = Q2/2/(iniNfullp->Dot(lvq));
   }
 
-  const TLorentzVector tmphadronfullp = (*protonfullp) + (*pionfullp);//this is more logical
-  //this will cause delta<0 in GEANT4: tmphadronfullp->SetXYZT(protonfullp->X()+pionfullp->X(), protonfullp->Y()+pionfullp->Y(), protonfullp->Z()+pionfullp->Z(), Energy(protonfullp, ProtonMass())+Energy(pionfullp, pionfullp->P()>1E-10? PionMass():0));//need to use experimental momentum only
-
   {
     //---hadron: 8; tmphadronfullp is intermediate locally
     protonmomentum = protonfullp->P();
@@ -348,10 +345,6 @@ void AnaUtils::Calc()
     piontheta = pionfullp->Theta()*TMath::RadToDeg();
     //pionEk = pionfullp->E()-PionMass();
     pionEk = Ekin(pionfullp, PionMass()); //only use experimental momentum
-    
-    baryonmomentum = tmphadronfullp.P();
-    baryontheta = tmphadronfullp.Theta()*TMath::RadToDeg();
-    baryonmass = tmphadronfullp.M();
   }
   
   {
@@ -363,6 +356,14 @@ void AnaUtils::Calc()
       AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, pionfullp, protonfullp,     dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
     }
     else{
+      //GiBUU 4-momentum doesn't give physical mass; but using its given 4-momentum provides direct access to internal dynamics like pN
+      const TLorentzVector tmphadronfullp = (*protonfullp) + (*pionfullp);//this is more logical
+      //this will cause delta<0 in GEANT4; only used for neutrino. tmphadronfullp->SetXYZT(protonfullp->X()+pionfullp->X(), protonfullp->Y()+pionfullp->Y(), protonfullp->Z()+pionfullp->Z(), Energy(protonfullp, ProtonMass())+Energy(pionfullp, pionfullp->P()>1E-10? PionMass():0));//need to use experimental momentum only
+    
+      baryonmomentum = tmphadronfullp.P();
+      baryontheta = tmphadronfullp.Theta()*TMath::RadToDeg();
+      baryonmass = tmphadronfullp.M();
+
       AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, &tmphadronfullp, dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
     }
 
@@ -371,16 +372,6 @@ void AnaUtils::Calc()
 
   }
   
-  //test
-  /*
-  if(IApN<0){
-    printf("debug event %d evtMode %d AstarPDG %d\n", event, evtMode, AstarPDG);
-    muonfullp->Print();
-    tmphadronfullp->Print();
-    printf("debug done for event %d\n", event);
-    exit(1);
-  }
-  */
   /*
     protonTT = protonfullp->Vect().Dot(ztt);
     pionTT = pionfullp->Vect().Dot(ztt);
