@@ -21,9 +21,6 @@ using namespace ReadGENIE;
 
 void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntryToStop = -999)
 {
-  targetZ = 18;
-  printf("\nanaGenerator::GEANT4ReadChain setting targetZ as 18 for argon only!\n\n");
-
   ReadGEANT4::SetChain(ch);
 
   int ientry = 0;
@@ -51,6 +48,14 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
     
     //===========================================================================
     AnaUtils::Ini();
+
+    //need to go after Ini
+    targetZ = 18;
+    static bool kprintz = true;
+    if(kprintz){
+      printf("\nanaGenerator::GEANT4ReadChain setting targetZ as 18 for argon only!\n\n");
+      kprintz=false;
+    }
 
     const int tmpnp = ReadGEANT4::interType->size();
     //printf("test0 PDGcode size %d\n", tmpnp);

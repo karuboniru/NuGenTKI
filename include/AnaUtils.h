@@ -285,7 +285,7 @@ bool AnaUtils::IsGood()
   else if(anamode==GEANT4PIPLUSKE1GEV){
     //accept Npmpi
     //1p
-    if( (nPion+nPiZero) ==1 && (nProton==1||nProton==2) )    
+    if(1)//accept all (nPion+nPiZero) ==1 && (nProton==1||nProton==2) )    
       return true;
     else
       return false;
