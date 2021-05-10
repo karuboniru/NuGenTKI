@@ -57,8 +57,8 @@ namespace TreeIO
   int evtMode;
   double beamE;
 
-  int npar;
-  int totparcount;
+  int npar; //coded bit to count selected particles. For the internal bits, see particlebit in GeneratorIO.h.
+  int totparcount; //same coded bit as npar but for ALL particles. If npar == totparcount, the n<Particle> below are the true level particle counts, otherwise they are only for the selected ones.
   int nProton;
   int nPion;
   int nPiZero;
@@ -66,7 +66,7 @@ namespace TreeIO
   int nNeutron;
   int nBkg;
 
-  int AstarPDG;
+  int AstarPDG; //Astar is the final-state nucleus that has A > targetA/2, namely the nucleus remnant. targetA is the initial nucleus A.
   int AstarA;
 
   double CLR_KNsrc;
@@ -77,7 +77,7 @@ namespace TreeIO
   double LOWRECOIL_Eav;
   double LOWRECOIL_q3;
 
-  double GEANT4_gammaE;
+  double GEANT4_gammaE;//all energy of the gammas, need to be divied by nGamma to have the mean energy per gamma.
 
   //--- Calc, all will be set by = no need to Ini()
 #if __OPENCALC__
@@ -94,9 +94,9 @@ namespace TreeIO
   double baryontheta;
   double baryonmass;
 
-  double protonmomentum;
+  double protonmomentum;//in case of GEANT4, all protons are added together
   double protontheta;
-  double pionmomentum;
+  double pionmomentum;//in case of GEANT4, all pi+ and pi0 are added together
   double piontheta;
   double pionEk;
   
@@ -104,14 +104,14 @@ namespace TreeIO
   double dphit;
   double dalphat;
   double dpTT;
-  double beamCalcP;
-  double IApN;
-  double recoilM;
-  double recoilP;
-  double event_beamCalcP;
-  double event_IApN;
-  double event_recoilM;
-  double event_recoilP;
+  double beamCalcP;  //using pions and protons only, without knowing beam momentum, calculate via Mx assumption. Idea from J. Sobczyk
+  double IApN;       //using pions and protons only, without knowing beam momentum, calculate via Mx assumption. Idea from J. Sobczyk. This is the recoilP under the IA assumption
+  double recoilM;    //using pions and protons only, using beam momentum, direct, model-independent, calcuated recoil nucleus mass
+  double recoilP;    //using pions and protons only, using beam momentum, direct, model-independent, calcuated recoil nucleus momentum
+  double event_beamCalcP; //event_ means the calculation us all particles, including those not selected in Proceed()
+  double event_IApN;      //event_ means the calculation us all particles, including those not selected in Proceed()
+  double event_recoilM;   //event_ means the calculation us all particles, including those not selected in Proceed()
+  double event_recoilP;   //event_ means the calculation us all particles, including those not selected in Proceed()
   
  /*
    double muoncostheta;

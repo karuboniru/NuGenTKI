@@ -314,7 +314,7 @@ void ProceedGEANT4PIPLUSKE1GEV()
     }
   }
   else if(IsPiZero()){//no pi0 threshold
-    (*pionfullp) += (*lineFullMom);
+    (*pionfullp) += (*lineFullMom);//both pi+ and pi0 are lumped together
     AddABit(npar,  PIZEROBIT);
     AddABit(totparcount,  PIZEROBIT);
   }
