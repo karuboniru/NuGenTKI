@@ -91,7 +91,7 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
       //nuclei below GEANT4 tracking threshold and not saved. So far only found 1 such event.
       //now skipping all A<20 nuclei, can be quite often
       zeroNucleiCounter++;
-
+      hcounter->Fill(4);
       /*
       printf("anaGenerator bad failCounter %d\n", failCounter);
       for(int kk=0; kk<tmpnp; kk++){
@@ -102,9 +102,11 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
     }
     else if(failCounter==1){
       singleNucleiCounter++;
+      hcounter->Fill(5);
     }
     else{//>=2
       multiNucleiCounter++;
+      hcounter->Fill(6);
     }
 
     //hcounter->Fill(4);//only no nuclei or 1 nuclei, reject multi-nuclei, i.e. breakup
