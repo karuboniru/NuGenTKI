@@ -4,7 +4,7 @@ export GEANT4CHARGEDBEAM="list/Filelist_GEANT4_Ar_v010000xstat.txt"
 ntostop=
 #10000000
 
-tag=GEANT4CHARGEDBEAM_test9_10000xstat_0threshold
+tag=GEANT4CHARGEDBEAM_testArv1_10000xstat_0threshold
 
 ####################################
 
