@@ -95,8 +95,8 @@ void AnaUtils::MainProceed()
     else if(anamode == GFS0PI){
       ProceedMINERvAGFS0PI();
     }
-    else if(anamode == GEANT4PIPLUSKE1GEV){
-      ProceedGEANT4PIPLUSKE1GEV();
+    else if(anamode == GEANT4CHARGEDBEAM){
+      ProceedGEANT4CHARGEDBEAM();
     }
   }
   else if(expmode==kT2K){
@@ -150,7 +150,7 @@ bool AnaUtils::IsGood()
   }
 
   if(anamode==GFSPIZERO || anamode==GFS0PI){
-    if(IsBKG()){
+    if(GetNBkgs()){
       return false;
     }
 
@@ -197,7 +197,7 @@ bool AnaUtils::IsGood()
       return false;
     }
 
-    if(IsBKG()){
+    if(GetNBkgs()){
       return false;
     }
 
@@ -213,7 +213,7 @@ bool AnaUtils::IsGood()
       return false;
     }
 
-    if(IsBKG()){
+    if(GetNBkgs()){
       return false;
     }
 
@@ -229,7 +229,7 @@ bool AnaUtils::IsGood()
     if(GetNPions()!=1)
       return false;
 
-    if(IsBKG()){
+    if(GetNBkgs()){
       return false;
     }
 
@@ -242,12 +242,12 @@ bool AnaUtils::IsGood()
     if(targetZ!=1)
       return false;
 
-    if(IsBKG())
+    if(GetNBkgs())
       return false;
 
     return true;
     /*
-    if(IsBKG()){
+    if(GetNBkgs()){
       return false;
     }
 
@@ -261,7 +261,7 @@ bool AnaUtils::IsGood()
     */
   }
   else if(anamode==EXCL3){
-    if(IsBKG()){
+    if(GetNBkgs()){
       return false;
     }
 
@@ -282,7 +282,7 @@ bool AnaUtils::IsGood()
 
     return true;
   }
-  else if(anamode==GEANT4PIPLUSKE1GEV){
+  else if(anamode==GEANT4CHARGEDBEAM){
     //accept Npmpi
     //1p
     if(1)//accept all (nPion+nPiZero) ==1 && (nProton==1||nProton==2) )    
@@ -297,9 +297,19 @@ bool AnaUtils::IsGood()
 
 TLorentzVector AnaUtils::GetBeamFullP()
 {
+  if(beamfullp->E()>1E-3){//larger than 1 MeV
+    return *beamfullp;
+  }
+  else{
   double beamMass = 0;
-  if(anamode == GEANT4PIPLUSKE1GEV){
+  static int kprintbeammass=1;
+  if(anamode == GEANT4CHARGEDBEAM){
     beamMass = PionMass();
+
+    if(kprintbeammass){
+      printf("\n\n*********************** setting beam mass to %f ***********************\n\n", beamMass);
+      kprintbeammass=0;
+    }
   }
 
   const double pz = TMath::Sqrt(beamE*beamE-beamMass*beamMass);
@@ -308,6 +318,7 @@ TLorentzVector AnaUtils::GetBeamFullP()
   TLorentzVector beamp(0,0,pz,beamE);
 
   return beamp;
+  }
 }
 
 
@@ -352,7 +363,7 @@ void AnaUtils::Calc()
     const int localZ = (targetZ==1 ? 6 : targetZ);
     const int localA = AnaFunctions::getTargetA(localZ);
     //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *recoilfullp, double & dalphat, double & dphit, double & dpt, double & dpTT, double & beamCalcP, double & IApN, double & recoilM, double & recoilP)
-    if(anamode==GEANT4PIPLUSKE1GEV){
+    if(anamode==GEANT4CHARGEDBEAM){
       AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, pionfullp, protonfullp,     dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
     }
     else{

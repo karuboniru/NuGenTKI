@@ -28,7 +28,7 @@ namespace TreeIO
     NUGAS     =8,
     GFS0PI    =9,
     EXCL3 = 10,
-    GEANT4PIPLUSKE1GEV = 11
+    GEANT4CHARGEDBEAM = 11
   };
   
   enum experiment{
@@ -65,6 +65,7 @@ namespace TreeIO
   int nGamma;
   int nNeutron;
   int nBkg;
+  int nElectron;
 
   int AstarPDG; //Astar is the final-state nucleus that has A > targetA/2, namely the nucleus remnant. targetA is the initial nucleus A.
   int AstarA;
@@ -178,6 +179,7 @@ void IniTreeIO()
   nGamma = -999;
   nNeutron = -999;
   nBkg = -999;
+  nElectron = -999;
 
   AstarPDG = -999;
   AstarA = -999;
@@ -209,7 +211,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
   TTree * tout = new TTree("tree","tree");
   //const Int_t spl = 1;
 
-  if(anamode!=GEANT4PIPLUSKE1GEV){
+  if(anamode!=GEANT4CHARGEDBEAM){
     tout->Branch("iniNcharge",&iniNcharge);
     tout->Branch("perweight",&perweight);
     tout->Branch("filecount",&filecount);
@@ -230,6 +232,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
   tout->Branch("nGamma",&nGamma);
   tout->Branch("nNeutron",&nNeutron);
   tout->Branch("nBkg",&nBkg);
+  tout->Branch("nElectron",&nElectron);
 
   tout->Branch("AstarPDG",&AstarPDG);
   tout->Branch("AstarA",&AstarA);
@@ -246,7 +249,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
     tout->Branch("LOWRECOIL_q3",&LOWRECOIL_q3);
     tout->Branch("LOWRECOIL_Eav",&LOWRECOIL_Eav);
   }
-  else if(anamode==GEANT4PIPLUSKE1GEV){
+  else if(anamode==GEANT4CHARGEDBEAM){
     tout->Branch("GEANT4_gammaE",&GEANT4_gammaE);
   }
 
@@ -267,7 +270,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
     
 #if __OPENCALC__
 
-  if(anamode!=GEANT4PIPLUSKE1GEV){
+  if(anamode!=GEANT4CHARGEDBEAM){
     tout->Branch("muonmomentum",&muonmomentum);
     tout->Branch("muontheta",&muontheta);
     

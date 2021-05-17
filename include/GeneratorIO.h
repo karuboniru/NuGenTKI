@@ -39,13 +39,16 @@ namespace GeneratorIO
     PIZEROBIT  =100000,
     GAMMABIT   =1000000,
     NEUTRONBIT =10000000,
-    BKGBIT     =100000000
+    BKGBIT     =100000000,
+    NUBIT      =1000000000
   };
   
   //=======================================================================================================================
   //                                                  variables
   //=======================================================================================================================
-  
+
+  TLorentzVector * beamfullp= new TLorentzVector;
+
   //IsIniN
   TLorentzVector * iniNfullp = new TLorentzVector;
   
@@ -67,6 +70,8 @@ namespace GeneratorIO
   
 void IniGeneratorIO()
 {
+  beamfullp->SetXYZT(0,0,0,0);
+
   iniNfullp->SetXYZT(0,0,0,0);
 
   RESpifullp->SetXYZT(0,0,0,0);
@@ -361,7 +366,7 @@ void SetGENIETarget(const TString evtcode)
     }
 }
 
-void GEANT4SetID(const int pdg)
+void GEANT4SetID(const int pdg, const int eventID)
 {
   lineCharge = (pdg>0) ? 1 : -1;
 
@@ -397,8 +402,11 @@ void GEANT4SetID(const int pdg)
   else if(pdg>3000){//strangeness and charm etc.  3122 is Lambda
     linePID = KAONBIT;
   }
+  else if(abs(pdg)==11){
+    linePID = ELECTRONBIT;
+  }
   else{
-    printf("GeneratorIO::GEANT4SetID not known pdg %d\n", pdg); exit(1);
+    printf("GeneratorIO::GEANT4SetID not known pdg %d eventID %d\n", pdg, eventID); exit(1);
   }
 }
 
@@ -525,17 +533,23 @@ void GENIESetID(const int pdg, const double tmptote)
   }
 }
 
-bool GEANT4Proceed(const int ientry, const int tmpMode, const int tmppdg, const double tmppx, const double tmppy, const double tmppz, const double tmpE)
+bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const double tmppx, const double tmppy, const double tmppz, const double tmpE)
 {
   //missing iniN-->
   //<---
 
-  if(beamE<0){//not initialized
-    beamE = PionMass() + 1;
-
-    event = ientry;
+  if(beamE<0){//not initialized, should correspond to [0] of particle vectors
+    beamfullp->SetXYZT(tmppx, tmppy, tmppz, tmpE);//input unit is MeV
+    (*beamfullp) *= 1E-3;
+    
+    beamE = beamfullp->E();
+    
+    event = eventID;
     //interType==1 is inelastic scattering, =2 is elastic scattering, no other values
     evtMode = tmpMode;
+
+    //skip beam particle
+    return false;
   }
 
   /*
@@ -575,7 +589,7 @@ bool GEANT4Proceed(const int ientry, const int tmpMode, const int tmppdg, const 
   lineFullMom->SetXYZT(tmppx, tmppy, tmppz, tmpE);//input unit is MeV
   (*lineFullMom) *= 1E-3;
 
-  GEANT4SetID(tmppdg);
+  GEANT4SetID(tmppdg, eventID);
   return true;
 }
 

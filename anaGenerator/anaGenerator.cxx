@@ -49,14 +49,6 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
     //===========================================================================
     AnaUtils::Ini();
 
-    //need to go after Ini
-    targetZ = 18;
-    static bool kprintz = true;
-    if(kprintz){
-      printf("\nanaGenerator::GEANT4ReadChain setting targetZ as 18 for argon only!\n\n");
-      kprintz=false;
-    }
-
     const int tmpnp = ReadGEANT4::interType->size();
     //printf("test0 PDGcode size %d\n", tmpnp);
     if(tmpnp==0){//skip non-interacting events
@@ -65,25 +57,25 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
     isInteractionCounter++;
     hcounter->Fill(2);//interacting including elastic and inelastic
     
-    const int interType = (*ReadGEANT4::interType)[0];
-    if(interType!=1){
-      if(interType!=2){
-        printf("anaGenerator bad interType! should only have 1 or 2: %d\n", interType);exit(1);
-      }
+    const bool interType = (*ReadGEANT4::interType)[0];
+    if(!interType){
       continue;
     }
     isInelas++;
     hcounter->Fill(3);//only inelastic
-    
+
+    targetZ = (*ReadGEANT4::targetZ)[0];
     int failCounter = 0;
     for(int ii=0; ii<tmpnp; ii++){
       //printf("test all ientry %d ii %d/%d interType %d pdg %d x %f y %f z %f e %f\n", ientry, ii, tmpnp, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii]);
-      const bool kProceed = GeneratorIO::GEANT4Proceed(ientry, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii]);
+      const bool kProceed = GeneratorIO::GEANT4Proceed(ReadGEANT4::EventID, interType, (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii]);
       if(kProceed){
         AnaUtils::MainProceed();
       }
       else{
-        failCounter++;
+        if(ii!=0){//beam particle at [0]
+          failCounter++;
+        }
       }
     }//loop over particle
 

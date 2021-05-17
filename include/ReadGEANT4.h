@@ -6,6 +6,8 @@
 namespace ReadGEANT4
 {
    // Declaration of leaf types
+   Int_t           EventID;
+   vector<int>     *targetZ;
    vector<int>     *PDGcode;
    vector<int>     *interType;
    vector<double>  *massPart;
@@ -18,6 +20,8 @@ namespace ReadGEANT4
    vector<double>  *E;
 
    // List of branches
+   TBranch        *b_EventID;   //!
+   TBranch        *b_targetZ;   //!
    TBranch        *b_PDGcode;   //!
    TBranch        *b_interType;   //!
    TBranch        *b_massPart;   //!
@@ -34,6 +38,7 @@ void SetChain(TChain *ch)
 {
   ch->SetMakeClass(0);
   // Set object pointer
+   targetZ = 0;
    PDGcode = 0;
    interType = 0;
    massPart = 0;
@@ -45,6 +50,8 @@ void SetChain(TChain *ch)
    Pz = 0;
    E = 0;
 
+   ch->SetBranchAddress("EventID", &EventID, &b_EventID);
+   ch->SetBranchAddress("targetZ", &targetZ, &b_targetZ);
    ch->SetBranchAddress("PDGcode", &PDGcode, &b_PDGcode);
    ch->SetBranchAddress("interType", &interType, &b_interType);
    ch->SetBranchAddress("massPart", &massPart, &b_massPart);

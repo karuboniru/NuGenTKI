@@ -69,11 +69,6 @@ bool IsGamma()
   return (linePID==GAMMABIT);
 }
 
-bool IsBKG()
-{
-  return (npar>=BKGBIT);
-}
-
 void AddABit(int &testnp, const int TESTBIT)
 {
   const int ntest = (testnp%(10*TESTBIT)) /TESTBIT;
@@ -90,35 +85,66 @@ void AddABit(int &testnp, const int TESTBIT)
 //                                                  GetN
 //=======================================================================================================================
 
+int GetNBit(const int bit)
+{
+  return (npar%(10*bit)) /bit;
+}
+ 
 int GetNProtons()
 {
   //because of adding bit is in the if() of new leading proton, the nprotons is only such new leading protons in FV
-  return (npar%(10*PROTONBIT)) /PROTONBIT;
+  return GetNBit(PROTONBIT);
 }
 
 int GetNNeutrons()
 {
-  return (npar%(10*NEUTRONBIT)) /NEUTRONBIT;
+  return GetNBit(NEUTRONBIT);
 }
 
 int GetNMuons()
 {
-  return (npar%(10*MUONBIT)) /MUONBIT;
+  return GetNBit(MUONBIT);
 }
 
 int GetNPions()
 {
-  return (npar%(10*PIONBIT)) /PIONBIT;
+  return GetNBit(PIONBIT);
 }
 
+int GetNGammas()
+{
+  return GetNBit(GAMMABIT);
+}
+
+int GetNPiZeros()
+{
+  return GetNBit(PIZEROBIT);
+}
+
+int GetNBkgs()
+{
+  return GetNBit(BKGBIT);
+}
+
+int GetNElectrons()
+{
+  return GetNBit(ELECTRONBIT);
+}
+
+int GetNNus()
+{
+  return GetNBit(NUBIT);
+}
+ 
 void SetNParticles()
 {
-  nProton  = (npar%(10*PROTONBIT))  /PROTONBIT;
-  nPion    = (npar%(10*PIONBIT))    /PIONBIT;
-  nPiZero  = (npar%(10*PIZEROBIT))  /PIZEROBIT;
-  nGamma   = (npar%(10*GAMMABIT))   /GAMMABIT;
-  nNeutron = (npar%(10*NEUTRONBIT)) /NEUTRONBIT;
-  nBkg     = (npar%(10*BKGBIT))     /BKGBIT;
+  nProton  = GetNProtons();
+  nPion    = GetNPions();
+  nPiZero  = GetNPiZeros();
+  nGamma   = GetNGammas();
+  nNeutron = GetNNeutrons();
+  nBkg     = GetNBkgs();
+  nElectron= GetNElectrons();
 }
 
 //=======================================================================================================================
@@ -295,7 +321,7 @@ void ProceedRESPS()
   }
 }
 
-void ProceedGEANT4PIPLUSKE1GEV()
+void ProceedGEANT4CHARGEDBEAM()
 {
   if(IsPion()&&lineCharge==1){
     AddABit(totparcount,  PIONBIT);
@@ -305,6 +331,19 @@ void ProceedGEANT4PIPLUSKE1GEV()
       AddABit(npar,  PIONBIT);
     }
   }
+  else if(IsPiZero()){//no pi0 threshold
+    (*pionfullp) += (*lineFullMom);//both pi+ and pi0 are lumped together
+    AddABit(npar,  PIZEROBIT);
+    AddABit(totparcount,  PIZEROBIT);
+  }
+  else if(IsElectron()){
+    AddABit(totparcount,  ELECTRONBIT);
+
+    if(lineFullMom->P()>5E-3){//5 MeV electron threshold just as a place holder
+      (*pionfullp) += (*lineFullMom);//lump to pion 
+      AddABit(npar,  ELECTRONBIT);
+    }
+  }
   else if(IsProton()){
     AddABit(totparcount,  PROTONBIT);
     
@@ -312,11 +351,6 @@ void ProceedGEANT4PIPLUSKE1GEV()
       (*protonfullp) += (*lineFullMom);
       AddABit(npar,  PROTONBIT);
     }
-  }
-  else if(IsPiZero()){//no pi0 threshold
-    (*pionfullp) += (*lineFullMom);//both pi+ and pi0 are lumped together
-    AddABit(npar,  PIZEROBIT);
-    AddABit(totparcount,  PIZEROBIT);
   }
   else if(IsNeutron()){
     AddABit(npar,  NEUTRONBIT);
