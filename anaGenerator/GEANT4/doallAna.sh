@@ -1,11 +1,12 @@
-export GEANT4CHARGEDBEAM="list/Filelist_GEANT4_Electron_v010000xstat.txt"
+export GEANT4CHARGEDBEAM="list/Filelist_GEANT4_Electron_1GeV_v010000xstat.txt"
+#"list/Filelist_GEANT4_Electron_v010000xstat.txt"
 #"list/Filelist_GEANT4_Pion_v010000xstat.txt"
 #"list/Filelist_GEANT4_v0test_1000xstat.txt"
 
 ntostop=
 #10000000
 
-tag=GEANT4CHARGEDBEAM_testElectronV0_10000xstat_0threshold
+tag=GEANT4CHARGEDBEAM_testElectron1GeVV0_10000xstat_0threshold
 
 ####################################
 
