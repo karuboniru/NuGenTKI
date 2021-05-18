@@ -323,7 +323,7 @@ void ProceedRESPS()
 
 void ProceedGEANT4CHARGEDBEAM()
 {
-  if(IsPion()&&lineCharge==1){
+  if(IsPion()&&lineCharge==1){//pi+
     AddABit(totparcount,  PIONBIT);
     
     if(lineFullMom->P()>0.1){//100 MeV pion threshold
@@ -362,7 +362,7 @@ void ProceedGEANT4CHARGEDBEAM()
 
     GEANT4_gammaE += lineFullMom->E();
   }
-  else if(linePID==1000 || linePID==10){//kaon, pi-
+  else if(IsKaon() || IsPion()){//kaon, pi-
     AddABit(npar,  BKGBIT);
     AddABit(totparcount,  BKGBIT);
   }
