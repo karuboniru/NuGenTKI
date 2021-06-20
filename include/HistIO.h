@@ -18,21 +18,21 @@ using namespace std;
 namespace HistIO
 {
   //============================================ variables and histograms ===================================== 
-  double perweight, enu;
+  double perweight, beamE;
   int targetZ, evtMode, npar;
 
-  TH1D * henu  = 0x0;
+  TH1D * hbeamE  = 0x0;
 
 #if __OPENCALC__ 
   double muonmomentum, muontheta;
   double Wtrue, Wrest, xBj, xrest, Q2;
   double protonmomentum, protontheta, pionmomentum, piontheta, pionEk, baryonmomentum, baryontheta, baryonmass;
-  double dpt, dphit, dalphat,  neutronmomentum,  dpTT;
+  double dpt, dphit, dalphat,  IApN,  dpTT;
 #endif
   TH1D * hmuonmomentum = 0x0, * hmuontheta = 0x0;
   TH1D * hWtrue = 0x0, * hWrest = 0x0, * hxBj = 0x0, * hxrest = 0x0, * hQ2 = 0x0;
   TH1D * hprotonmomentum = 0x0,* hprotontheta = 0x0, * hpionmomentum = 0x0, * hpiontheta = 0x0, * hpionEk =0x0, * hbaryonmomentum=0x0, * hbaryontheta=0x0, * hbaryonmass=0x0;
-  TH1D * hdpt = 0x0, * hdphit = 0x0, * hdalphat = 0x0, * hneutronmomentum = 0x0, * hdpTT = 0x0;
+  TH1D * hdpt = 0x0, * hdphit = 0x0, * hdalphat = 0x0, * hIApN = 0x0, * hdpTT = 0x0;
 
 #if __OPENCLR__
   double RESmass, adlerPhi, lrsign, w2;
@@ -54,7 +54,7 @@ namespace HistIO
 #if __OPENMMECCQE__
 #endif
   TH1D * hq3 = 0x0, * hq2qe = 0x0, * hmuonpt=0x0, * hmupz=0x0;
-  TH2D * hq3VSEav = 0x0, * hq3VSneutronmomentum = 0x0, *hmuonptVSmupz=0x0, *hmupzVSmuonpt=0x0;
+  TH2D * hq3VSEav = 0x0, * hq3VSIApN = 0x0, *hmuonptVSmupz=0x0, *hmupzVSmuonpt=0x0;
   TH3D * hErecoilTIMES1E3VSmupzVSmuonpt = 0x0;
 
 //=============================================================================================================================
@@ -65,7 +65,7 @@ void SetTree(TTree * tree, const int anaid)
 {
   tree->SetBranchAddress("perweight", &perweight); 
   tree->SetBranchAddress("targetZ", &targetZ);
-  tree->SetBranchAddress("enu", &enu);    
+  tree->SetBranchAddress("beamE", &beamE);    
   tree->SetBranchAddress("evtMode", &evtMode);
   tree->SetBranchAddress("npar", &npar);
 
@@ -91,7 +91,7 @@ void SetTree(TTree * tree, const int anaid)
   tree->SetBranchAddress("dpt", &dpt);
   tree->SetBranchAddress("dphit", &dphit);
   tree->SetBranchAddress("dalphat", &dalphat);
-  tree->SetBranchAddress("neutronmomentum", &neutronmomentum);
+  tree->SetBranchAddress("IApN", &IApN);
   tree->SetBranchAddress("dpTT", &dpTT);
 #endif
 
@@ -140,7 +140,7 @@ void FillTopoTaskHist()
   hdpt->Fill(dpt,perweight);
   hdphit->Fill(dphit,perweight);
   hdalphat->Fill(dalphat,perweight);
-  hneutronmomentum->Fill(neutronmomentum,perweight);
+  hIApN->Fill(IApN,perweight);
   hdpTT->Fill(dpTT,perweight);
 #endif
 
@@ -182,7 +182,7 @@ void FillHist(const bool passwr, const bool isTopoTask)
 #endif
   
   if(passwr){
-    henu->Fill(enu,perweight);
+    hbeamE->Fill(beamE,perweight);
 
     //only fill if this is a topo task
     if(isTopoTask){        
@@ -220,7 +220,7 @@ vector<TString> SetHist(const TString tag, const TString nuExp, const int anaid,
       const double Bbin[]={0.000000, 2.000000, 3.000000, 4.000000, 5.000000, 6.000000, 7.000000, 8.000000, 9.000000, 10.000000, 11.000000, 12.000000, 13.000000, 14.000000, 15.000000, 16.000000, 17.000000, 18.000000, 19.000000, 20.000000, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80, 82, 84, 86, 88, 90, 92, 94, 96, 98, 100, 102, 104, 106, 108, 110, 112, 114, 116, 118, 120, 122, 124, 126, 128, 130};
       hmuontheta = new TH1D("muontheta"+tag,"", sizeof(Bbin)/sizeof(double)-1, Bbin); lout->Add(hmuontheta);
     }
-    henu  = new TH1D("enu"+tag,"", 60, 0, 20); lout->Add(henu);
+    hbeamE  = new TH1D("beamE"+tag,"", 60, 0, 20); lout->Add(hbeamE);
   }
   
   hRESmass = new TH1D("RESmass"+tag,"", 60, 0, 3); lout->Add(hRESmass);
@@ -304,11 +304,11 @@ vector<TString> SetHist(const TString tag, const TString nuExp, const int anaid,
         
         if(anaid==CC0piNpID){
           const double Hbin0p[]={0.000000, 0.025000, 0.050000, 0.075000, 0.100000, 0.125000, 0.150000, 0.175000, 0.200000, 0.225000, 0.250000, 0.275000, 0.300000, 0.350000, 0.400000, 0.450000, 0.500000, 0.550000, 0.600000, 0.650000, 0.700000, 0.800000, 1.000000, 1.200000, 2.000000};
-          hneutronmomentum = new TH1D("neutronmomentum"+tag,"", sizeof(Hbin0p)/sizeof(double)-1, Hbin0p); lout->Add(hneutronmomentum);
+          hIApN = new TH1D("IApN"+tag,"", sizeof(Hbin0p)/sizeof(double)-1, Hbin0p); lout->Add(hIApN);
         }
         else if(anaid==CC1piNpID || anaid == CCMpiNpID){
           const double Hbin1p[]={0,0.055,0.11,0.165,0.22,0.275,0.33,0.385,0.44,0.495,0.56,0.655,0.81};
-          hneutronmomentum = new TH1D("neutronmomentum"+tag,"", sizeof(Hbin1p)/sizeof(double)-1, Hbin1p); lout->Add(hneutronmomentum);
+          hIApN = new TH1D("IApN"+tag,"", sizeof(Hbin1p)/sizeof(double)-1, Hbin1p); lout->Add(hIApN);
         }
         
         hprotonTT = new TH1D("protonTT"+tag,"", sizeof(Jbin)/sizeof(double)-1, Jbin);
@@ -335,7 +335,7 @@ vector<TString> SetHist(const TString tag, const TString nuExp, const int anaid,
       hdpt = new TH1D("dpt"+tag,"", sizeof(Gbin)/sizeof(double)-1, Gbin);
       
       const double Hbin[]={0.000000, 0.030000, 0.060000, 0.090000, 0.120000, 0.150000, 0.180000, 0.210000, 0.240000, 0.270000, 0.300000, 0.350000, 0.400000, 0.450000, 0.500000, 0.550000, 0.600000, 0.650000, 0.700000, 0.800000, 1.000000, 1.200000, 1.5, 2.000000};
-      hneutronmomentum = new TH1D("neutronmomentum"+tag,"", sizeof(Hbin)/sizeof(double)-1, Hbin); lout->Add(hneutronmomentum);
+      hIApN = new TH1D("IApN"+tag,"", sizeof(Hbin)/sizeof(double)-1, Hbin); lout->Add(hIApN);
       
       const double Jbin[]={-2, -0.800000, -0.700000, -0.650000, -0.600000, -0.550000, -0.500000, -0.450000, -0.400000, -0.350000, -0.300000, -0.250000, -0.200000, -0.150000, -0.100000, -0.050000, 0.000000, 0.050000, 0.100000, 0.150000, 0.200000, 0.250000, 0.300000, 0.350000, 0.400000, 0.450000, 0.500000, 0.550000, 0.600000, 0.650000, 0.700000, 0.800000, 2};
       hdpTT = new TH1D("dpTT"+tag,"", sizeof(Jbin)/sizeof(double)-1, Jbin);
@@ -367,8 +367,8 @@ vector<TString> SetHist(const TString tag, const TString nuExp, const int anaid,
     hq3VSEav = new TH2D("q3VSEav"+tag,"", sizeof(bEav)/sizeof(double)-1, bEav, sizeof(bq3)/sizeof(double)-1, bq3); lout->Add(hq3VSEav); hhs.push_back("q3VSEav");
     
     if(anaid==LOWRECOIL0piNp){
-      const double bneutronmomentum[]={0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1, 1.03333, 1.06667, 1.1, 1.13333, 1.16667, 1.2, 1.23333, 1.26667, 1.3, 1.33333, 1.36667, 1.4, 1.43333, 1.46667, 1.5, 1.53333, 1.56667, 1.6, 1.63333, 1.66667, 1.7, 1.73333, 1.76667, 1.8, 1.83333, 1.86667, 1.9, 1.93333, 1.96667, 2};
-      hq3VSneutronmomentum = new TH2D("q3VSneutronmomentum"+tag,"", sizeof(bneutronmomentum)/sizeof(double)-1, bneutronmomentum, sizeof(bq3)/sizeof(double)-1, bq3);lout->Add(hq3VSneutronmomentum); hhs.push_back("q3VSneutronmomentum");
+      const double bIApN[]={0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333, 0.466667, 0.5, 0.533333, 0.566667, 0.6, 0.633333, 0.666667, 0.7, 0.733333, 0.766667, 0.8, 0.833333, 0.866667, 0.9, 0.933333, 0.966667, 1, 1.03333, 1.06667, 1.1, 1.13333, 1.16667, 1.2, 1.23333, 1.26667, 1.3, 1.33333, 1.36667, 1.4, 1.43333, 1.46667, 1.5, 1.53333, 1.56667, 1.6, 1.63333, 1.66667, 1.7, 1.73333, 1.76667, 1.8, 1.83333, 1.86667, 1.9, 1.93333, 1.96667, 2};
+      hq3VSIApN = new TH2D("q3VSIApN"+tag,"", sizeof(bIApN)/sizeof(double)-1, bIApN, sizeof(bq3)/sizeof(double)-1, bq3);lout->Add(hq3VSIApN); hhs.push_back("q3VSIApN");
     }
   }
   else if(anaid==MMECCQE){
@@ -395,8 +395,8 @@ vector<TString> SetHist(const TString tag, const TString nuExp, const int anaid,
     hErecoilTIMES1E3VSmupzVSmuonpt = new TH3D("ErecoilTIMES1E3VSmupzVSmuonpt"+tag, "", sizeof(muonpt3dbins)/sizeof(double)-1, muonpt3dbins, sizeof(mupz3dbins)/sizeof(double)-1, mupz3dbins, sizeof(Erecoil3dbins)/sizeof(double)-1, Erecoil3dbins); lout->Add(hErecoilTIMES1E3VSmupzVSmuonpt);; hhs.push_back("ErecoilTIMES1E3VSmupzVSmuonpt");
   }
   else if(anaid==NUBAR1PI){
-    const double enubins[]={0, 1.5, 2.0,3.0,3.50,4.0,5.0,6.0,8.0,10.0, 12.0};
-    henu = new TH1D("enu"+tag,"", 10, enubins); lout->Add(henu); hhs.push_back("enu");
+    const double beamEbins[]={0, 1.5, 2.0,3.0,3.50,4.0,5.0,6.0,8.0,10.0, 12.0};
+    hbeamE = new TH1D("beamE"+tag,"", 10, beamEbins); lout->Add(hbeamE); hhs.push_back("beamE");
     
     hmuonmomentum = new TH1D("muonmomentum"+tag,"", 30, 0, 10); lout->Add(hmuonmomentum); hhs.push_back("muonmomentum");
     hmuontheta = new TH1D("muontheta"+tag,"", 25, 0, 25); lout->Add(hmuontheta); hhs.push_back("muontheta");
