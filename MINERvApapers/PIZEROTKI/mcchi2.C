@@ -33,7 +33,13 @@ TH1D* getMINERvA(const TString pint, const TString varname, TMatrixD *& cov)
 
   TList * lin = (TList*)fin->Get(varname);
   if(!lin){
-    cout<<"no list "<<varname<<endl; exit(1);
+    if(varname=="IApN"){
+      //old name
+      lin = (TList*)fin->Get("neutronmomentum");
+    }
+    if(!lin){
+      cout<<"no list "<<varname<<endl; exit(1);
+    }
   }
 
   TH1D * hh = (TH1D*) (lin->At(0));
@@ -49,7 +55,7 @@ TH1D* getMINERvA(const TString pint, const TString varname, TMatrixD *& cov)
   }
   cov = (TMatrixD*) cov->Clone("cov");
 
-  if( (pint=="pi0")&& (varname=="neutronmomentum"||varname=="dpTT") ){
+  if( (pint=="pi0")&& (varname=="IApN"||varname=="dpTT") ){
     style::ScaleXaxis(hh, 1E-3);
     (*cov) *= 1E6;
   }
@@ -66,7 +72,7 @@ TH1D* getMINERvA(const TString pint, const TString varname, TMatrixD *& cov)
 
 TString getPIZEROvar(const TString var)
 {
-  if(var=="neutronmomentum"){
+  if(var=="IApN"){
     return "pN";
   }
   else if(var=="dalphat"){
@@ -98,7 +104,7 @@ void fixTitle(const int ivar, TH1D * hdata)
 
 int mcchi2(const int opt, const TString sgen, const TString pint)
 {
-  const TString varname[]={"muonmomentum","muontheta","protonmomentum","protontheta","dalphat","dphit","dpt", "neutronmomentum", "dpTT"};
+  const TString varname[]={"muonmomentum","muontheta","protonmomentum","protontheta","dalphat","dphit","dpt", "IApN", "dpTT"};
   
   const int ivar = opt;
 
@@ -209,11 +215,13 @@ int mcchi2(const int opt, const TString sgen, const TString pint)
   else if(sgen=="oobgibuu"){
     if(pint=="0pi"){
       //filehead = "data/MINERvALEGiBUUGFS0PIa9t1nuCarbon";
-      filehead = "data/GFS0PIMINERvAGiBUULE_CarbonOnly";
+      //filehead = "data/GFS0PIMINERvAGiBUULE_CarbonOnly";
+      filehead = "data/GFS0PIMINERvAGiBUULE_repeatPRDoldE";
     }
     else if(pint=="pi0"){
       //filehead = "data/MINERvALEGiBUUGFSPIZEROa7t4nuCarbon";
-      filehead = "data/GFSPIZEROMINERvAGiBUULE_CarbonOnly";
+      //filehead = "data/GFSPIZEROMINERvAGiBUULE_CarbonOnly";
+      filehead = "data/GFSPIZEROMINERvAGiBUULE_repeatPRDoldE";
     }
     filetag.push_back("");
 
@@ -367,7 +375,7 @@ int mcchi2(const int opt, const TString sgen, const TString pint)
     int noff=1, xnbin = hdata->GetNbinsX();
     if(pint=="0pi"){
       noff=2;
-      if(varname[ivar]=="neutronmomentum")
+      if(varname[ivar]=="IApN")
         xnbin -= 2;
       else if(varname[ivar]=="dalphat")
         xnbin -= 1;
@@ -425,7 +433,7 @@ int mcchi2(const int opt, const TString sgen, const TString pint)
     xmax = 400/1E3;
     xmin = -xmax;
   }
-  else if(varname[ivar]=="neutronmomentum"){
+  else if(varname[ivar]=="IApN"){
     xmin = 0;
     xmax = 800/1E3;
   }

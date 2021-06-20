@@ -34,15 +34,25 @@ TH1D *getMINERvA0PI(const TString varname, TMatrixD *& cov)
   //TFile *fdata=new TFile("data/CC0piTKI_MINERvAPRL/official_release_data_fullCov/MINERvA_1805.05486_v2.root");
   //TFile *fdata=new TFile("data/CC0piTKI_MINERvAPRL/official_release_data_fullCov_deelastic/MINERvA_1805.05486_v3.root");
   TFile *fdata=new TFile("data/PhysRevD.101.092001.root");
- 
-  TH1D * hh  = (TH1D*) ((TList*)fdata->Get(varname))->At(0);      
+
+  TList * tmplist = (TList*)fdata->Get(varname);
+  if(!tmplist){
+    if(varname=="IApN"){
+      //old name
+      tmplist = (TList*)fdata->Get("neutronmomentum");
+    }
+    if(!tmplist){
+      cout<<"no tmplist "<<varname<<endl; exit(1);
+    }
+  }  
+  TH1D * hh  = (TH1D*) tmplist->At(0);      
   if(!hh){
     cout<<"no 0pi hist! "<<varname<<endl; exit(1);
   }
   printf("check norm 0pi raw: %e\n", hh->Integral(0,100000,"width"));
 
   style::ResetStyle(hh);
-  cov = (TMatrixD*) ((TList*)fdata->Get(varname))->At(2); 
+  cov = (TMatrixD*) tmplist->At(2); 
   if(!cov){
     cout<<"no 0pi cov! "<<varname<<endl; exit(1);
   }
@@ -55,7 +65,13 @@ TH1D* getMINERvAPIZERO(const TString varname, TMatrixD *& cov)
   TFile *fin = new TFile("data/PIZEROTKI_MINERvA.root");
   TList * lin = (TList*)fin->Get(varname);
   if(!lin){
-    cout<<"no list "<<varname<<endl; exit(1);
+    if(varname=="IApN"){
+      //old name
+      lin = (TList*)fin->Get("neutronmomentum");
+    }
+    if(!lin){
+      cout<<"no list "<<varname<<endl; exit(1);
+    }
   }
 
   TH1D * hh = (TH1D*) (lin->At(0));
@@ -137,7 +153,7 @@ TH1D * norm2Shape(const TH1D *hh, const TMatrixD * rawcov)
 
 int draw(const int opt = 0)
 {
-  const TString varname[]={"muonmomentum","muontheta","protonmomentum","protontheta","dalphat","dphit","dpt", "neutronmomentum", "dpTx", "dpTy"};
+  const TString varname[]={"muonmomentum","muontheta","protonmomentum","protontheta","dalphat","dphit","dpt", "IApN", "dpTx", "dpTy"};
   
   const int ivar = opt;
 
@@ -148,7 +164,7 @@ int draw(const int opt = 0)
 
   TH1D * h1draw = norm2Shape(hdata1, data1Cov);
   TH1D * h2DRAW = norm2Shape(hDATA2, DATA2Cov);    
-  if(varname[ivar]=="neutronmomentum"||varname[ivar]=="dpt"){
+  if(varname[ivar]=="IApN"||varname[ivar]=="dpt"){
     style::ScaleXaxis(h2DRAW, 1E-3);
   }
 
@@ -207,7 +223,7 @@ int draw(const int opt = 0)
     xmin = 0;
     xmax = 180;
   }
-  else if(varname[ivar]=="neutronmomentum"){
+  else if(varname[ivar]=="IApN"){
     xmin = 0;
     xmax = 0.8;//1;
   }
