@@ -368,10 +368,9 @@ void AnaUtils::Calc()
     }
     else{
       //GiBUU 4-momentum doesn't give physical mass; but using its given 4-momentum provides direct access to internal dynamics like pN
-      //test const TLorentzVector tmphadronfullp = (*protonfullp) + (*pionfullp);//this is more logical
+      const TLorentzVector tmphadronfullp = (*protonfullp) + (*pionfullp);//this is more logical
       //this will cause delta<0 in GEANT4; only used for neutrino. 
-      //to repeat old results
-      TLorentzVector tmphadronfullp; tmphadronfullp.SetXYZT(protonfullp->X()+pionfullp->X(), protonfullp->Y()+pionfullp->Y(), protonfullp->Z()+pionfullp->Z(), Energy(protonfullp, ProtonMass())+Energy(pionfullp, pionfullp->P()>1E-10? PionMass():0));//need to use experimental momentum only
+      //to repeat old results TLorentzVector tmphadronfullp; tmphadronfullp.SetXYZT(protonfullp->X()+pionfullp->X(), protonfullp->Y()+pionfullp->Y(), protonfullp->Z()+pionfullp->Z(), Energy(protonfullp, ProtonMass())+Energy(pionfullp, pionfullp->P()>1E-10? PionMass():0));//need to use experimental momentum only
     
       baryonmomentum = tmphadronfullp.P();
       baryontheta = tmphadronfullp.Theta()*TMath::RadToDeg();

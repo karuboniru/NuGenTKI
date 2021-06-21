@@ -32,7 +32,7 @@ export NUGASa8P50=
 
 nfile=
 
-tag=MINERvALE_GiBUU_repeatPRDoldE${nfile}_
+tag=MINERvALE_GiBUU_newE${nfile}_
 #MINERvAGiBUU_LE_
 #MINERvAGiBUU_PIZEROrep_
 #DUNEGiBUU_${nfile}_
