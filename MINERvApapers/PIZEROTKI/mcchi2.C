@@ -216,12 +216,12 @@ int mcchi2(const int opt, const TString sgen, const TString pint)
     if(pint=="0pi"){
       //filehead = "data/MINERvALEGiBUUGFS0PIa9t1nuCarbon";
       //filehead = "data/GFS0PIMINERvAGiBUULE_CarbonOnly";
-      filehead = "data/GFS0PIMINERvAGiBUULE_repeatPRDoldE";
+      filehead = "data/GFS0PIMINERvAGiBUULE_newE";
     }
     else if(pint=="pi0"){
       //filehead = "data/MINERvALEGiBUUGFSPIZEROa7t4nuCarbon";
       //filehead = "data/GFSPIZEROMINERvAGiBUULE_CarbonOnly";
-      filehead = "data/GFSPIZEROMINERvAGiBUULE_repeatPRDoldE";
+      filehead = "data/GFSPIZEROMINERvAGiBUULE_newE";
     }
     filetag.push_back("");
 
