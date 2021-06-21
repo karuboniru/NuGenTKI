@@ -3,15 +3,18 @@
    http://www-pnp.physics.ox.ac.uk/~luxi/transport/doxygen/NuGenTKI
 
   ## Quick how-to
-  
-style/, bin/, and include/AnaFunctions.h are from submodule TKI. Need to load/update separately with
+First checkout TKI package in some location $TKI_PARENT
+  ```
+  cd $TKI_PARENT
+  git clone https://github.com/luxianguo/TKI.git
+  ```
+Then checkout NuGenTKI package in some other location $NUGENTKI_PARENT
+  ```
+  cd $NUGENTKI_PARENT
+  git clone https://github.com/luxianguo/NuGenTKI.git
+  ```
+style/, bin/, and include/AnaFunctions.h are from TKI. Need to link it to NuGenTKI/
    ```
-   git submodule update --init
+  cd $NUGENTKI_PARENT/NuGenTKI
+  ln -s $TKI_PARENT/TKI
    ```
-and
-   ```
-   git submodule update --remote
-   ```
-respectively.
-
-In case of "Permission denied", open .git/config and change the url in [submodule “TKI”] part to url = https://github.com/luxianguo/TKI.git. See https://stackoverflow.com/questions/49191565/git-clone-works-git-submodule-fails-permission-denied
