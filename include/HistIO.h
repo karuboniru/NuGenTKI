@@ -25,12 +25,12 @@ namespace HistIO
 
 #if __OPENCALC__ 
   double muonmomentum, muontheta;
-  double Wtrue, Wrest, xBj, xrest, Q2;
+  double Wtrue, Wrest, xBj, xrest, Q2, event_recoilP, event_recoilM, recoilP, recoilM;
   double protonmomentum, protontheta, pionmomentum, piontheta, pionEk, baryonmomentum, baryontheta, baryonmass;
   double dpt, dphit, dalphat,  IApN,  dpTT;
 #endif
   TH1D * hmuonmomentum = 0x0, * hmuontheta = 0x0;
-  TH1D * hWtrue = 0x0, * hWrest = 0x0, * hxBj = 0x0, * hxrest = 0x0, * hQ2 = 0x0;
+  TH1D * hWtrue = 0x0, * hWrest = 0x0, * hxBj = 0x0, * hxrest = 0x0, * hQ2 = 0x0, * hevent_recoilP = 0x0, * hevent_recoilM_full = 0x0, * hevent_recoilM_zoom = 0x0, * hrecoilP = 0x0, * hrecoilM_full = 0x0, * hrecoilM_zoom = 0x0;
   TH1D * hprotonmomentum = 0x0,* hprotontheta = 0x0, * hpionmomentum = 0x0, * hpiontheta = 0x0, * hpionEk =0x0, * hbaryonmomentum=0x0, * hbaryontheta=0x0, * hbaryonmass=0x0;
   TH1D * hdpt = 0x0, * hdphit = 0x0, * hdalphat = 0x0, * hIApN = 0x0, * hdpTT = 0x0;
 
@@ -78,6 +78,10 @@ void SetTree(TTree * tree, const int anaid)
   tree->SetBranchAddress("xBj", &xBj);
   tree->SetBranchAddress("xrest", &xrest);
   tree->SetBranchAddress("Q2", &Q2);
+  tree->SetBranchAddress("event_recoilP", &event_recoilP);
+  tree->SetBranchAddress("event_recoilM", &event_recoilM);
+  tree->SetBranchAddress("recoilP", &recoilP);
+  tree->SetBranchAddress("recoilM", &recoilM);
 
   tree->SetBranchAddress("protonmomentum", &protonmomentum);
   tree->SetBranchAddress("protontheta", &protontheta);
@@ -127,7 +131,13 @@ void FillTopoTaskHist()
   hQ2->Fill(Q2,perweight);
   hxBj->Fill(xBj,perweight);
   hxrest->Fill(xrest,perweight);
-  
+  hevent_recoilP->Fill(event_recoilP,perweight);
+  hevent_recoilM_full->Fill(event_recoilM,perweight);
+  hevent_recoilM_zoom->Fill(event_recoilM,perweight);
+  hrecoilP->Fill(recoilP,perweight);
+  hrecoilM_full->Fill(recoilM,perweight);
+  hrecoilM_zoom->Fill(recoilM,perweight);
+
   hprotonmomentum->Fill(protonmomentum,perweight);
   hprotontheta->Fill(protontheta,perweight);  
   hpionmomentum->Fill(pionmomentum,perweight);
@@ -198,6 +208,12 @@ vector<TString> SetHist(const TString tag, const TString nuExp, const int anaid,
   vector<TString> hhs;
 
   hQ2  = new TH1D("Q2"+tag,"", 30, 0, 2); lout->Add(hQ2);
+  hevent_recoilP  = new TH1D("event_recoilP"+tag,"", 100, 0, 2); lout->Add(hevent_recoilP);
+  hevent_recoilM_full  = new TH1D("event_recoilM_full"+tag,"", 480, 0, 12); lout->Add(hevent_recoilM_full);
+  hevent_recoilM_zoom  = new TH1D("event_recoilM_zoom"+tag,"", 250, 9.7, 10.7); lout->Add(hevent_recoilM_zoom);
+  hrecoilP  = new TH1D("recoilP"+tag,"", 100, 0, 2); lout->Add(hrecoilP);
+  hrecoilM_full  = new TH1D("recoilM_full"+tag,"", 480, 0, 12); lout->Add(hrecoilM_full);
+  hrecoilM_zoom  = new TH1D("recoilM_zoom"+tag,"", 250, 9.7, 10.7); lout->Add(hrecoilM_zoom);
   hxBj = new TH1D("xBj"+tag,"", 30, 0, 2); lout->Add(hxBj);
   hxrest = new TH1D("xrest"+tag,"", 30, 0, 2); lout->Add(hxrest);
   hWtrue = new TH1D("Wtrue"+tag,"", 60, 0, 3); lout->Add(hWtrue);
