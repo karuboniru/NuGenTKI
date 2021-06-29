@@ -80,7 +80,7 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
     }//loop over particle
 
     if(failCounter==0){//all are processed and therefore there is no nuclei skipped.
-      //nuclei below GEANT4 tracking threshold and not saved. So far only found 1 such event.
+      //nuclei below GEANT4 tracking threshold are not saved. These can be helium and deutron, checked by looking at event_recoilM for AstarA<0
       //now skipping all A<20 nuclei, can be quite often
       zeroNucleiCounter++;
       hcounter->Fill(4);
@@ -123,7 +123,7 @@ test Cl/Ar39 ientry 189 kk 3/5 interType 1 pdg 22 x 0.708164 y 0.604643 z 0.4284
 test Cl/Ar39 ientry 189 kk 4/5 interType 1 pdg 1000180390 x -209.351213 y 28.246665 z 9.275568 e 36286.457472
     */
     
-    if(failCounter==1){
+    if(1){//fill all fail cases//if(failCounter==1){
       AnaUtils::DoFill(tout);
     }
   }//loop over event

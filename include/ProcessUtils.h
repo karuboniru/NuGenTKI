@@ -326,7 +326,7 @@ void ProceedGEANT4CHARGEDBEAM()
   if(IsPion()&&lineCharge==1){//pi+
     AddABit(totparcount,  PIONBIT);
     
-    if(lineFullMom->P()>0.1){//100 MeV pion threshold
+    if(lineFullMom->P()>0.1){//100 MeV/c pion threshold
       (*pionfullp) += (*lineFullMom);
       AddABit(npar,  PIONBIT);
     }
@@ -339,7 +339,7 @@ void ProceedGEANT4CHARGEDBEAM()
   else if(IsElectron()){
     AddABit(totparcount,  ELECTRONBIT);
 
-    if(lineFullMom->P()>5E-3){//5 MeV electron threshold just as a place holder
+    if(lineFullMom->P()>5E-3){//5 MeV/c electron threshold just as a place holder
       (*pionfullp) += (*lineFullMom);//lump to pion 
       AddABit(npar,  ELECTRONBIT);
     }
@@ -347,7 +347,7 @@ void ProceedGEANT4CHARGEDBEAM()
   else if(IsProton()){
     AddABit(totparcount,  PROTONBIT);
     
-    if(lineFullMom->P()>0.3){//300 MeV proton threshold
+    if(lineFullMom->P()>0.3){//300 MeV/c proton threshold
       (*protonfullp) += (*lineFullMom);
       AddABit(npar,  PROTONBIT);
     }
@@ -363,8 +363,11 @@ void ProceedGEANT4CHARGEDBEAM()
     GEANT4_gammaE += lineFullMom->E();
   }
   else if(IsKaon() || IsPion()){//kaon, pi-
-    AddABit(npar,  BKGBIT);
     AddABit(totparcount,  BKGBIT);
+
+    if(lineFullMom->P()>0.1){//100 MeV/c pi- and kaon threshold
+      AddABit(npar,  BKGBIT);
+    }
   }
   else{
     printf("ProceesUtils::ProceedGEANT4 not pion or proton! linePID %d\n", linePID); exit(1);
