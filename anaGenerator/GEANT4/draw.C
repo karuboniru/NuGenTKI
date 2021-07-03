@@ -32,6 +32,80 @@ TH1D *savedraw(const int iplot, TTree *t, TCanvas *c1, const TString var, const 
   return hout;
 }
 
+void sub2DM(TTree *t, TCanvas *c1, TList *lout, const TString basecut, const TString xvar, const double xmin, const double xmax, const TString yvar)
+{
+  const TString h2n = Form("%s_%s_2DM_basecut", c1->GetName(), xvar.Data());
+  TH2D * hm=new TH2D(h2n,"", 40, xmin, xmax, 23, -1, 22); lout->Add(hm);
+  style::ResetStyle(hm);
+
+  if(yvar=="(recoilM-event_recoilM)"){
+    hm->SetYTitle("#it{M}_{A'}^{ rec.}-#it{M}_{A'}^{ true} (GeV/#it{c}^{2})");
+  }
+  else{
+    printf("wrong yvar! %s\n", yvar.Data()); exit(1);
+  }
+
+  if(xvar=="event_recoilM"){
+    hm->SetXTitle("#it{M}_{A'}^{ true} (GeV/#it{c}^{2})");
+  }
+  else if(xvar=="recoilM"){
+    hm->SetXTitle("#it{M}_{A'}^{ rec.} (GeV/#it{c}^{2})");
+  }
+  else{
+    printf("wrong xvar! %s\n", xvar.Data()); exit(1);
+  }
+
+  t->Draw(Form("%s:%s>>%s", yvar.Data(), xvar.Data(), h2n.Data()), basecut, "colz");
+
+  const TString tag=c1->GetName();
+  TString slen;
+  if(tag.Contains("PiZero_OneP")){
+    slen="#pi^{0} p";
+  }
+  else if(tag.Contains("Pion_OneP")){
+    slen="#pi^{+} p";
+  }
+  else if(tag.Contains("PiZero_TwoP")){
+    slen="#pi^{0} p p";
+  }
+  else if(tag.Contains("Pion_TwoP")){
+    slen="#pi^{0} p p";
+  }
+  else{
+    printf("wrong tag! %s\n", c1->GetName()); exit(1);
+  }
+
+  TLatex * lh = new TLatex(0.2, 0.83, gConfig);
+  style::ResetStyle(lh);
+  
+  TLatex * lt = new TLatex(0.65, 0.83, slen);
+  style::ResetStyle(lt);
+
+  lh->Draw();
+  lt->Draw();
+  
+  c1->Print(gOutdir+h2n+".png");
+
+  const double underf = hm->Integral(0,10000,0,1);//only for y 21, -1, 20 !!
+  if(underf>0){
+    printf("\n\n********************************************* Underflow!! %s %f *************************************\n\n", c1->GetName(), underf); exit(1);
+  }
+}
+
+void Draw2DM(TTree *t, TCanvas *c1, TList *lout, const TString basecut)
+{
+  style::PadSetup(c1);
+  c1->SetBottomMargin(0.18);
+  c1->SetLeftMargin(0.13);
+  c1->SetRightMargin(0.12);
+  c1->SetTopMargin(0.07);
+  
+  gStyle->SetOptStat(0);
+
+  sub2DM(t, c1, lout, basecut, "event_recoilM", 17.5, 37.5, "(recoilM-event_recoilM)");
+  sub2DM(t, c1, lout, basecut, "recoilM",       34.8,   37.4,   "(recoilM-event_recoilM)");
+}
+
 void PhysicsBlock(TTree *t, TCanvas *c1, TList *lout, const TString basecut, const TString sigdef, const TString selcut, int nbin = -999, double xmin = -999, double xmax = -999)
 {
   const TString opt="hist"; ;
@@ -46,6 +120,8 @@ void PhysicsBlock(TTree *t, TCanvas *c1, TList *lout, const TString basecut, con
   nbin = 50; xmin = 0; xmax = 2;
   hout = savedraw(100, t, c1, "recoilP", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
   savedraw(101, t, c1, "event_recoilP", basecut+" && "+selcut,"e same", nbin, xmin, xmax);
+
+  Draw2DM(t, c1, lout, basecut);
 }
 
 
