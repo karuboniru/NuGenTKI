@@ -6,5 +6,6 @@ outdir=outplot/outdraw
 
 mkdir -p ${outdir}
 
-./draw ${infile} ${outdir}
+./draw ${infile} ${outdir} > seedraw.log &
+
 
