@@ -39,17 +39,17 @@ void sub2DM(TTree *t, TCanvas *c1, TList *lout, const TString basecut, const TSt
   style::ResetStyle(hm);
 
   if(yvar=="(recoilM-event_recoilM)"){
-    hm->SetYTitle("#it{M}_{A'}^{ rec.}-#it{M}_{A'}^{ true} (GeV/#it{c}^{2})");
+    hm->SetYTitle("#it{M}_{X}-#it{M}_{A'} (GeV/#it{c}^{2})");
   }
   else{
     printf("wrong yvar! %s\n", yvar.Data()); exit(1);
   }
 
   if(xvar=="event_recoilM"){
-    hm->SetXTitle("#it{M}_{A'}^{ true} (GeV/#it{c}^{2})");
+    hm->SetXTitle("#it{M}_{A'} (GeV/#it{c}^{2})");
   }
   else if(xvar=="recoilM"){
-    hm->SetXTitle("#it{M}_{A'}^{ rec.} (GeV/#it{c}^{2})");
+    hm->SetXTitle("#it{M}_{X} (GeV/#it{c}^{2})");
   }
   else{
     printf("wrong xvar! %s\n", xvar.Data()); exit(1);
@@ -272,7 +272,7 @@ void summary_RecoilP(TList *lout)
     hhs[ii]->SetLineColor(style::GetColor(lincols[ii]));  
     hhs[ii]->GetXaxis()->SetRangeUser(0,0.8);
     hhs[ii]->SetYTitle("p.d.f.");
-    hhs[ii]->SetXTitle("#it{p}_{A'} (GeV/#it{c})");
+    hhs[ii]->SetXTitle("#it{p}_{X} (GeV/#it{c})");
   }
 
   TCanvas * c0=new TCanvas("cP","",600,400);
@@ -339,8 +339,8 @@ void summary_RecoilM(TList *lout)
     }
 
     hhs[ii]->SetMaximum(hhs[ii]->GetBinContent(hhs[ii]->GetMaximumBin())*1.1);
-    hhs[ii]->SetYTitle("N");
-    hhs[ii]->SetXTitle("#it{M}_{A'} (GeV/#it{c}^{2})");
+    hhs[ii]->SetYTitle("#it{N}_{event}");
+    hhs[ii]->SetXTitle("#it{M}_{X} (GeV/#it{c}^{2})");
   }
 
   TCanvas * c0=new TCanvas("cM","",600,400);
