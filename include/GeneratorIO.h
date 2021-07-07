@@ -107,6 +107,13 @@ bool GiBUUIsIniN(const double tmppw, const double tmpmom1, const double tmpmom2,
   }
 }
 
+int GiBUUAntiNeutronID()
+{
+  const int tmpid = -1;
+  const int tmpcharge = -1;
+  return (9990000 + tmpid)*tmpcharge;
+}
+ 
 void GiBUUSetID(const int tmpid, const double tmptote)
 {
   //tmpid, lineCharge -> lineIsBkgParticle, lineMass, linePID, globalMuonCharge, LOWRECOIL_parbit, lineRawID
