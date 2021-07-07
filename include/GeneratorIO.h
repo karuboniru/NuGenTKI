@@ -107,7 +107,7 @@ bool GiBUUIsIniN(const double tmppw, const double tmpmom1, const double tmpmom2,
   }
 }
 
-int GiBUUAntiNeutronID()
+int GiBUUAntiProtonID()
 {
   const int tmpid = -1;
   const int tmpcharge = -1;
@@ -147,7 +147,7 @@ void GiBUUSetID(const int tmpid, const double tmptote)
   if( 
      ( tmpid>100 && tmpid<200 ) || 
      ( tmpid==999 || tmpid==901 ) || 
-     ( tmpid>=32 && tmpid<=61 ) 
+     ( abs(tmpid)>=32 && abs(tmpid)<=61 ) //tmpid<0 can be antiparticles
       ){
     lineIsBkgParticle = true;
   }
@@ -212,7 +212,7 @@ void GiBUUSetID(const int tmpid, const double tmptote)
     }
   }//all charged
   else{
-    if(tmpid == 1){
+    if(abs(tmpid) == 1){//include antineutron
       lineMass = NeutronMass();
       linePID = NEUTRONBIT;
       LOWRECOIL_parbit += NEUTRONBIT;

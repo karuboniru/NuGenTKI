@@ -530,7 +530,7 @@ void ProceedDUNEEXCL3()
       (*pionfullp)=(*lineFullMom);
     }
   }
-  else if(lineIsBkgParticle || IsNeutron() || lineRawID==GiBUUAntiNeutronID() || IsMuon() || IsProton() || IsPion() ){//neutron and also antiproton are background; mu/p/pi entering here are also non-exclusive background---they are below threshold and need to be subtracted in real measurement
+  else if(lineIsBkgParticle || IsNeutron() || lineRawID==GiBUUAntiProtonID() || IsMuon() || IsProton() || IsPion() ){//neutron and also antiproton are background; mu/p/pi entering here are also non-exclusive background---they are below threshold and need to be subtracted in real measurement
     AddABit(totparcount, BKGBIT);
     AddABit(npar, BKGBIT);
   }
@@ -581,7 +581,7 @@ void ProceedMINERvAGFS0PI()
     AddABit(totparcount, BKGBIT);
     AddABit(npar, BKGBIT);
   }
-  else if(!IsNeutron() && lineRawID!=GiBUUAntiNeutronID() && lineRawID<1E9){//allow antiproton and nuclei
+  else if(!IsNeutron() && lineRawID!=GiBUUAntiProtonID() && lineRawID<1E9){//allow antiproton and nuclei
     printf("GFS0PI strange background! linePID %d lineRawID %d\n", linePID, lineRawID); exit(1);
   }
 }
@@ -638,7 +638,7 @@ void ProceedMINERvAGFSPIZERO()
     AddABit(npar, BKGBIT);
   }
   else if(!IsNeutron()){
-    if(lineRawID!= GiBUUAntiNeutronID() && lineRawID<1E9){//GiBUU has large antiproton, allow GENIE NUCLEI
+    if(lineRawID!= GiBUUAntiProtonID() && lineRawID<1E9){//GiBUU has large antiproton, allow GENIE NUCLEI
       //printf("GFSPIZERO strange background! linePID %d lineRawID %d run %d event %d\n", linePID, lineRawID, run, event); exit(1);
       printf("GFSPIZERO strange background! linePID %d lineRawID %d\n", linePID, lineRawID); exit(1);
     }
