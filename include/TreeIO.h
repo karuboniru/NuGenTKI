@@ -28,7 +28,7 @@ namespace TreeIO
     NUGAS     =8,
     GFS0PI    =9,
     EXCL3 = 10,
-    GEANT4CHARGEDBEAM = 11
+    TESTBEAM = 11
   };
   
   enum experiment{
@@ -78,7 +78,7 @@ namespace TreeIO
   double LOWRECOIL_Eav;
   double LOWRECOIL_q3;
 
-  double GEANT4_gammaE;//all energy of the gammas, need to be divied by nGamma to have the mean energy per gamma.
+  double TESTBEAM_gammaE;//all energy of the gammas, need to be divied by nGamma to have the mean energy per gamma.
 
   //--- Calc, all will be set by = no need to Ini()
 #if __OPENCALC__
@@ -95,9 +95,9 @@ namespace TreeIO
   double baryontheta;
   double baryonmass;
 
-  double protonmomentum;//in case of GEANT4, all protons are added together
+  double protonmomentum;//in case of TESTBEAM, all protons are added together
   double protontheta;
-  double pionmomentum;//in case of GEANT4, all pi+ and pi0 are added together
+  double pionmomentum;//in case of TESTBEAM, all pi+ and pi0 are added together
   double piontheta;
   double pionEk;
   
@@ -193,7 +193,7 @@ void IniTreeIO()
   LOWRECOIL_Eav = 0;
 
   //has to start from 0
-  GEANT4_gammaE = 0;
+  TESTBEAM_gammaE = 0;
   //--- EOF
 }
 
@@ -211,7 +211,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
   TTree * tout = new TTree("tree","tree");
   //const Int_t spl = 1;
 
-  if(anamode!=GEANT4CHARGEDBEAM){
+  if(anamode!=TESTBEAM){
     tout->Branch("iniNcharge",&iniNcharge);
     tout->Branch("perweight",&perweight);
     tout->Branch("filecount",&filecount);
@@ -249,8 +249,8 @@ TTree * GetTree(const analysis ana, const experiment exp)
     tout->Branch("LOWRECOIL_q3",&LOWRECOIL_q3);
     tout->Branch("LOWRECOIL_Eav",&LOWRECOIL_Eav);
   }
-  else if(anamode==GEANT4CHARGEDBEAM){
-    tout->Branch("GEANT4_gammaE",&GEANT4_gammaE);
+  else if(anamode==TESTBEAM){
+    tout->Branch("TESTBEAM_gammaE",&TESTBEAM_gammaE);
   }
 
   /*
@@ -270,7 +270,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
     
 #if __OPENCALC__
 
-  if(anamode!=GEANT4CHARGEDBEAM){
+  if(anamode!=TESTBEAM){
     tout->Branch("muonmomentum",&muonmomentum);
     tout->Branch("muontheta",&muontheta);
     

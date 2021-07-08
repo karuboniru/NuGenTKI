@@ -95,8 +95,8 @@ void AnaUtils::MainProceed()
     else if(anamode == GFS0PI){
       ProceedMINERvAGFS0PI();
     }
-    else if(anamode == GEANT4CHARGEDBEAM){
-      ProceedGEANT4CHARGEDBEAM();
+    else if(anamode == TESTBEAM){
+      ProceedTESTBEAM();
     }
   }
   else if(expmode==kT2K){
@@ -282,7 +282,7 @@ bool AnaUtils::IsGood()
 
     return true;
   }
-  else if(anamode==GEANT4CHARGEDBEAM){
+  else if(anamode==TESTBEAM){
     //accept Npmpi
     //1p
     if(1)//accept all (nPion+nPiZero) ==1 && (nProton==1||nProton==2) )    
@@ -303,7 +303,7 @@ TLorentzVector AnaUtils::GetBeamFullP()
   else{
   double beamMass = 0;
   static int kprintbeammass=1;
-  if(anamode == GEANT4CHARGEDBEAM){
+  if(anamode == TESTBEAM){
     beamMass = PionMass();
 
     if(kprintbeammass){
@@ -363,13 +363,13 @@ void AnaUtils::Calc()
     const int localZ = (targetZ==1 ? 6 : targetZ);
     const int localA = AnaFunctions::getTargetA(localZ);
     //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *recoilfullp, double & dalphat, double & dphit, double & dpt, double & dpTT, double & beamCalcP, double & IApN, double & recoilM, double & recoilP)
-    if(anamode==GEANT4CHARGEDBEAM){
+    if(anamode==TESTBEAM){
       AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, pionfullp, protonfullp,     dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
     }
     else{
       //GiBUU 4-momentum doesn't give physical mass; but using its given 4-momentum provides direct access to internal dynamics like pN
       const TLorentzVector tmphadronfullp = (*protonfullp) + (*pionfullp);//this is more logical
-      //this will cause delta<0 in GEANT4; only used for neutrino. 
+      //this will cause delta<0 in TESTBEAM; only used for neutrino. 
       //to repeat old results TLorentzVector tmphadronfullp; tmphadronfullp.SetXYZT(protonfullp->X()+pionfullp->X(), protonfullp->Y()+pionfullp->Y(), protonfullp->Z()+pionfullp->Z(), Energy(protonfullp, ProtonMass())+Energy(pionfullp, pionfullp->P()>1E-10? PionMass():0));//need to use experimental momentum only
     
       baryonmomentum = tmphadronfullp.P();

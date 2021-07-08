@@ -1,4 +1,4 @@
-export GEANT4CHARGEDBEAM="list/Filelist_GEANT4_Pion_v010000xstat.txt"
+export GEANT4CHARGEDBEAM="list/Filelist_FLUKA_Pion_v01GeVc.txt"
 #"list/Filelist_GEANT4_Electron_1GeV_v010000xstat.txt"
 #"list/Filelist_GEANT4_Electron_v010000xstat.txt"
 #

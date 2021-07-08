@@ -321,7 +321,7 @@ void ProceedRESPS()
   }
 }
 
-void ProceedGEANT4CHARGEDBEAM()
+void ProceedTESTBEAM()
 {
   if(IsPion()&&lineCharge==1){//pi+
     AddABit(totparcount,  PIONBIT);
@@ -360,7 +360,7 @@ void ProceedGEANT4CHARGEDBEAM()
     AddABit(npar,  GAMMABIT);
     AddABit(totparcount,  GAMMABIT);
 
-    GEANT4_gammaE += lineFullMom->E();
+    TESTBEAM_gammaE += lineFullMom->E();
   }
   else if(IsKaon() || IsPion()){//kaon, pi-
     AddABit(totparcount,  BKGBIT);
@@ -370,7 +370,7 @@ void ProceedGEANT4CHARGEDBEAM()
     }
   }
   else{
-    printf("ProceesUtils::ProceedGEANT4 not pion or proton! linePID %d\n", linePID); exit(1);
+    printf("ProceesUtils::ProceedTESTBEAM not pion or proton! linePID %d\n", linePID); exit(1);
   }
 }
 
