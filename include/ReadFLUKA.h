@@ -1,46 +1,59 @@
 #ifndef __READFLUKA_H__
 #define __READFLUKA_H__
 
-namespace READFLUKA
+
+const Int_t MAXHITS = 400000;
+const Int_t MAXINEHITS = 400000;
+const Int_t MXS = 500000;
+
+namespace ReadFLUKA
 {
-   Int_t           RunNum;
-   Int_t           EveNum;
-   Int_t           NIncHits;
-   Int_t           IdInc[1];   //[NIncHits]
-   Int_t           IdParInc[1];   //[NIncHits]
-   Int_t           TrInc[1];   //[NIncHits]
-   Int_t           ParTrInc[1];   //[NIncHits]
-   Int_t           IntParInc[1];   //[NIncHits]
-   Int_t           RegInc[1];   //[NIncHits]
-   Float_t         PosInc[1][3];   //[NIncHits]
-   Float_t         PInc[1][5];   //[NIncHits]
-   Float_t         TimeInc[1];   //[NIncHits]
-   Int_t           NCalHits;
-   Int_t           WhCal[1];   //[NCalHits]
-   Float_t         PosCal[1][3];   //[NCalHits]
-   Float_t         EneCal[1];   //[NCalHits]
-   Float_t         EqCal[1];   //[NCalHits]
-   Int_t           NCHitPiz;
-   Int_t           WhCPiz[1];   //[NCHitPiz]
-   Float_t         PosCPiz[1][3];   //[NCHitPiz]
-   Float_t         EneCPiz[1];   //[NCHitPiz]
-   Float_t         EqCPiz[1];   //[NCHitPiz]
-   Int_t           NIneHits;
-   Int_t           TypeIne[1];   //[NIneHits]
-   Int_t           IdIne[1];   //[NIneHits]
-   Int_t           TrIne[1];   //[NIneHits]
-   Int_t           IdParIne[1];   //[NIneHits]
-   Int_t           IntParIne[1];   //[NIncHits]
-   Float_t         PIne[1][5];   //[NIneHits]
-   Float_t         PosIne[1][3];   //[NIneHits]
-   Float_t         TimeIne[1];   //[NIneHits]
-   Int_t           NSecIne[1];   //[NIneHits]
-   Int_t           FirstSec[1];   //[NIneHits]
-   Int_t           NTIneSec;
-   Int_t           HitSecIne[26];   //[NTIneSec]
-   Int_t           IdSecIne[26];   //[NTIneSec]
-   Int_t           TrSecIne[26];   //[NTIneSec]
-   Float_t         PSec[26][5];   //[NTIneSec]
+   Int_t    RunNum;		// Run number
+   Int_t    EveNum;		// Event number
+   //
+   Int_t    NIncHits;
+   Int_t    IdInc[MAXHITS];
+   Int_t    IdParInc[MAXHITS];
+   Int_t    TrInc[MAXHITS];
+   Int_t    IntParInc[MAXHITS];
+   Int_t    RegInc[MAXHITS];
+   Int_t    ParTrInc[MAXHITS];   // track id of the parent
+   Float_t PosInc[MAXHITS][3];	// position of hit 
+   Float_t PInc[MAXHITS][5];	//momentum/ energy of crossing particle
+   Float_t TimeInc[MAXHITS];	// time
+   //
+   Int_t    NCalHits;			// number of energy "blobs" in EM calo
+  //   Float_t EdepCal;			// total en deposited in LAR
+  //  Float_t EdepECal;			// energy deposited in LAR by electrom. particles
+   Int_t    WhCal[MAXHITS];		// calo part
+   Float_t PosCal[MAXHITS][3];	// position of n-th blob
+   Float_t EneCal[MAXHITS];	//
+     Float_t EqCal[MAXHITS];	// 
+  //   Float_t EdepCal;			// total en deposited in LAR
+  //  Float_t EdepECal;			// energy deposited in LAR by electrom. particles
+   Int_t    NCHitPiz;			// number of energy "blobs" in EM calo
+   Int_t    WhCPiz[MAXHITS];		// calo part
+   Float_t PosCPiz[MAXHITS][3];	// position of n-th blob
+   Float_t EqCPiz[MAXHITS];	//
+     Float_t EneCPiz[MAXHITS];	// 
+  //   Float_t TimeCal[MAXHITS];	// time
+  //
+  Int_t   NIneHits;  // number of inelastic/decay
+  Int_t    TypeIne[MAXINEHITS];  // int. type (fluka coding)
+  Int_t    IdIne[MAXINEHITS];
+  Int_t    TrIne[MAXINEHITS]; // track number
+  Int_t    IdParIne[MAXINEHITS]; //original parent
+  Int_t    IntParIne[MAXHITS]; // parent from last interaction
+  Float_t PIne[MAXINEHITS][5];  //momentum
+   Float_t PosIne[MAXINEHITS][3];	// position of hit 
+   Float_t TimeIne[MAXINEHITS];	// time
+  Int_t   NSecIne[MAXINEHITS];  //number of secondaries in this hit
+  Int_t    FirstSec[MAXINEHITS]; //position of first secondary from this hit
+  Int_t   NTIneSec;  //total number of secondaries
+  Float_t PSec[MXS][5];  //momentum,total energy,
+  Int_t    TrSecIne[MXS]; // track number
+  Int_t   HitSecIne[MXS];  // hit where particle was produced
+  Int_t    IdSecIne[MXS];  //
 
    // List of branches
    TBranch        *b_RunNum;   //!
@@ -85,7 +98,7 @@ namespace READFLUKA
   
 void SetChain(TChain *ch)
 {
-  fChain->SetMakeClass(0);
+  ch->SetMakeClass(0);
 
    ch->SetBranchAddress("RunNum", &RunNum, &b_RunNum);
    ch->SetBranchAddress("EveNum", &EveNum, &b_EveNum);

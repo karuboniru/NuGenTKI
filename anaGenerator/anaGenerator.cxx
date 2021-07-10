@@ -15,9 +15,123 @@
 #include "AnaUtils.h"
 #include "ReadGENIE.h"
 #include "ReadGEANT4.h"
+#include "ReadFLUKA.h"
 
 using namespace std;
 using namespace ReadGENIE;
+using namespace ReadFLUKA;
+
+void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntryToStop = -999)
+{
+  ReadFLUKA::SetChain(ch);
+
+  int ientry = 0;
+  int isInteractionCounter = 0;
+  int isInelas = 0;
+  int zeroNucleiCounter = 0;
+  int singleNucleiCounter = 0;
+  int multiNucleiCounter = 0;
+
+  while(ch->GetEntry(ientry)){
+    if(ientry%100000==0){
+      printf("myEntries %d\n", ientry);
+    }
+    
+    if(nEntryToStop>0){
+      if(ientry>=nEntryToStop){
+        printf("\n\n\n************************  GEANT4 Breaking after %d entries ***********************************************\n\n", nEntryToStop);
+        break;
+      }
+    }
+
+    //do it before the loop continues for any reason
+    ientry++;
+    hcounter->Fill(1);//any event
+    
+    //===========================================================================
+    AnaUtils::Ini();
+
+    const int tmpnp = ReadFLUKA::NSecIne[0];
+    //printf("test0 PDGcode size %d\n", tmpnp);
+    if(tmpnp==0){//skip non-interacting events
+      continue;
+    }
+    isInteractionCounter++;
+    hcounter->Fill(2);//interacting including elastic and inelastic
+
+    const int nIne = ReadFLUKA::NIneHits;
+    if(nIne==0){
+      continue;
+    }
+    isInelas++;
+    hcounter->Fill(3);//only inelastic
+
+    const int interType = ReadFLUKA::TypeIne[0];
+    if(nIne!=1 || interType!=101){//expect to have only 1 inelastic interaction per event
+      printf("strange nIne or interType %d %d\n", nIne, interType); exit(1);
+    }
+
+    const int beam = ReadFLUKA::IdIne[0];
+    if(beam!=211){
+      printf("wrong beam! %d\n", beam); exit(1);
+    }
+    const TLorentzVector tmpBeamP(ReadFLUKA::PIne[0][0], ReadFLUKA::PIne[0][1], ReadFLUKA::PIne[0][2], ReadFLUKA::PIne[0][3]);
+    
+    targetZ = 18;//need to read in from file, to-do
+    int failCounter = 0;
+    TLorentzVector totEvtP=-tmpBeamP;
+    for(int ii=0; ii<tmpnp; ii++){
+      const TLorentzVector tmpSecP(ReadFLUKA::PSec[ii][0], ReadFLUKA::PSec[ii][1], ReadFLUKA::PSec[ii][2], ReadFLUKA::PSec[ii][3]);
+      totEvtP += tmpSecP;
+      const bool kProceed = GeneratorIO::FLUKAProceed(ReadFLUKA::EveNum, &tmpBeamP, ReadFLUKA::IdSecIne[ii], &tmpSecP);
+      if(kProceed){
+        AnaUtils::MainProceed();
+      }
+      else{
+        if(ii!=0){//beam particle at [0]
+          failCounter++;
+        }
+      }
+    }//loop over particle
+
+    /*    //test momentum conservation: totEvtP.Print(); exit(1);
+      test evt 1 beamm 0.139571 pdg 111 imass 0.134977
+      test evt 1 beamm 0.139571 pdg 211 imass 0.139571
+      test evt 1 beamm 0.139571 pdg 2112 imass 0.939565
+      test evt 1 beamm 0.139571 pdg 22 imass -0.000001
+      test evt 1 beamm 0.139571 pdg 22 imass -0.000000
+      test evt 1 beamm 0.139571 pdg -8981961 imass 36.285842
+      (x,y,z,t)=(0.000000,0.000000,0.000000,37.215539) (P,eta,phi,E)=(0.000000,1.475926,1.165905,37.215539)
+     */
+    if(totEvtP.P()>1E-6 || fabs(totEvtP.M()-37.2)>1E-1){//have seen 37.228016, 37.232100
+      printf("initial target not at rest or not argon-40 run %d event %d\n", ReadFLUKA::RunNum, ReadFLUKA::EveNum); totEvtP.Print(); exit(1);
+    }
+    
+    if(failCounter==0){//all are processed and therefore there is no nuclei skipped.
+      zeroNucleiCounter++;
+      hcounter->Fill(4);
+     
+    }
+    else if(failCounter==1){
+      singleNucleiCounter++;
+      hcounter->Fill(5);
+    }
+    else{//>=2
+      multiNucleiCounter++;
+      hcounter->Fill(6);
+    }
+
+    /*//test
+    if(1){//fill all fail cases//if(failCounter==1){
+      AnaUtils::DoFill(tout);
+    }
+    */
+    
+  }//loop over event
+  
+  cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<isInelas<<" are inelastic interaction, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;
+
+}
 
 void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntryToStop = -999)
 {
@@ -376,6 +490,17 @@ void anaGenerator(const TString tag, const TString filelist, const int tmpana, c
     }
     else{
       cout<<"No generator identified for GEANT4!! "<<filelist<<endl;
+      exit(1);
+    }
+  }
+  else if(filelist.Contains("FLUKA")){
+    TChain * rootFileInput = AnaUtils::InputROOTFiles(filelist, "HitsTree");
+    if(rootFileInput){
+      hcounter=new TH1I("hcounter","",20,0,20);
+      FLUKAReadChain(rootFileInput, tout, hcounter, nToStop);
+    }
+    else{
+      cout<<"No generator identified for FLUKA!! "<<filelist<<endl;
       exit(1);
     }
   }

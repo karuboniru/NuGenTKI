@@ -600,6 +600,12 @@ bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const
   return true;
 }
 
+bool FLUKAProceed(const int evt, const TLorentzVector *beamfull, const int tmppdg, const TLorentzVector *tmpfull)
+{
+  //printf("test evt %d beamm %f pdg %d imass %f\n", evt, beamfull->M(), tmppdg, tmpfull->M());
+  return false;
+}
+
 bool GENIEProceed(const dtype IniOrFinaltype, const dtype RESdtype, const TString code, const int tmpevent, const int tmpprod, const double tmpenu, const double tmppw, const double tmpmom1, const double tmpmom2, const double tmpmom3, const double tmptote, const int tmpid, const double tmpKNsrc)
 {
   if(IniOrFinaltype==kINI){
