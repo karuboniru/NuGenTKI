@@ -21,7 +21,7 @@ using namespace std;
 using namespace ReadGENIE;
 using namespace ReadFLUKA;
 
-void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntryToStop = -999)
+void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM, const int nEntryToStop = -999)
 {
   ReadFLUKA::SetChain(ch);
 
@@ -31,7 +31,8 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntry
   int zeroNucleiCounter = 0;
   int singleNucleiCounter = 0;
   int multiNucleiCounter = 0;
-
+  int isAr40 = 0;
+  
   while(ch->GetEntry(ientry)){
     if(ientry%100000==0){
       printf("myEntries %d\n", ientry);
@@ -88,9 +89,7 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntry
         AnaUtils::MainProceed();
       }
       else{
-        if(ii!=0){//beam particle at [0]
-          failCounter++;
-        }
+        failCounter++;
       }
     }//loop over particle
 
@@ -103,14 +102,24 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntry
       test evt 1 beamm 0.139571 pdg -8981961 imass 36.285842
       (x,y,z,t)=(0.000000,0.000000,0.000000,37.215539) (P,eta,phi,E)=(0.000000,1.475926,1.165905,37.215539)
      */
-    if(totEvtP.P()>1E-6 || fabs(totEvtP.M()-37.2)>1E-1){//have seen 37.228016, 37.232100
+    if(totEvtP.P()>1E-6){// || fabs(totEvtP.M()-37.2)>1E-1){//have seen 37.228016, 37.232100
       printf("initial target not at rest or not argon-40 run %d event %d\n", ReadFLUKA::RunNum, ReadFLUKA::EveNum); totEvtP.Print(); exit(1);
     }
+    
+    htargetM->Fill(totEvtP.M());
+    if(fabs(totEvtP.M()-37.2)>1){
+      continue;
+    }
+    else if(fabs(totEvtP.M()-37.2)>2E-1){
+      //unknown Ar-40!(x,y,z,t)=(-0.000000,0.000000,-0.000000,37.305117) (P,eta,phi,E)=(0.000000,-1.605495,2.266529,37.305117)
+      printf("unknown Ar-40!"); totEvtP.Print(); exit(1);
+    }
+    isAr40++;
+    hcounter->Fill(10);
     
     if(failCounter==0){//all are processed and therefore there is no nuclei skipped.
       zeroNucleiCounter++;
       hcounter->Fill(4);
-     
     }
     else if(failCounter==1){
       singleNucleiCounter++;
@@ -121,15 +130,13 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntry
       hcounter->Fill(6);
     }
 
-    /*//test
     if(1){//fill all fail cases//if(failCounter==1){
       AnaUtils::DoFill(tout);
     }
-    */
     
   }//loop over event
   
-  cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<isInelas<<" are inelastic interaction, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;
+  cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<isInelas<<" are inelastic interaction, "<<isAr40<<" is on Ar-40, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;
 
 }
 
@@ -471,6 +478,7 @@ void anaGenerator(const TString tag, const TString filelist, const int tmpana, c
   //_________________________________________________________________________________________________
   TH1F * hCCrate = 0x0;
   TH1I * hcounter = 0x0;
+  TH1D * htargetM = 0x0;
   int nrun = -999;
   if(filelist.Contains("GENIE")){
     TChain * rootFileInput = AnaUtils::InputROOTFiles(filelist, "gRooTracker");
@@ -497,7 +505,8 @@ void anaGenerator(const TString tag, const TString filelist, const int tmpana, c
     TChain * rootFileInput = AnaUtils::InputROOTFiles(filelist, "HitsTree");
     if(rootFileInput){
       hcounter=new TH1I("hcounter","",20,0,20);
-      FLUKAReadChain(rootFileInput, tout, hcounter, nToStop);
+      htargetM = new TH1D("htargetM","",1600,0,40);
+      FLUKAReadChain(rootFileInput, tout, hcounter, htargetM, nToStop);
     }
     else{
       cout<<"No generator identified for FLUKA!! "<<filelist<<endl;
@@ -514,14 +523,14 @@ void anaGenerator(const TString tag, const TString filelist, const int tmpana, c
 
   fout->cd();
 
-  if(hCCrate){
-    hCCrate->Write();
+  TH1 * hhs[]={hCCrate, hcounter, htargetM};
+  for(unsigned int ii=0; ii<sizeof(hhs)/sizeof(TH1*); ii++){
+    if(hhs[ii]){
+      printf("Saving hist %d %s\n", ii, hhs[ii]->GetName());
+      hhs[ii]->Write();
+    }
   }
 
-  if(hcounter){
-    hcounter->Write();
-  }
-  
   TTree *theader = new TTree("header","header");
   theader->Branch("nrun",&nrun);
   theader->Fill();

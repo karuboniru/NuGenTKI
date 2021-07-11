@@ -40,7 +40,7 @@ namespace GeneratorIO
     GAMMABIT   =1000000,
     NEUTRONBIT =10000000,
     BKGBIT     =100000000,
-    NUBIT      =1000000000
+    NUCLEUSBIT =1000000000
   };
   
   //=======================================================================================================================
@@ -373,11 +373,14 @@ void SetGENIETarget(const TString evtcode)
     }
 }
 
-void GEANT4SetID(const int pdg, const int eventID)
+void GEANT4FLUKASetID(const int pdg, const int eventID)
 {
   lineCharge = (pdg>0) ? 1 : -1;
 
-  if(abs(pdg)==211){
+  if(abs(pdg)>9000){
+    linePID = NUCLEUSBIT;
+  }
+  else if(abs(pdg)==211){
     linePID = PIONBIT;
     lineMass = PionMass();
   }
@@ -412,8 +415,11 @@ void GEANT4SetID(const int pdg, const int eventID)
   else if(abs(pdg)==11){
     linePID = ELECTRONBIT;
   }
+  else if(abs(pdg)==13){
+    linePID = MUONBIT;
+  }
   else{
-    printf("GeneratorIO::GEANT4SetID not known pdg %d eventID %d\n", pdg, eventID); exit(1);
+    printf("GeneratorIO::GEANT4FLUKASetID not known pdg %d eventID %d\n", pdg, eventID); exit(1);
   }
 }
 
@@ -596,14 +602,42 @@ bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const
   lineFullMom->SetXYZT(tmppx, tmppy, tmppz, tmpE);//input unit is MeV
   (*lineFullMom) *= 1E-3;
 
-  GEANT4SetID(tmppdg, eventID);
+  GEANT4FLUKASetID(tmppdg, eventID);
   return true;
 }
 
-bool FLUKAProceed(const int evt, const TLorentzVector *beamfull, const int tmppdg, const TLorentzVector *tmpfull)
+bool FLUKAProceed(const int evt, const TLorentzVector *tmpbeam, const int tmppdg, const TLorentzVector *tmpsecondary)
 {
-  //printf("test evt %d beamm %f pdg %d imass %f\n", evt, beamfull->M(), tmppdg, tmpfull->M());
-  return false;
+  //printf("test EveNum %d beamm %f secondary pdg %d Px %f Py %f Pz %f E %f M %f\n", evt, beamfull->M(), tmppdg, tmpfull->Px(), tmpfull->Py(), tmpfull->Pz(), tmpfull->E(), tmpfull->M());
+
+  if(beamE<0){
+    (*beamfullp) = (*tmpbeam);
+
+    beamE = beamfullp->E();
+
+    event = evt;
+  }
+
+  if( abs(tmppdg) > 9000 ){
+    if(tmpsecondary->M() < 1){
+      printf("too light nucleus!! %d %f\n", tmppdg, tmpsecondary->M()); tmpsecondary->Print(); exit(1);
+    }
+
+    return false;//skip all nuclei
+
+    /*
+    const int targetA = AnaFunctions::getTargetA(targetZ);
+    if(tmpsecondary->M() > targetA/2){//only skipping Astar 
+
+    }
+    */
+  }
+
+  (*lineFullMom) = (*tmpsecondary);
+
+  GEANT4FLUKASetID(tmppdg, evt);
+  
+  return true;
 }
 
 bool GENIEProceed(const dtype IniOrFinaltype, const dtype RESdtype, const TString code, const int tmpevent, const int tmpprod, const double tmpenu, const double tmppw, const double tmpmom1, const double tmpmom2, const double tmpmom3, const double tmptote, const int tmpid, const double tmpKNsrc)

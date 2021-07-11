@@ -131,11 +131,13 @@ int GetNElectrons()
   return GetNBit(ELECTRONBIT);
 }
 
+/*
 int GetNNus()
 {
   return GetNBit(NUBIT);
 }
- 
+*/
+   
 void SetNParticles()
 {
   nProton  = GetNProtons();
@@ -362,7 +364,7 @@ void ProceedTESTBEAM()
 
     TESTBEAM_gammaE += lineFullMom->E();
   }
-  else if(IsKaon() || IsPion()){//kaon, pi-
+  else if(IsKaon() || IsPion() || IsMuon()){//kaon, pi-, mu+/-; mu+/- come from FLUKA Drell-Yang!!
     AddABit(totparcount,  BKGBIT);
 
     if(lineFullMom->P()>0.1){//100 MeV/c pi- and kaon threshold

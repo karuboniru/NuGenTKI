@@ -321,21 +321,26 @@ void summary_RecoilM(TList *lout)
   
   const int nh = sizeof(hhs)/sizeof(TH1D*);
 
-  //const int stkcols[]={1014, 1003, 1002, 1009, 1010, 1007, 1012, 1005, 1011, 1008, 1014, 1017};
-  const int lincols[]={1002, 1009, 1008, 1011};//, 1014, 1017, 1015};
-  const int ncol=sizeof(lincols)/sizeof(int);
+  //const int linecol[]={1014, 1003, 1002, 1009, 1010, 1007, 1012, 1005, 1011, 1008, 1014, 1017};
+  //const int linecol[]={1002, 1009, 1008, 1011};//, 1014, 1017, 1015};
+  const int ngroup=4;//sizeof(linecol)/sizeof(int);
   
   for(int ii=0; ii<nh; ii++){
     printf("Setting ii %d %s\n", ii, hhs[ii]->GetName());
     style::ResetStyle(hhs[ii]);
-    hhs[ii]->SetLineWidth(2);
-    hhs[ii]->SetLineColor(style::GetColor(lincols[ii%ncol]));
+    hhs[ii]->SetLineWidth(1);
+    //hhs[ii]->SetLineColor(style::GetColor(linecol[ii%ngroup]));
+    hhs[ii]->SetLineColor(style::GetColor(1002));
 
-    if(ii>=2*ncol){
+    if(ii>=2*ngroup){
       hhs[ii]->SetLineStyle(kDashed);
+      hhs[ii]->SetLineWidth(2);
+      hhs[ii]->SetLineColor(style::GetColor(1009));
     }
-    else if(ii>=ncol){
+    else if(ii>=ngroup){
       hhs[ii]->SetLineStyle(kDotted);
+      hhs[ii]->SetLineWidth(6);
+      hhs[ii]->SetLineColor(style::GetColor(1008));
     }
 
     hhs[ii]->SetMaximum(hhs[ii]->GetBinContent(hhs[ii]->GetMaximumBin())*1.1);
@@ -416,22 +421,31 @@ int main(int argc, char * argv[])
   if(sin.Contains("GEANT4")){
     gConfig += "GEANT4 ";
   }
+  else if(sin.Contains("FLUKA")){
+    gConfig += "FLUKA ";
+  }
   else{
     printf("Unknown generator! %s\n", sin.Data()); exit(1);
   }
+  
   if(sin.Contains("Ar")){
     gConfig += "Ar ";
   }
   else{
     printf("Unknown target! %s\n", sin.Data()); exit(1);
   }
+  
   if(sin.Contains("Piplus")){
     gConfig += "#pi^{+} ";
   }
   else{
     printf("Unknown beam particle! %s\n", sin.Data()); exit(1);
   }
-  if(sin.Contains("1GeV")){
+
+  if(sin.Contains("1GeVc")){
+    gConfig += "(1 GeV/#it{c}) ";
+  }
+  else if(sin.Contains("1GeV")){
     gConfig += "(1 GeV) ";
   }
   else{
