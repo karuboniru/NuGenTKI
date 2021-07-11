@@ -40,7 +40,7 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
     
     if(nEntryToStop>0){
       if(ientry>=nEntryToStop){
-        printf("\n\n\n************************  GEANT4 Breaking after %d entries ***********************************************\n\n", nEntryToStop);
+        printf("\n\n\n************************  FLUKA Breaking after %d entries ***********************************************\n\n", nEntryToStop);
         break;
       }
     }
@@ -77,6 +77,9 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
       printf("wrong beam! %d\n", beam); exit(1);
     }
     const TLorentzVector tmpBeamP(ReadFLUKA::PIne[0][0], ReadFLUKA::PIne[0][1], ReadFLUKA::PIne[0][2], ReadFLUKA::PIne[0][3]);
+    if(fabs(tmpBeamP.M()-0.139571)>1E-5){
+      printf("wrong beam mass! %f", tmpBeamP.M()); tmpBeamP.Print(); exit(1);
+    }
     
     targetZ = 18;//need to read in from file, to-do
     int failCounter = 0;
@@ -102,8 +105,8 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
       test evt 1 beamm 0.139571 pdg -8981961 imass 36.285842
       (x,y,z,t)=(0.000000,0.000000,0.000000,37.215539) (P,eta,phi,E)=(0.000000,1.475926,1.165905,37.215539)
      */
-    if(totEvtP.P()>1E-6){// || fabs(totEvtP.M()-37.2)>1E-1){//have seen 37.228016, 37.232100
-      printf("initial target not at rest or not argon-40 run %d event %d\n", ReadFLUKA::RunNum, ReadFLUKA::EveNum); totEvtP.Print(); exit(1);
+    if(totEvtP.P()>1E-6){
+      printf("initial target not at rest run %d event %d\n", ReadFLUKA::RunNum, ReadFLUKA::EveNum); totEvtP.Print(); exit(1);
     }
     
     htargetM->Fill(totEvtP.M());
@@ -140,7 +143,7 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
 
 }
 
-void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntryToStop = -999)
+void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM, const int nEntryToStop = -999)
 {
   ReadGEANT4::SetChain(ch);
 
@@ -150,7 +153,10 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
   int zeroNucleiCounter = 0;
   int singleNucleiCounter = 0;
   int multiNucleiCounter = 0;
-
+  int isPiplus = 0;
+  int isTargetAtRest = 0;
+  int isAr40 = 0;
+ 
   while(ch->GetEntry(ientry)){
     if(ientry%100000==0){
       printf("myEntries %d\n", ientry);
@@ -187,9 +193,22 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
 
     targetZ = (*ReadGEANT4::targetZ)[0];
     int failCounter = 0;
+    TLorentzVector totEvtP;
+    TLorentzVector beamP;
     for(int ii=0; ii<tmpnp; ii++){
       //printf("test all ientry %d ii %d/%d interType %d pdg %d x %f y %f z %f e %f\n", ientry, ii, tmpnp, (*ReadGEANT4::interType)[ii], (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii]);
-      const bool kProceed = GeneratorIO::GEANT4Proceed(ReadGEANT4::EventID, interType, (*ReadGEANT4::PDGcode)[ii], (*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii]);
+      TLorentzVector tmpSecP((*ReadGEANT4::Px)[ii], (*ReadGEANT4::Py)[ii], (*ReadGEANT4::Pz)[ii], (*ReadGEANT4::E)[ii]);
+      tmpSecP *= 1E-3;//input unit is MeV
+      
+      if(ii==0){
+        beamP = tmpSecP;
+        totEvtP = -beamP;//beam
+      }
+      else{
+        totEvtP += tmpSecP;
+      }
+      
+      const bool kProceed = GeneratorIO::GEANT4Proceed(ReadGEANT4::EventID, interType, (*ReadGEANT4::PDGcode)[ii], &tmpSecP);
       if(kProceed){
         AnaUtils::MainProceed();
       }
@@ -199,7 +218,31 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, const int nEntr
         }
       }
     }//loop over particle
+    
+    if(fabs(beamP.M()-0.139571)>1E-5){
+      printf("***************************** ERROR EventID %d wrong beam mass! %f ", ReadGEANT4::EventID, beamP.M()); beamP.Print(); //exit(1);
+      continue;
+    }
+    isPiplus++;
+    hcounter->Fill(10);
 
+    if(totEvtP.P()>3E-2){
+      printf("***************************** ERROR EventID %d initial target not at rest", ReadGEANT4::EventID); totEvtP.Print(); //exit(1);
+      continue;
+    }
+    isTargetAtRest++;
+    hcounter->Fill(11);
+    
+    htargetM->Fill(totEvtP.M());
+    if(fabs(totEvtP.M()-37.2)>1){
+      continue;
+    }
+    if(fabs(totEvtP.M()-37.2)>2E-1){
+      printf("***************************** ERROR EventID %d unknown Ar-40 mass! %f", ReadGEANT4::EventID, totEvtP.M()); totEvtP.Print(); exit(1);
+    }
+    isAr40++;
+    hcounter->Fill(12);
+    
     if(failCounter==0){//all are processed and therefore there is no nuclei skipped.
       //nuclei below GEANT4 tracking threshold are not saved. These can be helium and deutron, checked by looking at event_recoilM for AstarA<0
       //now skipping all A<20 nuclei, can be quite often
@@ -249,7 +292,7 @@ test Cl/Ar39 ientry 189 kk 4/5 interType 1 pdg 1000180390 x -209.351213 y 28.246
     }
   }//loop over event
   
-  cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<isInelas<<" are inelastic interaction, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;
+  cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<isInelas<<" are inelastic interaction, "<<isPiplus<<" are pi+ beam, "<<isTargetAtRest<<" are target at rest, "<<isAr40<<" is argon-40, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;
 }
 
 void GENIEReadChain(TChain * ch, TTree * tout, TH1F * &hCCrate, const int nEntryToStop = -999)
@@ -494,7 +537,8 @@ void anaGenerator(const TString tag, const TString filelist, const int tmpana, c
     TChain * rootFileInput = AnaUtils::InputROOTFiles(filelist, "PartInfo");
     if(rootFileInput){
       hcounter=new TH1I("hcounter","",20,0,20);
-      GEANT4ReadChain(rootFileInput, tout, hcounter, nToStop);
+      htargetM = new TH1D("htargetM","",1600,-1,40);
+      GEANT4ReadChain(rootFileInput, tout, hcounter, htargetM, nToStop);
     }
     else{
       cout<<"No generator identified for GEANT4!! "<<filelist<<endl;
@@ -505,7 +549,7 @@ void anaGenerator(const TString tag, const TString filelist, const int tmpana, c
     TChain * rootFileInput = AnaUtils::InputROOTFiles(filelist, "HitsTree");
     if(rootFileInput){
       hcounter=new TH1I("hcounter","",20,0,20);
-      htargetM = new TH1D("htargetM","",1600,0,40);
+      htargetM = new TH1D("htargetM","",1600,-1,40);
       FLUKAReadChain(rootFileInput, tout, hcounter, htargetM, nToStop);
     }
     else{

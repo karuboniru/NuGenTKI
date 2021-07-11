@@ -70,6 +70,7 @@ namespace TreeIO
 
   int AstarPDG; //Astar is the final-state nucleus that has A > targetA/2, namely the nucleus remnant. targetA is the initial nucleus A.
   int AstarA;
+  double AstarM;
 
   double CLR_KNsrc;
   
@@ -185,6 +186,7 @@ void IniTreeIO()
 
   AstarPDG = -999;
   AstarA = -999;
+  AstarM = -999;
 
   CLR_KNsrc = 0;
 
@@ -239,6 +241,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
 
   tout->Branch("AstarPDG",&AstarPDG);
   tout->Branch("AstarA",&AstarA);
+  tout->Branch("AstarM",&AstarM);
 
   //---
   if(anamode==CLR||anamode==RESPS){

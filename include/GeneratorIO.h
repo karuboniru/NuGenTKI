@@ -546,15 +546,14 @@ void GENIESetID(const int pdg, const double tmptote)
   }
 }
 
-bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const double tmppx, const double tmppy, const double tmppz, const double tmpE)
+bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const TLorentzVector * tmpSecondary)
 {
   //missing iniN-->
   //<---
 
   if(beamE<0){//not initialized, should correspond to [0] of particle vectors
-    beamfullp->SetXYZT(tmppx, tmppy, tmppz, tmpE);//input unit is MeV
-    (*beamfullp) *= 1E-3;
-    
+    (*beamfullp) = (*tmpSecondary);
+
     beamE = beamfullp->E();
     
     event = eventID;
@@ -589,6 +588,7 @@ bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const
       if(AstarPDG==-999){
         AstarPDG = tmppdg;
         AstarA = lineA;
+        AstarM = tmpSecondary->M();
       }
       else{
         printf("GeneratorIO::GEANT4Proceed multiple large nuclei! %d %d %d %d\n", targetA, lineA, AstarPDG, tmppdg);
@@ -598,8 +598,7 @@ bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const
     }
   }
   
-  lineFullMom->SetXYZT(tmppx, tmppy, tmppz, tmpE);//input unit is MeV
-  (*lineFullMom) *= 1E-3;
+  (*lineFullMom) = (*tmpSecondary);
 
   GEANT4FLUKASetID(tmppdg, eventID);
   return true;
@@ -622,14 +621,20 @@ bool FLUKAProceed(const int evt, const TLorentzVector *tmpbeam, const int tmppdg
       printf("too light nucleus!! %d %f\n", tmppdg, tmpsecondary->M()); tmpsecondary->Print(); exit(1);
     }
 
-    return false;//skip all nuclei
-
-    /*
     const int targetA = AnaFunctions::getTargetA(targetZ);
-    if(tmpsecondary->M() > targetA/2){//only skipping Astar 
-
+    const double targetM = AnaFunctions::nuclearMass(targetA, targetZ);
+    if(tmpsecondary->M() > targetM/2){//only skipping Astar
+      if(AstarPDG==-999){
+        AstarPDG = tmppdg;
+        //AstarA = ;//to-do: update with more accurate
+        AstarM = tmpsecondary->M();
+      }
+      else{
+        printf("GeneratorIO::FLUKAProceed multiple large nuclei! %d %f %d %d\n", targetA, targetM, AstarPDG, tmppdg); tmpsecondary->Print();
+        exit(1);
+      }
+      return false;//only skip Astar
     }
-    */
   }
 
   (*lineFullMom) = (*tmpsecondary);
@@ -667,6 +672,8 @@ bool GENIEProceed(const dtype IniOrFinaltype, const dtype RESdtype, const TStrin
           if(AstarPDG==-999){
             AstarPDG = tmpid;
             AstarA = lineA;
+            TLorentzVector tmpaa(tmpmom1, tmpmom2, tmpmom3, tmptote);
+            AstarM = tmpaa.M();
             //printf("testbug %d %d %d %d %s\n", lineA, targetA, tmpZ, tmpid, code.Data());
           }
           else{
