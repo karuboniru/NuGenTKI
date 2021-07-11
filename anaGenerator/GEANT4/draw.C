@@ -417,12 +417,17 @@ int main(int argc, char * argv[])
     return 0;
   }
 
+  gOutdir = argv[2];
+  gOutdir+="/";
+
   const TString sin = argv[1];
   if(sin.Contains("GEANT4")){
     gConfig += "GEANT4 ";
+    gOutdir+="GEANT4_";
   }
   else if(sin.Contains("FLUKA")){
     gConfig += "FLUKA ";
+    gOutdir+="FLUKA_";
   }
   else{
     printf("Unknown generator! %s\n", sin.Data()); exit(1);
@@ -452,9 +457,7 @@ int main(int argc, char * argv[])
     printf("Unknown beam energy! %s\n", sin.Data()); exit(1);
   }
   
-  gOutdir = argv[2];
-  gOutdir+="/";
-
+  
   printf("\n\n=============================== Drawing %s input %s output %s ===============================\n", gConfig.Data(), sin.Data(), gOutdir.Data());
 
   style::SetGlobalStyle();
