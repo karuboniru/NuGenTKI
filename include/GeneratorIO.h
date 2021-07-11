@@ -40,7 +40,7 @@ namespace GeneratorIO
     GAMMABIT   =1000000,
     NEUTRONBIT =10000000,
     BKGBIT     =100000000,
-    NUCLEUSBIT =1000000000
+    NUCLEUSBIT =1000000000//start to overflow, need ULong64_t
   };
   
   //=======================================================================================================================
@@ -585,7 +585,6 @@ bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const
   if(tmppdg>1000000){
     const int lineA = (tmppdg%1000)/10;
     const int targetA = AnaFunctions::getTargetA(targetZ);
-    //only skip Astar
     if(lineA> (targetA/2)){
       if(AstarPDG==-999){
         AstarPDG = tmppdg;
@@ -595,7 +594,7 @@ bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const
         printf("GeneratorIO::GEANT4Proceed multiple large nuclei! %d %d %d %d\n", targetA, lineA, AstarPDG, tmppdg);
         exit(1);
       }
-      return false;
+      return false;    //only skip Astar, all other small nuclei are needed for signal calculation
     }
   }
   

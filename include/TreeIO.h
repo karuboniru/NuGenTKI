@@ -57,9 +57,10 @@ namespace TreeIO
   int evtMode;
   double beamE;
 
-  int npar; //coded bit to count selected particles. For the internal bits, see particlebit in GeneratorIO.h.
-  int totparcount; //same coded bit as npar but for ALL particles. If npar == totparcount, the n<Particle> below are the true level particle counts, otherwise they are only for the selected ones.
+  ULong64_t npar; //coded bit to count selected particles. For the internal bits, see particlebit in GeneratorIO.h.
+  ULong64_t totparcount; //same coded bit as npar but for ALL particles. If npar == totparcount, the n<Particle> below are the true level particle counts, otherwise they are only for the selected ones.
   int nProton;
+  int nNuclei;
   int nPion;
   int nPiZero;
   int nGamma;
@@ -174,6 +175,7 @@ void IniTreeIO()
   npar=0;
   totparcount=0;
   nProton = -999;
+  nNuclei = -999;
   nPion = -999;
   nPiZero = -999;
   nGamma = -999;
@@ -227,6 +229,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
   tout->Branch("npar",&npar);
   tout->Branch("totparcount",&totparcount);
   tout->Branch("nProton",&nProton);
+  tout->Branch("nNuclei",&nNuclei);
   tout->Branch("nPion",&nPion);
   tout->Branch("nPiZero",&nPiZero);
   tout->Branch("nGamma",&nGamma);

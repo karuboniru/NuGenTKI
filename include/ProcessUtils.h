@@ -69,7 +69,12 @@ bool IsGamma()
   return (linePID==GAMMABIT);
 }
 
-void AddABit(int &testnp, const int TESTBIT)
+bool IsNucleus()
+{
+  return (linePID==NUCLEUSBIT);
+}
+ 
+void AddABit(ULong64_t &testnp, const ULong64_t TESTBIT)
 {
   const int ntest = (testnp%(10*TESTBIT)) /TESTBIT;
   if(ntest<8){
@@ -85,7 +90,7 @@ void AddABit(int &testnp, const int TESTBIT)
 //                                                  GetN
 //=======================================================================================================================
 
-int GetNBit(const int bit)
+int GetNBit(const ULong64_t bit)//be careful of overflow at 1E9 for very large bit
 {
   return (npar%(10*bit)) /bit;
 }
@@ -131,16 +136,15 @@ int GetNElectrons()
   return GetNBit(ELECTRONBIT);
 }
 
-/*
-int GetNNus()
+int GetNNuclei()
 {
-  return GetNBit(NUBIT);
+  return GetNBit(NUCLEUSBIT);
 }
-*/
    
 void SetNParticles()
 {
   nProton  = GetNProtons();
+  nNuclei  = GetNNuclei();
   nPion    = GetNPions();
   nPiZero  = GetNPiZeros();
   nGamma   = GetNGammas();
@@ -358,13 +362,17 @@ void ProceedTESTBEAM()
     AddABit(npar,  NEUTRONBIT);
     AddABit(totparcount,  NEUTRONBIT);
   }
+  else if(IsNucleus()){
+    AddABit(npar,  NUCLEUSBIT);
+    AddABit(totparcount,  NUCLEUSBIT);
+  }
   else if(IsGamma()){
     AddABit(npar,  GAMMABIT);
     AddABit(totparcount,  GAMMABIT);
 
     TESTBEAM_gammaE += lineFullMom->E();
   }
-  else if(IsKaon() || IsPion() || IsMuon()){//kaon, pi-, mu+/-; mu+/- come from FLUKA Drell-Yang!!
+  else if(IsKaon() || IsPion() || IsMuon() ){//kaon, pi-, mu+/-; mu+/- come from FLUKA Drell-Yang!!; only consider background that can be vetoed in experiment here
     AddABit(totparcount,  BKGBIT);
 
     if(lineFullMom->P()>0.1){//100 MeV/c pi- and kaon threshold
@@ -479,7 +487,7 @@ void ProceedMINERvAGFS()
   else if(lineIsBkgParticle){//all mesons https://gibuu.hepforge.org/trac/wiki/ParticleIDs                                                                                                                                                                           
     if(globalMuonCharge == -999){
       //printf("globalMuonCharge not set before others! %d %d npar %d event %d\n", linePID, globalMuonCharge, npar, event); exit(1);
-      printf("globalMuonCharge not set before others! %d %d npar %d\n", linePID, globalMuonCharge, npar); exit(1);
+      printf("globalMuonCharge not set before others! %d %d npar %lld\n", linePID, globalMuonCharge, npar); exit(1);
     }
     AddABit(totparcount, BKGBIT);
     AddABit(npar, BKGBIT);
@@ -578,7 +586,7 @@ void ProceedMINERvAGFS0PI()
   }
   else if(lineIsBkgParticle){//all mesons https://gibuu.hepforge.org/trac/wiki/ParticleIDs                                                                                                                                                                           
     if(globalMuonCharge == -999){
-      printf("globalMuonCharge not set before others! %d %d npar %d lineRawID %d event %d\n", linePID, globalMuonCharge, npar, lineRawID, event); exit(1);
+      printf("globalMuonCharge not set before others! %d %d npar %lld lineRawID %d event %d\n", linePID, globalMuonCharge, npar, lineRawID, event); exit(1);
     }
     AddABit(totparcount, BKGBIT);
     AddABit(npar, BKGBIT);

@@ -1,4 +1,4 @@
-export TESTBEAM="list/Filelist_GEANT4_Pion_v010000xstat.txt"
+export TESTBEAM="list/Filelist_GEANT4_Pion_Ar_1GeV_v010000xstat.txt"
 #"list/Filelist_GEANT4_Electron_1GeV_v010000xstat.txt"
 #"list/Filelist_GEANT4_Electron_v010000xstat.txt"
 #
@@ -7,7 +7,7 @@ export TESTBEAM="list/Filelist_GEANT4_Pion_v010000xstat.txt"
 ntostop=
 #10000000
 
-tag=TESTBEAM_Piplus-1GeV-Ar_10000xstat_HASthreshold_Allisgood_Allsave
+tag=TESTBEAM_Piplus-1GeV-Ar_10000xstat_HASthreshold_Allisgood_Allsave_testNucleiSetIDandSkip
 #TESTBEAM_Ar_10000xstat_HASthreshold_Allisgood
 #TESTBEAM_testElectron1GeVV0_10000xstat_0threshold
 

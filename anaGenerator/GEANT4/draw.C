@@ -18,8 +18,8 @@ TH1D *savedraw(const int iplot, TTree *t, TCanvas *c1, const TString var, const 
   const TString hn=Form("%sid%d", c1->GetName(), iplot);
   const TString hbin = nbin>0?Form("(%d, %f, %f)", nbin, xmin, xmax):"";
   const TString v2 = var+">>"+hn+hbin;
-  printf("Draw(%s, %s, %s)\n", v2.Data(), cut.Data(), opt.Data());
-  t->Draw(v2, cut, opt);
+  const int nd = t->Draw(v2, cut, opt);
+  printf("Draw(%s, %s, %s) ndraw %d\n", v2.Data(), cut.Data(), opt.Data(), nd);
 
   c1->Print(Form(gOutdir+"%s.png", hn.Data()));
 
@@ -390,7 +390,7 @@ void summary_RecoilM(TList *lout)
   lg->Clear();
 }
 
-void draw(const TString sin)
+void overdraw(const TString sin)
 {
   TFile * fin = new TFile(sin);
   TTree * tree = (TTree*)fin->Get("tree");
@@ -463,6 +463,6 @@ int main(int argc, char * argv[])
   style::fgkYTitleOffset = 0.85;
   style::fgkXTitleOffset = 1.1;
 
-  draw(sin);
+  overdraw(sin);
   return 0;
 }
