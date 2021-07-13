@@ -22,6 +22,24 @@ void CorrectFSString(TString & slen)
   }
 }
 
+void CorrectOUFlow(TH1D * hh)
+{
+  const double underf = hh->GetBinContent(0);
+  if(underf>1E-10){
+    printf("Correcting %s underflow %f\n", hh->GetName(), underf);
+    hh->AddBinContent(1,underf);
+    hh->SetBinContent(0,0);
+  }
+
+  const int nbin = hh->GetNbinsX();
+  const double overf = hh->GetBinContent(nbin+1);
+  if(overf>1E-10){
+    printf("Correcting %s overflow %f\n", hh->GetName(), overf);
+    hh->AddBinContent(nbin, overf);
+    hh->SetBinContent(nbin+1,0);
+  }
+}
+
 TH1D *savedraw(const int iplot, TTree *t, TCanvas *c1, const TString var, const TString cut="1", const TString opt="hist", const int nbin=-999, const double xmin = -999, const double xmax = -999)
 {
   gStyle->SetOptStat("enoum");
@@ -369,6 +387,7 @@ void summary_RecoilM(TList *lout)
     }
 
     hhs[ii]->SetMaximum(hhs[ii]->GetBinContent(hhs[ii]->GetMaximumBin())*1.1);
+    CorrectOUFlow(hhs[ii]);
     hhs[ii]->SetYTitle("#it{N}_{event}");
     hhs[ii]->SetXTitle("#it{M}_{X} (GeV/#it{c}^{2})");
   }
