@@ -153,7 +153,7 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM
   int zeroNucleiCounter = 0;
   int singleNucleiCounter = 0;
   int multiNucleiCounter = 0;
-  int isPiplus = 0;
+  int isTestBeam = 0;
   int isTargetAtRest = 0;
   int isAr40 = 0;
  
@@ -219,11 +219,11 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM
       }
     }//loop over particle
     
-    if(fabs(beamP.M()-0.139571)>1E-5){
-      printf("***************************** ERROR EventID %d wrong beam mass! %f ", ReadGEANT4::EventID, beamP.M()); beamP.Print(); //exit(1);
+    if(fabs(beamP.M()-0.139571)>1E-5 && fabs(beamP.M()-0.000511)>1E-5){
+      printf("***************************** ERROR EventID %d wrong beam mass not piplus or electron! %f ", ReadGEANT4::EventID, beamP.M()); beamP.Print(); //exit(1);
       continue;
     }
-    isPiplus++;
+    isTestBeam++;
     hcounter->Fill(10);
 
     if(totEvtP.P()>3E-2){
@@ -292,7 +292,7 @@ test Cl/Ar39 ientry 189 kk 4/5 interType 1 pdg 1000180390 x -209.351213 y 28.246
     }
   }//loop over event
   
-  cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<isInelas<<" are inelastic interaction, "<<isPiplus<<" are pi+ beam, "<<isTargetAtRest<<" are target at rest, "<<isAr40<<" is argon-40, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;
+  cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<isInelas<<" are inelastic interaction, "<<isTestBeam<<" are pi+/electron beam, "<<isTargetAtRest<<" are target at rest, "<<isAr40<<" is argon-40, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;
 }
 
 void GENIEReadChain(TChain * ch, TTree * tout, TH1F * &hCCrate, const int nEntryToStop = -999)

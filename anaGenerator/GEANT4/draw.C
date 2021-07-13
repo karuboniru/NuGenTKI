@@ -5,6 +5,23 @@ TString gConfig;
 
 #define __KSLOW__ 0
 
+bool IsPiPlusBeam()
+{
+  return gOutdir.Contains("Piplus");
+}
+
+void CorrectFSString(TString & slen)
+{
+  if(!IsPiPlusBeam()){
+    if(slen.Contains("#pi^{+}")){
+      slen.ReplaceAll("#pi^{+}","e");
+    }
+    else if(slen.Contains("#pi^{0}")){
+      slen.Prepend("e ");
+    }
+  }
+}
+
 TH1D *savedraw(const int iplot, TTree *t, TCanvas *c1, const TString var, const TString cut="1", const TString opt="hist", const int nbin=-999, const double xmin = -999, const double xmax = -999)
 {
   gStyle->SetOptStat("enoum");
@@ -35,7 +52,7 @@ TH1D *savedraw(const int iplot, TTree *t, TCanvas *c1, const TString var, const 
 void sub2DM(TTree *t, TCanvas *c1, TList *lout, const TString basecut, const TString xvar, const double xmin, const double xmax, const TString yvar)
 {
   const TString h2n = Form("%s_%s_2DM_basecut", c1->GetName(), xvar.Data());
-  TH2D * hm=new TH2D(h2n,"", 40, xmin, xmax, 23, -1, 22); lout->Add(hm);
+  TH2D * hm=new TH2D(h2n,"", 40, xmin, xmax, 23, -1.5, 21.5); lout->Add(hm);
   style::ResetStyle(hm);
 
   if(yvar=="(recoilM-event_recoilM)"){
@@ -74,6 +91,8 @@ void sub2DM(TTree *t, TCanvas *c1, TList *lout, const TString basecut, const TSt
   else{
     printf("wrong tag! %s\n", c1->GetName()); exit(1);
   }
+
+  CorrectFSString(slen);
 
   TLatex * lh = new TLatex(0.2, 0.83, gConfig);
   style::ResetStyle(lh);
@@ -129,9 +148,10 @@ void subdrawPiZero_OneP(TTree * t, TList *lout)
 {
   TCanvas * c1 = new TCanvas("PiZero_OneP","",600,400);
 
-  const TString basecut="nBkg==0 && nPion==0 && nPiZero==1 && nProton==1";
-  const TString sigdef = "(totparcount-1000000*nGamma)==100001";
-  const TString selcut="abs(recoilM-36.293)<0.009";
+  const TString beamCut = IsPiPlusBeam() ? "nPion==0 && nPiZero==1 && nElectron==0" : "nPion==0 && nPiZero==1 && nElectron==1";//e pi0 p final state
+  const TString basecut = beamCut+" && nBkg==0 && nProton==1";
+  const TString sigdef  = IsPiPlusBeam() ? "(totparcount-1000000*nGamma)==100001" : "(totparcount-1000000*nGamma)==110001";
+  const TString selcut  = IsPiPlusBeam() ? "recoilM<36.302": "recoilM<36.307";
 
 #if __KSLOW__
   int iplot=9000;
@@ -162,9 +182,10 @@ void subdrawPion_OneP(TTree * t, TList *lout)
 {
   TCanvas * c1 = new TCanvas("Pion_OneP","",600,400);
 
-  const TString basecut="nBkg==0 && nPiZero==0 && nPion==1 && nProton==1";
-  const TString sigdef = "(totparcount-1000000*nGamma)==11";
-  const TString selcut="abs(recoilM-36.296)<0.011";
+  const TString beamCut = IsPiPlusBeam() ? "nPion==1 && nPiZero==0 && nElectron==0" : "nPion==0 && nPiZero==0 && nElectron==1";//e p final state
+  const TString basecut = beamCut+" && nBkg==0 && nProton==1";
+  const TString sigdef  = IsPiPlusBeam() ? "(totparcount-1000000*nGamma)==11" : "(totparcount-1000000*nGamma)==10001";
+  const TString selcut  = "recoilM<36.307";
   
 #if __KSLOW__
   int iplot=9000;
@@ -196,9 +217,10 @@ void subdrawPiZero_TwoP(TTree * t, TList *lout)
   
   TCanvas * c1 = new TCanvas("PiZero_TwoP","",600,400);
 
-  const TString basecut="nBkg==0 && nPion==0 && nPiZero==1 && nProton==2";
-  const TString sigdef = "(totparcount-1000000*nGamma)==100002";
-  const TString selcut="abs(recoilM-35.367)<0.007";
+  const TString beamCut = IsPiPlusBeam() ? "nPion==0 && nPiZero==1 && nElectron==0" : "nPion==0 && nPiZero==1 && nElectron==1";//e pi0 p p final state
+  const TString basecut = beamCut+" && nBkg==0 && nProton==2";
+  const TString sigdef  = IsPiPlusBeam() ? "(totparcount-1000000*nGamma)==100002" : "(totparcount-1000000*nGamma)==110002";
+  const TString selcut  = IsPiPlusBeam() ? "recoilM<35.374" : "recoilM<35.379";
   
 #if __KSLOW__
   int iplot=9000;
@@ -228,9 +250,10 @@ void subdrawPion_TwoP(TTree * t, TList *lout)
 {
   TCanvas * c1 = new TCanvas("Pion_TwoP","",600,400);
 
-  const TString basecut="nBkg==0 && nPiZero==0 && nPion==1 && nProton==2";
-  const TString sigdef = "(totparcount-1000000*nGamma)==12";
-  const TString selcut="abs(recoilM-35.370)<0.009";
+  const TString beamCut = IsPiPlusBeam() ? "nPion==1 && nPiZero==0 && nElectron==0" : "nPion==0 && nPiZero==0 && nElectron==1";//e p p final state
+  const TString basecut = beamCut+" && nBkg==0 && nProton==2";
+  const TString sigdef  = IsPiPlusBeam() ? "(totparcount-1000000*nGamma)==12" : "(totparcount-1000000*nGamma)==10002";
+  const TString selcut  = "recoilM<35.379";
 
 #if __KSLOW__
   int iplot=9000;
@@ -289,11 +312,13 @@ void summary_RecoilP(TList *lout)
   
   TString opt="hist C ";
 
-  PiZero_OneP->Draw(opt); lg->AddEntry(PiZero_OneP,"#pi^{0} p","l");
-  Pion_OneP->Draw(opt+" same"); lg->AddEntry(Pion_OneP,"#pi^{+} p","l");
+  TString beam;
+  TString slen;
+  slen = "#pi^{0}"; CorrectFSString(slen); PiZero_OneP->Draw(opt); lg->AddEntry(PiZero_OneP,slen+" p","l");
+  slen = "#pi^{+}"; CorrectFSString(slen); Pion_OneP->Draw(opt+" same"); lg->AddEntry(Pion_OneP,slen+" p","l");
   //c0->Print(gOutdir+"summary_RecoilP_OnePi.png"); 
-  PiZero_TwoP->Draw(opt+" same"); lg->AddEntry(PiZero_TwoP, "#pi^{0} p p","l");
-  Pion_TwoP->Draw(opt+" same"); lg->AddEntry(Pion_TwoP, "#pi^{+} p p","l");
+  slen = "#pi^{0}"; CorrectFSString(slen); PiZero_TwoP->Draw(opt+" same"); lg->AddEntry(PiZero_TwoP,slen+" p p","l");
+  slen = "#pi^{+}"; CorrectFSString(slen); Pion_TwoP->Draw(opt+" same"); lg->AddEntry(Pion_TwoP,slen+" p p","l");
   lg->Draw();
   
   c0->Print(gOutdir+"summary_RecoilP_TwoPi.png");
@@ -356,35 +381,48 @@ void summary_RecoilM(TList *lout)
   
   gStyle->SetOptStat(0);
 
-  TLegend * lg = new TLegend(0.6, 0.55, 0.9, 0.85);
+  const double lx = 0.6;
+  TLegend * lg = new TLegend(lx, 0.55, lx+0.3, 0.85);
   style::ResetStyle(lg,0.3);
   
   TString opt="hist ";
 
-  PiZero_OneP_Raw->Draw(opt);         lg->AddEntry(PiZero_OneP_Raw,"#pi^{0} p raw","l");
-  PiZero_OneP_Sig->Draw(opt+" same"); lg->AddEntry(PiZero_OneP_Sig,"#pi^{0} p signal","l");
-  PiZero_OneP_Sel->Draw(opt+" same"); lg->AddEntry(PiZero_OneP_Sel,"#pi^{0} p selected","l");
+  TString slen;
+
+  if(!IsPiPlusBeam()){
+    lg->SetX1(0.17);
+    lg->SetX2(0.47);
+  }
+
+  slen = "#pi^{0}"; CorrectFSString(slen);
+  PiZero_OneP_Raw->Draw(opt);         lg->AddEntry(PiZero_OneP_Raw,slen+" p raw","l");
+  PiZero_OneP_Sig->Draw(opt+" same"); lg->AddEntry(PiZero_OneP_Sig,slen+" p signal","l");
+  PiZero_OneP_Sel->Draw(opt+" same"); lg->AddEntry(PiZero_OneP_Sel,slen+" p selected","l");
   lg->SetHeader(gConfig); lg->Draw();
   c0->Print(gOutdir+"summary_PiZero_OneP_RecoilM.png");
   lg->Clear();
 
-  Pion_OneP_Raw->Draw(opt);         lg->AddEntry(Pion_OneP_Raw,"#pi^{+} p raw","l");
-  Pion_OneP_Sig->Draw(opt+" same"); lg->AddEntry(Pion_OneP_Sig,"#pi^{+} p signal","l");
-  Pion_OneP_Sel->Draw(opt+" same"); lg->AddEntry(Pion_OneP_Sel,"#pi^{+} p selected","l");
+  slen = "#pi^{+}"; CorrectFSString(slen);
+  Pion_OneP_Raw->Draw(opt);         lg->AddEntry(Pion_OneP_Raw,slen+" p raw","l");
+  Pion_OneP_Sig->Draw(opt+" same"); lg->AddEntry(Pion_OneP_Sig,slen+" p signal","l");
+  Pion_OneP_Sel->Draw(opt+" same"); lg->AddEntry(Pion_OneP_Sel,slen+" p selected","l");
   lg->SetHeader(gConfig); lg->Draw();
   c0->Print(gOutdir+"summary_Pion_OneP_RecoilM.png");
   lg->Clear();
 
-  PiZero_TwoP_Raw->Draw(opt);         lg->AddEntry(PiZero_TwoP_Raw,"#pi^{0} p p raw","l");
-  PiZero_TwoP_Sig->Draw(opt+" same"); lg->AddEntry(PiZero_TwoP_Sig,"#pi^{0} p p signal","l");
-  PiZero_TwoP_Sel->Draw(opt+" same"); lg->AddEntry(PiZero_TwoP_Sel,"#pi^{0} p p selected","l");
+  lg->SetX1NDC(lx); lg->SetX2NDC(lx+0.3);
+  slen = "#pi^{0}"; CorrectFSString(slen);
+  PiZero_TwoP_Raw->Draw(opt);         lg->AddEntry(PiZero_TwoP_Raw,slen+" p p raw","l");
+  PiZero_TwoP_Sig->Draw(opt+" same"); lg->AddEntry(PiZero_TwoP_Sig,slen+" p p signal","l");
+  PiZero_TwoP_Sel->Draw(opt+" same"); lg->AddEntry(PiZero_TwoP_Sel,slen+" p p selected","l");
   lg->SetHeader(gConfig); lg->Draw();
   c0->Print(gOutdir+"summary_PiZero_TwoP_RecoilM.png");
   lg->Clear();
 
-  Pion_TwoP_Raw->Draw(opt);         lg->AddEntry(Pion_TwoP_Raw,"#pi^{+} p p raw","l");
-  Pion_TwoP_Sig->Draw(opt+" same"); lg->AddEntry(Pion_TwoP_Sig,"#pi^{+} p p signal","l");
-  Pion_TwoP_Sel->Draw(opt+" same"); lg->AddEntry(Pion_TwoP_Sel,"#pi^{+} p p selected","l");
+  slen = "#pi^{+}"; CorrectFSString(slen);
+  Pion_TwoP_Raw->Draw(opt);         lg->AddEntry(Pion_TwoP_Raw,slen+" p p raw","l");
+  Pion_TwoP_Sig->Draw(opt+" same"); lg->AddEntry(Pion_TwoP_Sig,slen+" p p signal","l");
+  Pion_TwoP_Sel->Draw(opt+" same"); lg->AddEntry(Pion_TwoP_Sel,slen+" p p selected","l");
   lg->SetHeader(gConfig); lg->Draw();
   c0->Print(gOutdir+"summary_Pion_TwoP_RecoilM.png");
   lg->Clear();
@@ -435,6 +473,7 @@ int main(int argc, char * argv[])
   
   if(sin.Contains("Ar")){
     gConfig += "Ar ";
+    gOutdir+="Ar_";
   }
   else{
     printf("Unknown target! %s\n", sin.Data()); exit(1);
@@ -442,6 +481,11 @@ int main(int argc, char * argv[])
   
   if(sin.Contains("Piplus")){
     gConfig += "#pi^{+} ";
+    gOutdir+="Piplus_";
+  }
+  else if(sin.Contains("Electron")){
+    gConfig += "e ";
+    gOutdir+="Electron_";
   }
   else{
     printf("Unknown beam particle! %s\n", sin.Data()); exit(1);
