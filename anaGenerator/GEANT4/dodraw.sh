@@ -6,7 +6,8 @@ mkdir -p ${outdir}
 
 #        outplot/outAna11_TESTBEAM_Piplus-1GeV-Ar_10000xstat_HASthreshold_Allisgood_Allsave_testNucleiSetIDandSkipTESTBEAM_Filelist_GEANT4_Pion_Ar_1GeV_v010000xstat.root
 #    outplot/outAna11_TESTBEAM_Electron-1GeV-Ar_10000xstat_HASthreshold_Allisgood_Allsave_testNucleiSetIDandSkipTESTBEAM_Filelist_GEANT4_Electron_Ar1GeV_v010000xstat.root 
-for infile in outplot/outAna11_TESTBEAM_Electron_500MeV-Ar_HASthresholdTESTBEAM_Filelist_GEANT4_Electron_Ar500MeV.root
+for infile in outplot/outAna11_TESTBEAM_Piplus-1GeV-Ar_10000xstat_HASthreshold_checkTESTBEAM_Filelist_GEANT4_Pion_Ar_1GeV_v010000xstat.root
+    #outplot/outAna11_TESTBEAM_Electron_500MeV-Ar_HASthresholdTESTBEAM_Filelist_GEANT4_Electron_Ar500MeV.root
               #outplot/outAna11_TESTBEAM_Piplus-1GeV-Ar_1mstat_HASthreshold11900000TESTBEAM_Filelist_GEANT4_Pion_Ar_1GeV_1mstat.root
 do
 
