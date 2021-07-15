@@ -220,14 +220,14 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM
     }//loop over particle
     
     if(fabs(beamP.M()-0.139571)>1E-5 && fabs(beamP.M()-0.000511)>1E-5){
-      printf("***************************** ERROR EventID %d wrong beam mass not piplus or electron! %f ", ReadGEANT4::EventID, beamP.M()); beamP.Print(); //exit(1);
+      //printf("***************************** ERROR EventID %d wrong beam mass not piplus or electron! %f ", ReadGEANT4::EventID, beamP.M()); beamP.Print(); //exit(1);
       continue;
     }
     isTestBeam++;
     hcounter->Fill(10);
 
     if(totEvtP.P()>3E-2){
-      printf("***************************** ERROR EventID %d initial target not at rest", ReadGEANT4::EventID); totEvtP.Print(); //exit(1);
+      //printf("***************************** ERROR EventID %d initial target not at rest", ReadGEANT4::EventID); totEvtP.Print(); //exit(1);
       continue;
     }
     isTargetAtRest++;

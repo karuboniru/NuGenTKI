@@ -516,6 +516,9 @@ int main(int argc, char * argv[])
   else if(sin.Contains("1GeV")){
     gConfig += "(1 GeV) ";
   }
+  else if(sin.Contains("500MeV")){
+    gConfig += "(0.5 GeV) ";
+  }
   else{
     printf("Unknown beam energy! %s\n", sin.Data()); exit(1);
   }
