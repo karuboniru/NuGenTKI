@@ -158,6 +158,9 @@ void PhysicsBlock(TTree *t, TCanvas *c1, TList *lout, const TString basecut, con
   hout = savedraw(100, t, c1, "recoilP", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
   savedraw(101, t, c1, "event_recoilP", basecut+" && "+selcut,"e same", nbin, xmin, xmax);
 
+  nbin = 400; xmin =1; xmax = 1.02;
+  savedraw(300, t, c1, "beamE", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+  
   Draw2DM(t, c1, lout, basecut);
 }
 
@@ -324,7 +327,7 @@ void summary_RecoilP(TList *lout)
   
   gStyle->SetOptStat(0);
 
-  TLegend * lg = new TLegend(0.6, 0.6, 0.9, 0.9);
+  TLegend * lg = new TLegend(0.55, 0.6, 0.85, 0.9);
   style::ResetStyle(lg,0.3);
   lg->SetHeader(gConfig);
   
@@ -400,7 +403,7 @@ void summary_RecoilM(TList *lout)
   
   gStyle->SetOptStat(0);
 
-  const double lx = 0.6;
+  const double lx = 0.55;
   TLegend * lg = new TLegend(lx, 0.55, lx+0.3, 0.85);
   style::ResetStyle(lg,0.3);
   

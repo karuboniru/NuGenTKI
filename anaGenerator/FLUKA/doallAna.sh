@@ -7,13 +7,13 @@ export TESTBEAM="list/Filelist_FLUKA_Pion_v01GeVc.txt"
 ntostop=
 #10000000
 
-tag=TESTBEAM_Piplus-1GeV-Ar_test_HASthreshold_Allisgood_Allsave_rep
+tag=TESTBEAM_Piplus-1GeVc-Ar_HASthreshold
 #TESTBEAM_Ar_10000xstat_HASthreshold_Allisgood
 #TESTBEAM_testElectron1GeVV0_10000xstat_0threshold
 
 ####################################
 
-mkexe.sh anaGenerator -I${NUGENTKI}/include
+mkexe.sh anaGenerator -I${NUGENTKI}/include -lstyle -I${NUGENTKI}/style  -L${NUGENTKI}/style || return 1
 
 #exit
 
