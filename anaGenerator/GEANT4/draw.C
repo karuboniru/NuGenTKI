@@ -49,6 +49,9 @@ TH1D *savedraw(const int iplot, TTree *t, TCanvas *c1, const TString var, const 
   else{
     gPad->SetLogy(1);
   }
+  if(var.Contains("beamE")){
+    gPad->SetLogy(1);
+  }
 
   const TString hn=Form("%sid%d", c1->GetName(), iplot);
   const TString hbin = nbin>0?Form("(%d, %f, %f)", nbin, xmin, xmax):"";
@@ -158,7 +161,7 @@ void PhysicsBlock(TTree *t, TCanvas *c1, TList *lout, const TString basecut, con
   hout = savedraw(100, t, c1, "recoilP", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
   savedraw(101, t, c1, "event_recoilP", basecut+" && "+selcut,"e same", nbin, xmin, xmax);
 
-  nbin = 400; xmin =1; xmax = 1.02;
+  nbin = 2000; xmin =0; xmax = 2;
   savedraw(300, t, c1, "beamE", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
   
   Draw2DM(t, c1, lout, basecut);
