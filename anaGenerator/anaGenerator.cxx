@@ -16,6 +16,7 @@
 #include "ReadGENIE.h"
 #include "ReadGEANT4.h"
 #include "ReadFLUKA.h"
+#include "style.h"
 
 using namespace std;
 using namespace ReadGENIE;
@@ -118,19 +119,19 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
       printf("unknown Ar-40!"); totEvtP.Print(); exit(1);
     }
     isAr40++;
-    hcounter->Fill(10);
+    hcounter->Fill(4);
     
     if(failCounter==0){//all are processed and therefore there is no nuclei skipped.
       zeroNucleiCounter++;
-      hcounter->Fill(4);
+      hcounter->Fill(5);
     }
     else if(failCounter==1){
       singleNucleiCounter++;
-      hcounter->Fill(5);
+      hcounter->Fill(6);
     }
     else{//>=2
       multiNucleiCounter++;
-      hcounter->Fill(6);
+      hcounter->Fill(7);
     }
 
     if(1){//fill all fail cases//if(failCounter==1){
@@ -138,9 +139,15 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
     }
     
   }//loop over event
-  
-  cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<isInelas<<" are inelastic interaction, "<<isAr40<<" is on Ar-40, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;
 
+  //static void PrintStat(const TString tag, const double oldsel, const double newn);
+  style::PrintStat("All entries", ientry, ientry);
+  style::PrintStat("Interactions", ientry, isInteractionCounter);
+  style::PrintStat("Inelastic", isInteractionCounter, isInelas);
+  style::PrintStat("Ar40", isInelas, isAr40);
+  style::PrintStat("zero nuclei", isAr40, zeroNucleiCounter);
+  style::PrintStat("single nuclei", isAr40, singleNucleiCounter);
+  style::PrintStat("multi nuclei", isAr40, multiNucleiCounter);
 }
 
 void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM, const int nEntryToStop = -999)
@@ -224,14 +231,14 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM
       continue;
     }
     isTestBeam++;
-    hcounter->Fill(10);
+    hcounter->Fill(4);
 
     if(totEvtP.P()>3E-2){
       //printf("***************************** ERROR EventID %d initial target not at rest", ReadGEANT4::EventID); totEvtP.Print(); //exit(1);
       continue;
     }
     isTargetAtRest++;
-    hcounter->Fill(11);
+    hcounter->Fill(5);
     
     htargetM->Fill(totEvtP.M());
     if(fabs(totEvtP.M()-37.2)>1){
@@ -241,13 +248,13 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM
       printf("***************************** ERROR EventID %d unknown Ar-40 mass! %f", ReadGEANT4::EventID, totEvtP.M()); totEvtP.Print(); exit(1);
     }
     isAr40++;
-    hcounter->Fill(12);
+    hcounter->Fill(6);
     
     if(failCounter==0){//all are processed and therefore there is no nuclei skipped.
       //nuclei below GEANT4 tracking threshold are not saved. These can be helium and deutron, checked by looking at event_recoilM for AstarA<0
       //now skipping all A<20 nuclei, can be quite often
       zeroNucleiCounter++;
-      hcounter->Fill(4);
+      hcounter->Fill(7);
       /*
       printf("anaGenerator bad failCounter %d\n", failCounter);
       for(int kk=0; kk<tmpnp; kk++){
@@ -258,11 +265,11 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM
     }
     else if(failCounter==1){
       singleNucleiCounter++;
-      hcounter->Fill(5);
+      hcounter->Fill(8);
     }
     else{//>=2
       multiNucleiCounter++;
-      hcounter->Fill(6);
+      hcounter->Fill(9);
     }
 
     //hcounter->Fill(4);//only no nuclei or 1 nuclei, reject multi-nuclei, i.e. breakup
@@ -291,8 +298,18 @@ test Cl/Ar39 ientry 189 kk 4/5 interType 1 pdg 1000180390 x -209.351213 y 28.246
       AnaUtils::DoFill(tout);
     }
   }//loop over event
-  
-  cout<<"All entries "<<ientry<<", of which "<<isInteractionCounter<<" are interactions, "<<isInelas<<" are inelastic interaction, "<<isTestBeam<<" are pi+/electron beam, "<<isTargetAtRest<<" are target at rest, "<<isAr40<<" is argon-40, "<<zeroNucleiCounter<<" have zero nuclei, "<<singleNucleiCounter<<" have single nuclei, "<<multiNucleiCounter<<" have multi nuclei."<<endl;
+
+  //static void PrintStat(const TString tag, const double oldsel, const double newn);
+  style::PrintStat("All entries", ientry, ientry);
+  style::PrintStat("Interactions", ientry, isInteractionCounter);
+  style::PrintStat("Inelastic", isInteractionCounter, isInelas);
+  style::PrintStat("Pi+/electron beam", isInelas, isTestBeam);
+  style::PrintStat("Target at rest", isTestBeam, isTargetAtRest);
+  style::PrintStat("Ar40", isTargetAtRest, isAr40);
+  style::PrintStat("zero nuclei", isAr40, zeroNucleiCounter);
+  style::PrintStat("single nuclei", isAr40, singleNucleiCounter);
+  style::PrintStat("multi nuclei", isAr40, multiNucleiCounter);
+
 }
 
 void GENIEReadChain(TChain * ch, TTree * tout, TH1F * &hCCrate, const int nEntryToStop = -999)
