@@ -325,13 +325,13 @@ TLorentzVector AnaUtils::GetBeamFullP()
 void AnaUtils::Calc()
 {
   const TLorentzVector beamFullP=GetBeamFullP();
-  const TLorentzVector lvq= beamFullP - (*muonfullp);
+  const TLorentzVector lvq= beamFullP - (*PU4pScatter);
 
 #if __OPENCALC__
   //---muon: 2
   {//use blocks to isolate calculations
-    muonmomentum = muonfullp->P();
-    muontheta = muonfullp->Theta()*TMath::RadToDeg();
+    muonmomentum = PU4pScatter->P();
+    muontheta = PU4pScatter->Theta()*TMath::RadToDeg();
     
     //---W: 5
     //not used q3 = lvq.P();
@@ -350,34 +350,29 @@ void AnaUtils::Calc()
 
   {
     //---hadron: 8; tmphadronfullp is intermediate locally
-    protonmomentum = protonfullp->P();
-    protontheta = protonfullp->Theta()*TMath::RadToDeg();
-    pionmomentum = pionfullp->P();
-    piontheta = pionfullp->Theta()*TMath::RadToDeg();
-    //pionEk = pionfullp->E()-PionMass();
-    pionEk = Ekin(pionfullp, PionMass()); //only use experimental momentum
+    protonmomentum = PU4pRecoil->P();
+    protontheta = PU4pRecoil->Theta()*TMath::RadToDeg();
+    pionmomentum = PU4pPion->P();
+    piontheta = PU4pPion->Theta()*TMath::RadToDeg();
+    //pionEk = PU4pPion->E()-PionMass();
+    pionEk = Ekin(PU4pPion, PionMass()); //only use experimental momentum
   }
   
   {
     //pretend hydrogen is carbon, same as experiment
     const int localZ = (targetZ==1 ? 6 : targetZ);
     const int localA = AnaFunctions::getTargetA(localZ);
-    //void getCommonTKI(const int targetA, const int targetZ, const TLorentzVector *beamfullp, const TLorentzVector *scatterfullp, const TLorentzVector *recoilfullp, double & dalphat, double & dphit, double & dpt, double & dpTT, double & beamCalcP, double & IApN, double & recoilM, double & recoilP)
-    if(anamode==TESTBEAM){
-      AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, pionfullp, protonfullp,     dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
-    }
-    else{
-      //GiBUU 4-momentum doesn't give physical mass; but using its given 4-momentum provides direct access to internal dynamics like pN
-      const TLorentzVector tmphadronfullp = (*protonfullp) + (*pionfullp);//this is more logical
-      //this will cause delta<0 in TESTBEAM; only used for neutrino. 
-      //to repeat old results TLorentzVector tmphadronfullp; tmphadronfullp.SetXYZT(protonfullp->X()+pionfullp->X(), protonfullp->Y()+pionfullp->Y(), protonfullp->Z()+pionfullp->Z(), Energy(protonfullp, ProtonMass())+Energy(pionfullp, pionfullp->P()>1E-10? PionMass():0));//need to use experimental momentum only
-    
-      baryonmomentum = tmphadronfullp.P();
-      baryontheta = tmphadronfullp.Theta()*TMath::RadToDeg();
-      baryonmass = tmphadronfullp.M();
 
-      AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, muonfullp, &tmphadronfullp, dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
-    }
+    //GiBUU 4-momentum doesn't give physical mass; but using its given 4-momentum provides direct access to internal dynamics like pN
+    const TLorentzVector tmphadronfullp = (*PU4pRecoil) + (*PU4pPion);//this is more logical
+    //this will cause delta<0 in TESTBEAM; only used for neutrino. 
+    //to repeat old results TLorentzVector tmphadronfullp; tmphadronfullp.SetXYZT(PU4pRecoil->X()+PU4pPion->X(), PU4pRecoil->Y()+PU4pPion->Y(), PU4pRecoil->Z()+PU4pPion->Z(), Energy(PU4pRecoil, ProtonMass())+Energy(PU4pPion, PU4pPion->P()>1E-10? PionMass():0));//need to use experimental momentum only
+    
+    baryonmomentum = tmphadronfullp.P();
+    baryontheta = tmphadronfullp.Theta()*TMath::RadToDeg();
+    baryonmass = tmphadronfullp.M();
+    
+    AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, PU4pScatter, &tmphadronfullp, dalphat, dphit, dpt, dpTT, beamCalcP, IApN, recoilM, recoilP);
 
     double dummy = -999;
     AnaFunctions::getCommonTKI(localA, localZ, &beamFullP, 0x0,       eventfullp,  dummy, dummy, dummy,dummy, event_beamCalcP, event_IApN, event_recoilM, event_recoilP);
@@ -385,22 +380,22 @@ void AnaUtils::Calc()
   }
   
   /*
-    protonTT = protonfullp->Vect().Dot(ztt);
-    pionTT = pionfullp->Vect().Dot(ztt);
+    protonTT = PU4pRecoil->Vect().Dot(ztt);
+    pionTT = PU4pPion->Vect().Dot(ztt);
   */
 
   //dpTy = dpt * cos(dalphat*TMath::DegToRad());
 #endif
 
 #if __OPENCLR__
-  const TVector3 ztt = (beamFullP.Vect().Cross(muonfullp->Vect())).Unit();    
+  const TVector3 ztt = (beamFullP.Vect().Cross(PU4pScatter->Vect())).Unit();    
 
   const double ares = -0.3; //0.2
 
   lrsign = 0;
-  if(protonfullp->E()>1E-10){
+  if(PU4pRecoil->E()>1E-10){
     //right is -1, left is +1
-    lrsign = protonfullp->Vect().Dot(ztt) > 0 ? -1 : 1;
+    lrsign = PU4pRecoil->Vect().Dot(ztt) > 0 ? -1 : 1;
 
     //just use the unweighted lrsign (original one)
     pseudosign = lrsign;
@@ -416,11 +411,11 @@ void AnaUtils::Calc()
     RESmass = ressum.M();
     
     //double GetAdlerPhi(TLorentzVector nufull, TLorentzVector muonfull, TLorentzVector pifull, TLorentzVector nucleonfull, TLorentzVector iniNfull)
-    adlerPhi = GetOneBoostAdlerPhi(beamFullP, *muonfullp, *RESpifullp, *RESnucleonfullp, *iniNfullp);
+    adlerPhi = GetOneBoostAdlerPhi(beamFullP, *PU4pScatter, *RESpifullp, *RESnucleonfullp, *iniNfullp);
 
     /*
     //->test
-    const double tbadler = GetTwoBoostAdlerPhi(beamFullP, *muonfullp, *RESpifullp, *RESnucleonfullp, *iniNfullp);
+    const double tbadler = GetTwoBoostAdlerPhi(beamFullP, *PU4pScatter, *RESpifullp, *RESnucleonfullp, *iniNfullp);
     if(fabs(adlerPhi-tbadler)>1e-10){
       printf("one-boost and two-boost not consistent!\n");
       exit(1);
@@ -434,7 +429,7 @@ void AnaUtils::Calc()
     lrsign *= w2;
 
     //============= repeat incorrect calculation in CLR paper first version =====>
-    pseudoPhi = GetPseudoPhi(beamFullP, *muonfullp, *RESpifullp, *RESnucleonfullp);
+    pseudoPhi = GetPseudoPhi(beamFullP, *PU4pScatter, *RESpifullp, *RESnucleonfullp);
     wpseudo2 = GetW2(pseudoPhi, ares);
     pseudosign *= wpseudo2;
   }
@@ -457,10 +452,10 @@ void AnaUtils::Calc()
 #endif
 
 #if __OPENMMECCQE__
-  //muoncostheta = TMath::Cos( muonfullp->Theta()  );
-  muonpt = muonfullp->Pt();
-  mupz = muonfullp->Pz();
-  q2qe = GetTrueCCQEQ2(muonmomentum, muonfullp->Theta());
+  //muoncostheta = TMath::Cos( PU4pScatter->Theta()  );
+  muonpt = PU4pScatter->Pt();
+  mupz = PU4pScatter->Pz();
+  q2qe = GetTrueCCQEQ2(muonmomentum, PU4pScatter->Theta());
 #endif 
 
 

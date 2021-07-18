@@ -11,17 +11,17 @@ namespace ProcessUtils
   //=======================================================================================================================
   //                                                  variables
   //=======================================================================================================================
-  TLorentzVector * muonfullp= new TLorentzVector;
-  TLorentzVector * protonfullp= new TLorentzVector;
-  TLorentzVector * pionfullp= new TLorentzVector;
+  TLorentzVector * PU4pScatter= new TLorentzVector;
+  TLorentzVector * PU4pRecoil= new TLorentzVector;
+  TLorentzVector * PU4pPion= new TLorentzVector;
   TLorentzVector * neutronFSfullp= new TLorentzVector;
   TLorentzVector * eventfullp = new TLorentzVector;
 
 void IniProcessUtils()
 {
-  muonfullp->SetXYZT(0,0,0,0);
-  protonfullp->SetXYZT(0,0,0,0);
-  pionfullp->SetXYZT(0,0,0,0);
+  PU4pScatter->SetXYZT(0,0,0,0);
+  PU4pRecoil->SetXYZT(0,0,0,0);
+  PU4pPion->SetXYZT(0,0,0,0);
   neutronFSfullp->SetXYZT(0,0,0,0);
   eventfullp->SetXYZT(0,0,0,0);
 }
@@ -167,17 +167,17 @@ void ProceedT2KGFS()
      IsMuon()
      && tmpmom> 0.25 && tmptheta< 126.87 //cos > -0.6
      ){//mu- or +
-    (*muonfullp)=(*lineFullMom);
+    (*PU4pScatter)=(*lineFullMom);
     npar+= MUONBIT;
   }
   else if(
           IsProton()
           ){
     if(
-       tmpmom>protonfullp->P()
+       tmpmom>PU4pRecoil->P()
        && tmpmom> 0.45 && tmpmom< 1.0 && tmptheta< 66.42 //cos > 0.4
        ){
-      (*protonfullp)=(*lineFullMom);
+      (*PU4pRecoil)=(*lineFullMom);
       npar += PROTONBIT;
       CLR_KNsrc = CLR_lineKNsource;
     }
@@ -189,7 +189,7 @@ void ProceedT2KGFS()
           && tmptheta<70
           ){//pion
         
-    (*pionfullp)=(*lineFullMom);
+    (*PU4pPion)=(*lineFullMom);
     npar += PIONBIT;
   }
   else if(lineIsBkgParticle){//all mesons https://gibuu.hepforge.org/trac/wiki/ParticleIDs                                                                                                                             
@@ -206,17 +206,17 @@ void ProceedT2KGFSEXP()
      IsMuon()
      && tmpmom> 0.25 && tmpmom< 7 && tmptheta< 70
      ){//mu- or +
-    (*muonfullp)=(*lineFullMom);
+    (*PU4pScatter)=(*lineFullMom);
     npar+= MUONBIT;
   }
   else if(
           IsProton()
           ){
     if(
-       tmpmom>protonfullp->P()
+       tmpmom>PU4pRecoil->P()
        && tmpmom> 0.45 && tmpmom< 1.2 && tmptheta< 70
        ){
-      (*protonfullp)=(*lineFullMom);
+      (*PU4pRecoil)=(*lineFullMom);
       npar += PROTONBIT;
       CLR_KNsrc = CLR_lineKNsource;
     }
@@ -225,7 +225,7 @@ void ProceedT2KGFSEXP()
           IsPion() && (lineCharge+globalMuonCharge) == 0
           && tmpmom> 0.15 && tmpmom< 1.2 && tmptheta< 70
           ){//pion
-    (*pionfullp)=(*lineFullMom);
+    (*PU4pPion)=(*lineFullMom);
     npar += PIONBIT;
   }
   else if(lineIsBkgParticle){//all mesons https://gibuu.hepforge.org/trac/wiki/ParticleIDs
@@ -242,7 +242,7 @@ void ProceedMINERvAMECCQE()
      IsMuon()
      && tmpmupz>1.5 && tmptheta<20
      ){
-    (*muonfullp)=(*lineFullMom);
+    (*PU4pScatter)=(*lineFullMom);
     npar+= MUONBIT;
   }
   else if(
@@ -264,17 +264,17 @@ void ProceedCLR()
      IsMuon()
      && tmpmom> 1.5 && tmpmom< 10 && tmptheta<20
      ){
-    (*muonfullp)=(*lineFullMom);
+    (*PU4pScatter)=(*lineFullMom);
     npar+= MUONBIT;
   }
   else if(
           IsProton()
           ){
     if(
-       tmpmom>protonfullp->P()
+       tmpmom>PU4pRecoil->P()
        && tmpmom> 0.45 && tmptheta<70
        ){
-      (*protonfullp)=(*lineFullMom);
+      (*PU4pRecoil)=(*lineFullMom);
       npar += PROTONBIT;
       CLR_KNsrc = CLR_lineKNsource;
     }
@@ -300,22 +300,22 @@ void ProceedRESPS()
      IsMuon()
      && tmpmom> 1.5 && tmpmom< 10 && tmptheta<20
      ){
-    (*muonfullp)=(*lineFullMom);
+    (*PU4pScatter)=(*lineFullMom);
     npar+= MUONBIT;
   }
   else if(
           IsProton()
           ){
     if(
-       tmpmom>protonfullp->P()
+       tmpmom>PU4pRecoil->P()
        ){
-      (*protonfullp)=(*lineFullMom);
+      (*PU4pRecoil)=(*lineFullMom);
       npar += PROTONBIT;
       CLR_KNsrc = CLR_lineKNsource;
     }
   }
   else if(linePID == PIONBIT || linePID == PIZEROBIT){//jus tag, no use of momentum for calculation
-    (*pionfullp)=(*lineFullMom);
+    (*PU4pPion)=(*lineFullMom);
     npar += PIONBIT;
   }
   else if(lineIsBkgParticle){
@@ -333,28 +333,28 @@ void ProceedTESTBEAM()
     AddABit(totparcount,  PIONBIT);
     
     if(lineFullMom->P()>0.1){//100 MeV/c pion threshold
-      (*pionfullp) += (*lineFullMom);
+      (*PU4pScatter) += (*lineFullMom);
       AddABit(npar,  PIONBIT);
     }
-  }
-  else if(IsPiZero()){//no pi0 threshold
-    (*pionfullp) += (*lineFullMom);//both pi+ and pi0 are lumped together
-    AddABit(npar,  PIZEROBIT);
-    AddABit(totparcount,  PIZEROBIT);
   }
   else if(IsElectron()){
     AddABit(totparcount,  ELECTRONBIT);
 
     if(lineFullMom->P()>5E-3){//5 MeV/c electron threshold just as a place holder
-      (*pionfullp) += (*lineFullMom);//lump to pion 
+      (*PU4pScatter) += (*lineFullMom);
       AddABit(npar,  ELECTRONBIT);
     }
+  }
+  else if(IsPiZero()){//no pi0 threshold
+    (*PU4pPion) += (*lineFullMom);
+    AddABit(npar,  PIZEROBIT);
+    AddABit(totparcount,  PIZEROBIT);
   }
   else if(IsProton()){
     AddABit(totparcount,  PROTONBIT);
     
     if(lineFullMom->P()>0.3){//300 MeV/c proton threshold
-      (*protonfullp) += (*lineFullMom);
+      (*PU4pRecoil) += (*lineFullMom);
       AddABit(npar,  PROTONBIT);
     }
   }
@@ -391,23 +391,23 @@ void ProceedNUGAS()
   if(
      IsMuon()
      ){
-    (*muonfullp)=(*lineFullMom);
+    (*PU4pScatter)=(*lineFullMom);
     npar+= MUONBIT;
   }
   else if(
           IsProton()
           ){
     if(
-       tmpmom>protonfullp->P()
+       tmpmom>PU4pRecoil->P()
        ){
-      (*protonfullp)=(*lineFullMom);
+      (*PU4pRecoil)=(*lineFullMom);
     }
     npar += PROTONBIT;
   }
   else if(
           IsPion() && (lineCharge+globalMuonCharge) == 0
           ){
-    (*pionfullp)=(*lineFullMom);
+    (*PU4pPion)=(*lineFullMom);
     npar += PIONBIT;
   }
   else if(
@@ -449,7 +449,7 @@ void ProceedMINERvAGFS()
     totparcount+= MUONBIT;
 
     if(tmpmom> 1.5 && tmpmom< 10 && tmptheta<20){//mu+ or mu-
-      (*muonfullp)=(*lineFullMom);
+      (*PU4pScatter)=(*lineFullMom);
       npar+= MUONBIT;
     }
   }
@@ -464,9 +464,9 @@ void ProceedMINERvAGFS()
       AddABit(npar, PROTONBIT);
       
       if(
-         tmpmom>protonfullp->P()
+         tmpmom>PU4pRecoil->P()
          ){
-        (*protonfullp)=(*lineFullMom);
+        (*PU4pRecoil)=(*lineFullMom);
         CLR_KNsrc = CLR_lineKNsource;
       }
     }
@@ -480,7 +480,7 @@ void ProceedMINERvAGFS()
     if(tmpEk > 0.075 && tmpEk < 0.4 
        && tmptheta<70
        ){//pion
-      (*pionfullp)=(*lineFullMom);
+      (*PU4pPion)=(*lineFullMom);
       AddABit(npar, PIONBIT);
     }
   }
@@ -508,7 +508,7 @@ void ProceedDUNEEXCL3()
     totparcount += MUONBIT;
 
     npar+= MUONBIT;
-    (*muonfullp)=(*lineFullMom);
+    (*PU4pScatter)=(*lineFullMom);
   }
   //proton 3 MeV KE = 75 MeV momentum
   //https://www.wolframalpha.com/input/?i=sqrt%28%28938.272%2B3%29%5E2-938.272%5E2%29
@@ -520,9 +520,9 @@ void ProceedDUNEEXCL3()
     AddABit(npar, PROTONBIT);
       
     if(
-       tmpmom>protonfullp->P()
+       tmpmom>PU4pRecoil->P()
        ){
-      (*protonfullp)=(*lineFullMom);
+      (*PU4pRecoil)=(*lineFullMom);
     }
   }
   //pion 3 MeV KE = 29 MeV momentum
@@ -535,9 +535,9 @@ void ProceedDUNEEXCL3()
     AddABit(npar, PIONBIT);
 
     if(
-       tmpmom>pionfullp->P()
+       tmpmom>PU4pPion->P()
        ){
-      (*pionfullp)=(*lineFullMom);
+      (*PU4pPion)=(*lineFullMom);
     }
   }
   else if(lineIsBkgParticle || IsNeutron() || lineRawID==GiBUUAntiProtonID() || IsMuon() || IsProton() || IsPion() ){//neutron and also antiproton are background; mu/p/pi entering here are also non-exclusive background---they are below threshold and need to be subtracted in real measurement
@@ -562,7 +562,7 @@ void ProceedMINERvAGFS0PI()
     totparcount+= MUONBIT;
 
     if(tmpmom> 1.5 && tmpmom< 10 && tmptheta<20){//mu+ or mu-
-      (*muonfullp)=(*lineFullMom);
+      (*PU4pScatter)=(*lineFullMom);
       npar+= MUONBIT;
     }
   }
@@ -577,9 +577,9 @@ void ProceedMINERvAGFS0PI()
       AddABit(npar, PROTONBIT);
       
       if(
-         tmpmom>protonfullp->P()
+         tmpmom>PU4pRecoil->P()
          ){
-        (*protonfullp)=(*lineFullMom);
+        (*PU4pRecoil)=(*lineFullMom);
         CLR_KNsrc = CLR_lineKNsource;
       }
     }
@@ -609,7 +609,7 @@ void ProceedMINERvAGFSPIZERO()
     if(
        tmpmom> 1.5 && tmpmom< 20 && tmptheta<25
        ){
-      (*muonfullp)=(*lineFullMom);
+      (*PU4pScatter)=(*lineFullMom);
       npar+= MUONBIT;
     }
   }
@@ -624,9 +624,9 @@ void ProceedMINERvAGFSPIZERO()
       AddABit(npar, PROTONBIT);
 
       if(
-         tmpmom>protonfullp->P()
+         tmpmom>PU4pRecoil->P()
          ){
-        (*protonfullp)=(*lineFullMom);
+        (*PU4pRecoil)=(*lineFullMom);
         CLR_KNsrc = CLR_lineKNsource;
       }
     }
@@ -638,9 +638,9 @@ void ProceedMINERvAGFSPIZERO()
     AddABit(npar, PIONBIT);
 
     if(
-       tmpmom>pionfullp->P()
+       tmpmom>PU4pPion->P()
        ){
-      (*pionfullp)=(*lineFullMom);
+      (*PU4pPion)=(*lineFullMom);
     }
   }
   else if(lineIsBkgParticle){
@@ -712,10 +712,10 @@ void ProceedMINERvALOWRECOIL()
       kk = tmpmom;
     }
     if(kk > 1.5){
-      (*muonfullp)=(*lineFullMom);
+      (*PU4pScatter)=(*lineFullMom);
 
       const TLorentzVector dummyNu(0,0,beamE, beamE);
-      const TLorentzVector lvq= dummyNu - (*muonfullp);
+      const TLorentzVector lvq= dummyNu - (*PU4pScatter);
       LOWRECOIL_q3 = lvq.P();
 
       //only save below 0.8 to save space and time
@@ -729,10 +729,10 @@ void ProceedMINERvALOWRECOIL()
           IsProton()
           ){
     if(
-       tmpmom>protonfullp->P()
+       tmpmom>PU4pRecoil->P()
        && tmpmom> 0.45 && tmpmom< 1.2 && tmptheta<70
        ){
-      (*protonfullp)=(*lineFullMom);
+      (*PU4pRecoil)=(*lineFullMom);
       npar += PROTONBIT;
       CLR_KNsrc = CLR_lineKNsource;
     }
@@ -741,7 +741,7 @@ void ProceedMINERvALOWRECOIL()
           IsPion() && (lineCharge+globalMuonCharge) == 0
           && tmpmom> 0.2 && tmpmom< 4.0 && tmptheta<70
           ){//pion
-    (*pionfullp)=(*lineFullMom);
+    (*PU4pPion)=(*lineFullMom);
     npar += PIONBIT;
   }
   else if(lineIsBkgParticle){//all mesons https://gibuu.hepforge.org/trac/wiki/ParticleIDs
@@ -768,15 +768,15 @@ void ProceedMINERvANUBAR1PI()
   if(IsMuon() && tmptheta<25 &&
      beamE > 1.5 && beamE < 10
      ){
-    (*muonfullp)=(*lineFullMom);
+    (*PU4pScatter)=(*lineFullMom);
     npar+= MUONBIT;
   }
   //->save any leading proton also, not affecting selection
   else if(
           IsProton()
           ){
-    if(tmpmom>protonfullp->P()){
-      (*protonfullp)=(*lineFullMom);
+    if(tmpmom>PU4pRecoil->P()){
+      (*PU4pRecoil)=(*lineFullMom);
       npar += PROTONBIT;
       CLR_KNsrc = CLR_lineKNsource;
     }
@@ -785,7 +785,7 @@ void ProceedMINERvANUBAR1PI()
   else if(
           IsPion() && (lineCharge+globalMuonCharge) == 0
           ){//pion
-    (*pionfullp)=(*lineFullMom);
+    (*PU4pPion)=(*lineFullMom);
     npar += PIONBIT;
   }
   else if(lineIsBkgParticle){//all mesons https://gibuu.hepforge.org/trac/wiki/ParticleIDs
