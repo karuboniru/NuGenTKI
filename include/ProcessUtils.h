@@ -346,7 +346,12 @@ void ProceedTESTBEAM()
     }
   }
   else if(IsPiZero()){//no pi0 threshold
-    (*PU4pPion) += (*lineFullMom);
+    if( PU4pScatter->P()>1E-10 ){//already has scatter
+      (*PU4pPion) += (*lineFullMom);
+    }
+    else{
+      (*PU4pScatter) += (*lineFullMom);
+    }
     AddABit(npar,  PIZEROBIT);
     AddABit(totparcount,  PIZEROBIT);
   }

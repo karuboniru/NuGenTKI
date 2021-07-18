@@ -159,11 +159,18 @@ void PhysicsBlock(TTree *t, TCanvas *c1, TList *lout, const TString basecut, con
 
   nbin = 50; xmin = 0; xmax = 2;
   hout = savedraw(100, t, c1, "recoilP", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
-  savedraw(101, t, c1, "event_recoilP", basecut+" && "+selcut,"e same", nbin, xmin, xmax);
+  hout = savedraw(101, t, c1, "event_recoilP", basecut+" && "+selcut,"e same", nbin, xmin, xmax); lout->Add(hout);
 
   nbin = 2000; xmin =0; xmax = 2;
-  savedraw(300, t, c1, "beamE", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
-  
+  hout = savedraw(300, t, c1, "beamE", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+
+  nbin = 50; xmin = 0; xmax = 3;
+  hout = savedraw(400, t, c1, "Wrest", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+  hout = savedraw(500, t, c1, "baryonmass", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+
+  nbin = 50; xmin = 0; xmax = 2;
+  hout = savedraw(600, t, c1, "xrest", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+
   Draw2DM(t, c1, lout, basecut);
 }
 
@@ -301,25 +308,37 @@ void subdrawPion_TwoP(TTree * t, TList *lout)
   PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35.365, 35.415);
 }
 
-void summary_RecoilP(TList *lout)
+void summaryConfig(TList *lout, const TString tag, const TString sID, const TString xtit, const double xmin=-999, const double xmax=-999)
 {
-  TH1D * PiZero_OneP = (TH1D*) lout->FindObject("PiZero_OnePid100"); if(!PiZero_OneP){printf("PiZero_OneP not found!\n"); lout->ls(); exit(1);}
-  TH1D * Pion_OneP = (TH1D*) lout->FindObject("Pion_OnePid100"); if(!Pion_OneP){printf("Pion_OneP not found!\n"); lout->ls(); exit(1);}
-  TH1D * PiZero_TwoP = (TH1D*) lout->FindObject("PiZero_TwoPid100"); if(!PiZero_TwoP){printf("PiZero_TwoP not found!\n"); lout->ls(); exit(1);}
-  TH1D * Pion_TwoP = (TH1D*) lout->FindObject("Pion_TwoPid100"); if(!Pion_TwoP){printf("Pion_TwoP not found!\n"); lout->ls(); exit(1);}
+  TH1D * PiZero_OneP = (TH1D*) lout->FindObject("PiZero_OnePid"+sID); if(!PiZero_OneP){printf("PiZero_OneP not found!\n"); lout->ls(); exit(1);}
+  TH1D * Pion_OneP = (TH1D*) lout->FindObject("Pion_OnePid"+sID); if(!Pion_OneP){printf("Pion_OneP not found!\n"); lout->ls(); exit(1);}
+  TH1D * PiZero_TwoP = (TH1D*) lout->FindObject("PiZero_TwoPid"+sID); if(!PiZero_TwoP){printf("PiZero_TwoP not found!\n"); lout->ls(); exit(1);}
+  TH1D * Pion_TwoP = (TH1D*) lout->FindObject("Pion_TwoPid"+sID); if(!Pion_TwoP){printf("Pion_TwoP not found!\n"); lout->ls(); exit(1);}
 
   TH1D * hhs[]={PiZero_OneP, Pion_OneP, PiZero_TwoP, Pion_TwoP};
   //const int stkcols[]={1014, 1003, 1002, 1009, 1010, 1007, 1012, 1005, 1011, 1008, 1014, 1017};
   const int lincols[]={1002, 1009, 1008, 1011, 1014, 1017, 1015};
   const int nh = sizeof(hhs)/sizeof(TH1D*);
+  double hm = -1E10;
   for(int ii=0; ii<nh; ii++){
     style::ResetStyle(hhs[ii]);
+    CorrectOUFlow(hhs[ii]);
     hhs[ii]->Scale(1./hhs[ii]->Integral(0,100000), "width");
+    const double tmpmax = hhs[ii]->GetBinContent(hhs[ii]->GetMaximumBin());
+    if(tmpmax > hm){
+      hm = tmpmax;
+    }
     hhs[ii]->SetLineWidth(2);
-    hhs[ii]->SetLineColor(style::GetColor(lincols[ii]));  
-    hhs[ii]->GetXaxis()->SetRangeUser(0,0.8);
+    hhs[ii]->SetLineColor(style::GetColor(lincols[ii]));
+    if(xmin !=-999){
+      hhs[ii]->GetXaxis()->SetRangeUser(xmin, xmax);
+    }
     hhs[ii]->SetYTitle("p.d.f.");
-    hhs[ii]->SetXTitle("#it{p}_{X} (GeV/#it{c})");
+    hhs[ii]->SetXTitle(xtit);
+  }
+
+  for(int ii=0; ii<nh; ii++){
+    hhs[ii]->SetMaximum(hm*1.1);
   }
 
   TCanvas * c0=new TCanvas("cP","",600,400);
@@ -340,14 +359,12 @@ void summary_RecoilP(TList *lout)
   TString slen;
   slen = "#pi^{0}"; CorrectFSString(slen); PiZero_OneP->Draw(opt); lg->AddEntry(PiZero_OneP,slen+" p","l");
   slen = "#pi^{+}"; CorrectFSString(slen); Pion_OneP->Draw(opt+" same"); lg->AddEntry(Pion_OneP,slen+" p","l");
-  //c0->Print(gOutdir+"summary_RecoilP_OnePi.png"); 
   slen = "#pi^{0}"; CorrectFSString(slen); PiZero_TwoP->Draw(opt+" same"); lg->AddEntry(PiZero_TwoP,slen+" p p","l");
   slen = "#pi^{+}"; CorrectFSString(slen); Pion_TwoP->Draw(opt+" same"); lg->AddEntry(Pion_TwoP,slen+" p p","l");
   lg->Draw();
   
-  c0->Print(gOutdir+"summary_RecoilP_TwoPi.png");
+  c0->Print(gOutdir+tag+"_summary.png");
 }
-
 
 void summary_RecoilM(TList *lout)
 {
@@ -464,7 +481,9 @@ void overdraw(const TString sin)
   subdrawPiZero_TwoP(tree, lout);
   subdrawPion_TwoP(tree, lout);
 
-  summary_RecoilP(lout);
+  summaryConfig(lout, "recoilP", "100", "#it{p}_{X} (GeV/#it{c})", 0, 0.8);
+  summaryConfig(lout, "Wrest", "400", "#it{W}_{rest} (GeV/#it{c}^{2})");
+  summaryConfig(lout, "xrest", "600", "#it{x}_{rest}");
   summary_RecoilM(lout);
   
   TFile * fout=new TFile(gOutdir+"summary.root","recreate");

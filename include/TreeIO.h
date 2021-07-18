@@ -279,7 +279,6 @@ TTree * GetTree(const analysis ana, const experiment exp)
   if(anamode!=TESTBEAM){
     tout->Branch("Wtrue",&Wtrue);
     tout->Branch("xBj",&xBj);
-    tout->Branch("xrest",&xrest);
     tout->Branch("Q2",&Q2);
     
     tout->Branch("baryonmomentum",&baryonmomentum);
@@ -290,6 +289,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
   tout->Branch("scattertheta",&scattertheta);
 
   tout->Branch("Wrest",&Wrest);
+  tout->Branch("xrest",&xrest);
   tout->Branch("baryonmass",&baryonmass);
 
   tout->Branch("recoilmomentum",&recoilmomentum);
