@@ -330,8 +330,8 @@ void AnaUtils::Calc()
 #if __OPENCALC__
   //---muon: 2
   {//use blocks to isolate calculations
-    muonmomentum = PU4pScatter->P();
-    muontheta = PU4pScatter->Theta()*TMath::RadToDeg();
+    scattermomentum = PU4pScatter->P();
+    scattertheta = PU4pScatter->Theta()*TMath::RadToDeg();
     
     //---W: 5
     //not used q3 = lvq.P();
@@ -350,8 +350,8 @@ void AnaUtils::Calc()
 
   {
     //---hadron: 8; tmphadronfullp is intermediate locally
-    protonmomentum = PU4pRecoil->P();
-    protontheta = PU4pRecoil->Theta()*TMath::RadToDeg();
+    recoilmomentum = PU4pRecoil->P();
+    recoiltheta = PU4pRecoil->Theta()*TMath::RadToDeg();
     pionmomentum = PU4pPion->P();
     piontheta = PU4pPion->Theta()*TMath::RadToDeg();
     //pionEk = PU4pPion->E()-PionMass();
@@ -452,10 +452,10 @@ void AnaUtils::Calc()
 #endif
 
 #if __OPENMMECCQE__
-  //muoncostheta = TMath::Cos( PU4pScatter->Theta()  );
-  muonpt = PU4pScatter->Pt();
-  mupz = PU4pScatter->Pz();
-  q2qe = GetTrueCCQEQ2(muonmomentum, PU4pScatter->Theta());
+  //scattercostheta = TMath::Cos( PU4pScatter->Theta()  );
+  scatterpt = PU4pScatter->Pt();
+  scatterpz = PU4pScatter->Pz();
+  q2qe = GetTrueCCQEQ2(scattermomentum, PU4pScatter->Theta());
 #endif 
 
 

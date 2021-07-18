@@ -84,8 +84,8 @@ namespace TreeIO
 
   //--- Calc, all will be set by = no need to Ini()
 #if __OPENCALC__
-  double muonmomentum;
-  double muontheta;
+  double scattermomentum;
+  double scattertheta;
   
   double Wrest;
   double Wtrue;
@@ -97,8 +97,8 @@ namespace TreeIO
   double baryontheta;
   double baryonmass;
 
-  double protonmomentum;//in case of TESTBEAM, all protons are added together
-  double protontheta;
+  double recoilmomentum;//in case of TESTBEAM, all protons are added together
+  double recoiltheta;
   double pionmomentum;//in case of TESTBEAM, all pi+ and pi0 are added together
   double piontheta;
   double pionEk;
@@ -117,7 +117,7 @@ namespace TreeIO
   double event_recoilP;   //event_ means the calculation us all particles, including those not selected in Proceed()
   
  /*
-   double muoncostheta;
+   double scattercostheta;
    double protonTT;
    double pionTT;
    double dpTy;
@@ -153,8 +153,8 @@ namespace TreeIO
   
 #if __OPENMMECCQE__
   double q2qe;
-  double muonpt;
-  double mupz;
+  double scatterpt;
+  double scatterpz;
 #endif
 
  //--- EOF
@@ -260,13 +260,13 @@ TTree * GetTree(const analysis ana, const experiment exp)
   }
 
   /*
-    tout->Branch("muonfullp","TLorentzVector", &muonfullp, 128000, spl);
+    tout->Branch("scatterfullp","TLorentzVector", &scatterfullp, 128000, spl);
     tout->Branch("protonfullp","TLorentzVector", &protonfullp, 128000, spl);
     tout->Branch("pionfullp","TLorentzVector", &pionfullp, 128000, spl);
     tout->Branch("baryonfullp","TLorentzVector", &baryonfullp, 128000, spl);
   */
 
-  //tout->Branch("muoncostheta",&muoncostheta);
+  //tout->Branch("scattercostheta",&scattercostheta);
   //tout->Branch("xCCH",&xCCH);
   //tout->Branch("energyCCH",&energyCCH);
   //tout->Branch("dpTy",&dpTy);
@@ -277,22 +277,23 @@ TTree * GetTree(const analysis ana, const experiment exp)
 #if __OPENCALC__
 
   if(anamode!=TESTBEAM){
-    tout->Branch("muonmomentum",&muonmomentum);
-    tout->Branch("muontheta",&muontheta);
-    
     tout->Branch("Wtrue",&Wtrue);
-    tout->Branch("Wrest",&Wrest);
     tout->Branch("xBj",&xBj);
     tout->Branch("xrest",&xrest);
     tout->Branch("Q2",&Q2);
     
     tout->Branch("baryonmomentum",&baryonmomentum);
     tout->Branch("baryontheta",&baryontheta);
-    tout->Branch("baryonmass",&baryonmass);
   }
-  
-  tout->Branch("protonmomentum",&protonmomentum);
-  tout->Branch("protontheta",&protontheta);
+
+  tout->Branch("scattermomentum",&scattermomentum);
+  tout->Branch("scattertheta",&scattertheta);
+
+  tout->Branch("Wrest",&Wrest);
+  tout->Branch("baryonmass",&baryonmass);
+
+  tout->Branch("recoilmomentum",&recoilmomentum);
+  tout->Branch("recoiltheta",&recoiltheta);
   tout->Branch("pionmomentum",&pionmomentum);
   tout->Branch("piontheta",&piontheta);
   tout->Branch("pionEk",&pionEk);
@@ -338,8 +339,8 @@ TTree * GetTree(const analysis ana, const experiment exp)
 
 #if __OPENMMECCQE__
   tout->Branch("q2qe",&q2qe);
-  tout->Branch("mupz",&mupz);
-  tout->Branch("muonpt",&muonpt);
+  tout->Branch("scatterpz",&scatterpz);
+  tout->Branch("scatterpt",&scatterpt);
 #endif
 
   return tout;

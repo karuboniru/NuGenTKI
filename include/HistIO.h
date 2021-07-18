@@ -70,8 +70,8 @@ void SetTree(TTree * tree, const int anaid)
   tree->SetBranchAddress("npar", &npar);
 
 #if __OPENCALC__ 
-  tree->SetBranchAddress("muonmomentum", &muonmomentum);
-  tree->SetBranchAddress("muontheta", &muontheta);
+  tree->SetBranchAddress("scattermomentum", &muonmomentum);
+  tree->SetBranchAddress("scattertheta", &muontheta);
   
   tree->SetBranchAddress("Wtrue", &Wtrue);
   tree->SetBranchAddress("Wrest", &Wrest);
@@ -83,8 +83,8 @@ void SetTree(TTree * tree, const int anaid)
   tree->SetBranchAddress("recoilP", &recoilP);
   tree->SetBranchAddress("recoilM", &recoilM);
 
-  tree->SetBranchAddress("protonmomentum", &protonmomentum);
-  tree->SetBranchAddress("protontheta", &protontheta);
+  tree->SetBranchAddress("scattermomentum", &protonmomentum);
+  tree->SetBranchAddress("scattertheta", &protontheta);
   tree->SetBranchAddress("pionmomentum", &pionmomentum);
   tree->SetBranchAddress("piontheta", &piontheta);
   tree->SetBranchAddress("pionEk", &pionEk);
