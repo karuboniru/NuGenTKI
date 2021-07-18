@@ -41,8 +41,7 @@ NUUUU="Nu"
 NUBAR="Nubar"
 
 ################################################################################################
-tuneTag=G18_10b_00_000
-#G18_02a_00_000
+tuneTag=G18_02a_00_000
 #G18_10b_00_000
 tmpGENIEtune=$(echo $tuneTag|tr -d '_')
 splineroot=$(readlink -f $(find ${GENIEspline}| grep $tmpGENIEtune | grep .root))
@@ -71,7 +70,7 @@ jobid=g1${aaa}
 
 GENIETAG="GENIE_${aaa}_Tune${tuneTag}"
 
-nevt=20000
+nevt=10
 #200000
 #10
 #
