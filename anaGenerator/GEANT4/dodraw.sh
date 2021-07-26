@@ -1,6 +1,6 @@
 mkexe.sh draw -lstyle -I${NUGENTKI}/style -L${NUGENTKI}/style
 
-task=_Wrest_xrest_Q2_All
+task=_Wrest_xrest_Q2_SPK_All
 
 outdir=outplot/outdraw${task}
 

@@ -176,6 +176,9 @@ void PhysicsBlock(TTree *t, TCanvas *c1, TList *lout, const TString basecut, con
   nbin = 50; xmin = 0; xmax = 2;
   hout = savedraw(700, t, c1, "Q2", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
 
+  nbin = 50; xmin = 0; xmax = 1;
+  hout = savedraw(800, t, c1, "scattermomentum", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+
   Draw2DM(t, c1, lout, basecut);
 }
 
@@ -495,6 +498,7 @@ void overdraw(const TString sin)
   summaryConfig(lout, "Wrest", "400", "#it{W}_{rest} (GeV/#it{c}^{2})");
   summaryConfig(lout, "xrest", "600", "#it{x}_{rest}");
   summaryConfig(lout, "Q2", "700", "Q^{2} (GeV^{2})");
+  summaryConfig(lout, "scattermomentum", "800", "#it{k}' (GeV/#it{c})");
   summary_RecoilM(lout);
   
   TFile * fout=new TFile(gOutdir+"summary.root","recreate");
