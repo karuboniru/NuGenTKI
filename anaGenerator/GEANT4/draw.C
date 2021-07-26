@@ -171,6 +171,9 @@ void PhysicsBlock(TTree *t, TCanvas *c1, TList *lout, const TString basecut, con
   nbin = 50; xmin = 0; xmax = 2;
   hout = savedraw(600, t, c1, "xrest", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
 
+  nbin = 50; xmin = 0; xmax = 2;
+  hout = savedraw(700, t, c1, "Q2", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+
   Draw2DM(t, c1, lout, basecut);
 }
 
@@ -484,6 +487,7 @@ void overdraw(const TString sin)
   summaryConfig(lout, "recoilP", "100", "#it{p}_{X} (GeV/#it{c})", 0, 0.8);
   summaryConfig(lout, "Wrest", "400", "#it{W}_{rest} (GeV/#it{c}^{2})");
   summaryConfig(lout, "xrest", "600", "#it{x}_{rest}");
+  summaryConfig(lout, "Q2", "700", "Q^{2} (GeV^{2})");
   summary_RecoilM(lout);
   
   TFile * fout=new TFile(gOutdir+"summary.root","recreate");
@@ -537,12 +541,15 @@ int main(int argc, char * argv[])
 
   if(sin.Contains("1GeVc")){
     gConfig += "(1 GeV/#it{c}) ";
+    gOutdir+="1GeVc";
   }
   else if(sin.Contains("1GeV")){
     gConfig += "(1 GeV) ";
+    gOutdir+="1GeV";
   }
   else if(sin.Contains("500MeV")){
     gConfig += "(0.5 GeV) ";
+    gOutdir+="500MeV";
   }
   else{
     printf("Unknown beam energy! %s\n", sin.Data()); exit(1);

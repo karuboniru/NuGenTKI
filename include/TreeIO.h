@@ -99,9 +99,9 @@ namespace TreeIO
 
   double recoilmomentum;//in case of TESTBEAM, all protons are added together
   double recoiltheta;
-  double pionmomentum;//in case of TESTBEAM, all pi+ and pi0 are added together
-  double piontheta;
-  double pionEk;
+  double mesonmomentum;//in case of TESTBEAM, all pi+ and pi0 are added together
+  double mesontheta;
+  double mesonEk;
   
   double dpt;
   double dphit;
@@ -279,7 +279,6 @@ TTree * GetTree(const analysis ana, const experiment exp)
   if(anamode!=TESTBEAM){
     tout->Branch("Wtrue",&Wtrue);
     tout->Branch("xBj",&xBj);
-    tout->Branch("Q2",&Q2);
     
     tout->Branch("baryonmomentum",&baryonmomentum);
     tout->Branch("baryontheta",&baryontheta);
@@ -290,13 +289,14 @@ TTree * GetTree(const analysis ana, const experiment exp)
 
   tout->Branch("Wrest",&Wrest);
   tout->Branch("xrest",&xrest);
+  tout->Branch("Q2",&Q2);
   tout->Branch("baryonmass",&baryonmass);
 
   tout->Branch("recoilmomentum",&recoilmomentum);
   tout->Branch("recoiltheta",&recoiltheta);
-  tout->Branch("pionmomentum",&pionmomentum);
-  tout->Branch("piontheta",&piontheta);
-  tout->Branch("pionEk",&pionEk);
+  tout->Branch("mesonmomentum",&mesonmomentum);
+  tout->Branch("mesontheta",&mesontheta);
+  tout->Branch("mesonEk",&mesonEk);
 
   tout->Branch("dpt",&dpt);
   tout->Branch("dphit",&dphit);

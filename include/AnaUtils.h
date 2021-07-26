@@ -352,10 +352,10 @@ void AnaUtils::Calc()
     //---hadron: 8; tmphadronfullp is intermediate locally
     recoilmomentum = PU4pRecoil->P();
     recoiltheta = PU4pRecoil->Theta()*TMath::RadToDeg();
-    pionmomentum = PU4pPion->P();
-    piontheta = PU4pPion->Theta()*TMath::RadToDeg();
-    //pionEk = PU4pPion->E()-PionMass();
-    pionEk = Ekin(PU4pPion, PionMass()); //only use experimental momentum
+    mesonmomentum = PU4pMeson->P();
+    mesontheta = PU4pMeson->Theta()*TMath::RadToDeg();
+    //pionEk = PU4pMeson->E()-PionMass();
+    mesonEk = Ekin(PU4pMeson, PionMass()); //only use experimental momentum
   }
   
   {
@@ -364,9 +364,9 @@ void AnaUtils::Calc()
     const int localA = AnaFunctions::getTargetA(localZ);
 
     //GiBUU 4-momentum doesn't give physical mass; but using its given 4-momentum provides direct access to internal dynamics like pN
-    const TLorentzVector tmphadronfullp = (*PU4pRecoil) + (*PU4pPion);//this is more logical
+    const TLorentzVector tmphadronfullp = (*PU4pRecoil) + (*PU4pMeson);//this is more logical
     //this will cause delta<0 in TESTBEAM; only used for neutrino. 
-    //to repeat old results TLorentzVector tmphadronfullp; tmphadronfullp.SetXYZT(PU4pRecoil->X()+PU4pPion->X(), PU4pRecoil->Y()+PU4pPion->Y(), PU4pRecoil->Z()+PU4pPion->Z(), Energy(PU4pRecoil, ProtonMass())+Energy(PU4pPion, PU4pPion->P()>1E-10? PionMass():0));//need to use experimental momentum only
+    //to repeat old results TLorentzVector tmphadronfullp; tmphadronfullp.SetXYZT(PU4pRecoil->X()+PU4pMeson->X(), PU4pRecoil->Y()+PU4pMeson->Y(), PU4pRecoil->Z()+PU4pMeson->Z(), Energy(PU4pRecoil, ProtonMass())+Energy(PU4pMeson, PU4pMeson->P()>1E-10? PionMass():0));//need to use experimental momentum only
     
     baryonmomentum = tmphadronfullp.P();
     baryontheta = tmphadronfullp.Theta()*TMath::RadToDeg();
@@ -381,7 +381,7 @@ void AnaUtils::Calc()
   
   /*
     protonTT = PU4pRecoil->Vect().Dot(ztt);
-    pionTT = PU4pPion->Vect().Dot(ztt);
+    pionTT = PU4pMeson->Vect().Dot(ztt);
   */
 
   //dpTy = dpt * cos(dalphat*TMath::DegToRad());

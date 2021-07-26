@@ -85,9 +85,9 @@ void SetTree(TTree * tree, const int anaid)
 
   tree->SetBranchAddress("scattermomentum", &protonmomentum);
   tree->SetBranchAddress("scattertheta", &protontheta);
-  tree->SetBranchAddress("pionmomentum", &pionmomentum);
-  tree->SetBranchAddress("piontheta", &piontheta);
-  tree->SetBranchAddress("pionEk", &pionEk);
+  tree->SetBranchAddress("mesonmomentum", &pionmomentum);
+  tree->SetBranchAddress("mesontheta", &piontheta);
+  tree->SetBranchAddress("mesonEk", &pionEk);
   tree->SetBranchAddress("baryonmomentum", &baryonmomentum);
   tree->SetBranchAddress("baryontheta", &baryontheta);
   tree->SetBranchAddress("baryonmass", &baryonmass);

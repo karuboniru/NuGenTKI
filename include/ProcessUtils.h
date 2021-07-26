@@ -13,7 +13,7 @@ namespace ProcessUtils
   //=======================================================================================================================
   TLorentzVector * PU4pScatter= new TLorentzVector;
   TLorentzVector * PU4pRecoil= new TLorentzVector;
-  TLorentzVector * PU4pPion= new TLorentzVector;
+  TLorentzVector * PU4pMeson= new TLorentzVector;
   TLorentzVector * neutronFSfullp= new TLorentzVector;
   TLorentzVector * eventfullp = new TLorentzVector;
 
@@ -21,7 +21,7 @@ void IniProcessUtils()
 {
   PU4pScatter->SetXYZT(0,0,0,0);
   PU4pRecoil->SetXYZT(0,0,0,0);
-  PU4pPion->SetXYZT(0,0,0,0);
+  PU4pMeson->SetXYZT(0,0,0,0);
   neutronFSfullp->SetXYZT(0,0,0,0);
   eventfullp->SetXYZT(0,0,0,0);
 }
@@ -189,7 +189,7 @@ void ProceedT2KGFS()
           && tmptheta<70
           ){//pion
         
-    (*PU4pPion)=(*lineFullMom);
+    (*PU4pMeson)=(*lineFullMom);
     npar += PIONBIT;
   }
   else if(lineIsBkgParticle){//all mesons https://gibuu.hepforge.org/trac/wiki/ParticleIDs                                                                                                                             
@@ -225,7 +225,7 @@ void ProceedT2KGFSEXP()
           IsPion() && (lineCharge+globalMuonCharge) == 0
           && tmpmom> 0.15 && tmpmom< 1.2 && tmptheta< 70
           ){//pion
-    (*PU4pPion)=(*lineFullMom);
+    (*PU4pMeson)=(*lineFullMom);
     npar += PIONBIT;
   }
   else if(lineIsBkgParticle){//all mesons https://gibuu.hepforge.org/trac/wiki/ParticleIDs
@@ -315,7 +315,7 @@ void ProceedRESPS()
     }
   }
   else if(linePID == PIONBIT || linePID == PIZEROBIT){//jus tag, no use of momentum for calculation
-    (*PU4pPion)=(*lineFullMom);
+    (*PU4pMeson)=(*lineFullMom);
     npar += PIONBIT;
   }
   else if(lineIsBkgParticle){
@@ -333,7 +333,14 @@ void ProceedTESTBEAM()
     AddABit(totparcount,  PIONBIT);
     
     if(lineFullMom->P()>0.1){//100 MeV/c pion threshold
-      (*PU4pScatter) += (*lineFullMom);
+      if(PU4pScatter->P()>1E-10 ){//already has scatter
+        (*PU4pMeson) += (*lineFullMom);//all other pi0
+        //printf("ProceedTESTBEAM Pi+ has scatter already pi+ %d pi0 %d e %d %lld %lld!\n", GetNPions(), GetNPiZeros(), GetNElectrons(), npar, totparcount); PU4pScatter->Print(); exit(1);
+      }
+      else{
+        (*PU4pScatter) = (*lineFullMom);//no lumping; all multi-pi events will fail counting cut
+      }
+
       AddABit(npar,  PIONBIT);
     }
   }
@@ -341,16 +348,21 @@ void ProceedTESTBEAM()
     AddABit(totparcount,  ELECTRONBIT);
 
     if(lineFullMom->P()>5E-3){//5 MeV/c electron threshold just as a place holder
-      (*PU4pScatter) += (*lineFullMom);
+      if(PU4pScatter->P()>1E-10 ){//already has scatter
+        printf("ProceedTESTBEAM Electron has scatter already! event %d pi+ %d pi0 %d e %d before %lld current %lld\n", event, GetNPions(), GetNPiZeros(), GetNElectrons(), npar, totparcount); PU4pScatter->Print(); exit(1);
+      }
+      else{
+        (*PU4pScatter) = (*lineFullMom);//no lumping; all multi-pi events will fail counting cut
+      }
       AddABit(npar,  ELECTRONBIT);
     }
   }
   else if(IsPiZero()){//no pi0 threshold
     if( PU4pScatter->P()>1E-10 ){//already has scatter
-      (*PU4pPion) += (*lineFullMom);
+      (*PU4pMeson) += (*lineFullMom);//all other pi0
     }
     else{
-      (*PU4pScatter) += (*lineFullMom);
+      (*PU4pScatter) = (*lineFullMom);//no lumping, only 1 pi0
     }
     AddABit(npar,  PIZEROBIT);
     AddABit(totparcount,  PIZEROBIT);
@@ -412,7 +424,7 @@ void ProceedNUGAS()
   else if(
           IsPion() && (lineCharge+globalMuonCharge) == 0
           ){
-    (*PU4pPion)=(*lineFullMom);
+    (*PU4pMeson)=(*lineFullMom);
     npar += PIONBIT;
   }
   else if(
@@ -485,7 +497,7 @@ void ProceedMINERvAGFS()
     if(tmpEk > 0.075 && tmpEk < 0.4 
        && tmptheta<70
        ){//pion
-      (*PU4pPion)=(*lineFullMom);
+      (*PU4pMeson)=(*lineFullMom);
       AddABit(npar, PIONBIT);
     }
   }
@@ -540,9 +552,9 @@ void ProceedDUNEEXCL3()
     AddABit(npar, PIONBIT);
 
     if(
-       tmpmom>PU4pPion->P()
+       tmpmom>PU4pMeson->P()
        ){
-      (*PU4pPion)=(*lineFullMom);
+      (*PU4pMeson)=(*lineFullMom);
     }
   }
   else if(lineIsBkgParticle || IsNeutron() || lineRawID==GiBUUAntiProtonID() || IsMuon() || IsProton() || IsPion() ){//neutron and also antiproton are background; mu/p/pi entering here are also non-exclusive background---they are below threshold and need to be subtracted in real measurement
@@ -643,9 +655,9 @@ void ProceedMINERvAGFSPIZERO()
     AddABit(npar, PIONBIT);
 
     if(
-       tmpmom>PU4pPion->P()
+       tmpmom>PU4pMeson->P()
        ){
-      (*PU4pPion)=(*lineFullMom);
+      (*PU4pMeson)=(*lineFullMom);
     }
   }
   else if(lineIsBkgParticle){
@@ -746,7 +758,7 @@ void ProceedMINERvALOWRECOIL()
           IsPion() && (lineCharge+globalMuonCharge) == 0
           && tmpmom> 0.2 && tmpmom< 4.0 && tmptheta<70
           ){//pion
-    (*PU4pPion)=(*lineFullMom);
+    (*PU4pMeson)=(*lineFullMom);
     npar += PIONBIT;
   }
   else if(lineIsBkgParticle){//all mesons https://gibuu.hepforge.org/trac/wiki/ParticleIDs
@@ -790,7 +802,7 @@ void ProceedMINERvANUBAR1PI()
   else if(
           IsPion() && (lineCharge+globalMuonCharge) == 0
           ){//pion
-    (*PU4pPion)=(*lineFullMom);
+    (*PU4pMeson)=(*lineFullMom);
     npar += PIONBIT;
   }
   else if(lineIsBkgParticle){//all mesons https://gibuu.hepforge.org/trac/wiki/ParticleIDs
