@@ -7,7 +7,7 @@ export TESTBEAM="list/Filelist_FLUKA_Pion_v01GeVc.txt"
 ntostop=
 #10000000
 
-tag=TESTBEAM_Piplus-1GeVc-Ar_HASthreshold_WrestXrest
+tag=TESTBEAM_Piplus-1GeVc-Ar_HASthreshold_WrestXrestQ2
 #TESTBEAM_Ar_10000xstat_HASthreshold_Allisgood
 #TESTBEAM_testElectron1GeVV0_10000xstat_0threshold
 

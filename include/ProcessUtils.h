@@ -349,7 +349,7 @@ void ProceedTESTBEAM()
 
     if(lineFullMom->P()>5E-3){//5 MeV/c electron threshold just as a place holder
       if(PU4pScatter->P()>1E-10 ){//already has scatter
-        printf("ProceedTESTBEAM Electron has scatter already! event %d pi+ %d pi0 %d e %d before %lld current %lld\n", event, GetNPions(), GetNPiZeros(), GetNElectrons(), npar, totparcount); PU4pScatter->Print(); exit(1);
+        printf("ProceedTESTBEAM Electron has scatter already! event %d pi+ %d pi0 %d e %d before %lld current %lld\n", event, GetNPions(), GetNPiZeros(), GetNElectrons(), npar, totparcount); PU4pScatter->Print(); //exit(1); //allow it to pass as FLUKA has a small fraction of e+e- events
       }
       else{
         (*PU4pScatter) = (*lineFullMom);//no lumping; all multi-pi events will fail counting cut

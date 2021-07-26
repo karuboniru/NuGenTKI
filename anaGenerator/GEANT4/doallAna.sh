@@ -1,14 +1,13 @@
 mkexe.sh anaGenerator -I${NUGENTKI}/include -lstyle -I${NUGENTKI}/style  -L${NUGENTKI}/style || exit
 
-#list/Filelist_GEANT4_Electron_Ar1GeV_v010000xstat.txt list/Filelist_GEANT4_Electron_Ar500MeV.txt
-for TESTBEAM in list/Filelist_GEANT4_Piplus_Ar_1GeVc_1b.txt 
+for TESTBEAM in list/Filelist_GEANT4_Piplus_Ar_1GeVc_1b.txt list/Filelist_GEANT4_Electron_Ar1GeV_v010000xstat.txt list/Filelist_GEANT4_Electron_Ar500MeV.txt
 do
 
 ntostop=
 #11900000
 #10000000
 
-tag=TESTBEAM_HASthreshold${ntostop}_WrestXrestQ2_$(echo $TESTBEAM | awk -F\/ '{print $2}'| awk -F\. '{print $1}')
+tag=TESTBEAM_HASthreshold${ntostop}_WrestXrestQ2All_$(echo $TESTBEAM | awk -F\/ '{print $2}'| awk -F\. '{print $1}')
 
 ####################################
 

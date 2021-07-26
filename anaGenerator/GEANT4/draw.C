@@ -60,6 +60,7 @@ TH1D *savedraw(const int iplot, TTree *t, TCanvas *c1, const TString var, const 
   printf("Draw(%s, %s, %s) ndraw %d\n", v2.Data(), cut.Data(), opt.Data(), nd);
 
   c1->Print(Form(gOutdir+"%s.png", hn.Data()));
+  c1->Print(Form(gOutdir+"%s.eps", hn.Data()));
 
   TH1D * hout = (TH1D*) gDirectory->Get(hn);
   if(!hout){
@@ -125,6 +126,7 @@ void sub2DM(TTree *t, TCanvas *c1, TList *lout, const TString basecut, const TSt
   lt->Draw();
   
   c1->Print(gOutdir+h2n+".png");
+  c1->Print(gOutdir+h2n+".eps");
 
   const double underf = hm->Integral(0,10000,0,1);//only for y 21, -1, 20 !!
   if(underf>0){
@@ -344,7 +346,7 @@ void summaryConfig(TList *lout, const TString tag, const TString sID, const TStr
     hhs[ii]->SetMaximum(hm*1.1);
   }
 
-  TCanvas * c0=new TCanvas("cP","",600,400);
+  TCanvas * c0=new TCanvas("cP"+tag,"",600,400);
   style::PadSetup(c0);
   c0->SetBottomMargin(0.18);
   c0->SetRightMargin(0.03);
@@ -367,6 +369,7 @@ void summaryConfig(TList *lout, const TString tag, const TString sID, const TStr
   lg->Draw();
   
   c0->Print(gOutdir+tag+"_summary.png");
+  c0->Print(gOutdir+tag+"_summary.eps");
 }
 
 void summary_RecoilM(TList *lout)
@@ -445,6 +448,7 @@ void summary_RecoilM(TList *lout)
   PiZero_OneP_Sel->Draw(opt+" same"); lg->AddEntry(PiZero_OneP_Sel,slen+" p selected","l");
   lg->SetHeader(gConfig); lg->Draw();
   c0->Print(gOutdir+"summary_PiZero_OneP_RecoilM.png");
+  c0->Print(gOutdir+"summary_PiZero_OneP_RecoilM.eps");
   lg->Clear();
 
   slen = "#pi^{+}"; CorrectFSString(slen);
@@ -453,6 +457,7 @@ void summary_RecoilM(TList *lout)
   Pion_OneP_Sel->Draw(opt+" same"); lg->AddEntry(Pion_OneP_Sel,slen+" p selected","l");
   lg->SetHeader(gConfig); lg->Draw();
   c0->Print(gOutdir+"summary_Pion_OneP_RecoilM.png");
+  c0->Print(gOutdir+"summary_Pion_OneP_RecoilM.eps");
   lg->Clear();
 
   lg->SetX1NDC(lx); lg->SetX2NDC(lx+0.3);
@@ -462,6 +467,7 @@ void summary_RecoilM(TList *lout)
   PiZero_TwoP_Sel->Draw(opt+" same"); lg->AddEntry(PiZero_TwoP_Sel,slen+" p p selected","l");
   lg->SetHeader(gConfig); lg->Draw();
   c0->Print(gOutdir+"summary_PiZero_TwoP_RecoilM.png");
+  c0->Print(gOutdir+"summary_PiZero_TwoP_RecoilM.eps");
   lg->Clear();
 
   slen = "#pi^{+}"; CorrectFSString(slen);
@@ -470,6 +476,7 @@ void summary_RecoilM(TList *lout)
   Pion_TwoP_Sel->Draw(opt+" same"); lg->AddEntry(Pion_TwoP_Sel,slen+" p p selected","l");
   lg->SetHeader(gConfig); lg->Draw();
   c0->Print(gOutdir+"summary_Pion_TwoP_RecoilM.png");
+  c0->Print(gOutdir+"summary_Pion_TwoP_RecoilM.eps");
   lg->Clear();
 }
 
