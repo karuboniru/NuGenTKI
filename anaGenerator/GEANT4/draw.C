@@ -177,8 +177,24 @@ void PhysicsBlock(TTree *t, TCanvas *c1, TList *lout, const TString basecut, con
   hout = savedraw(700, t, c1, "Q2", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
 
   nbin = 50; xmin = 0; xmax = 1;
+  hout = savedraw(701, t, c1, "q0", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+
+  nbin = 50; xmin = 0; xmax = 2;
+  hout = savedraw(702, t, c1, "q3", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+
+  nbin = 50; xmin = 0; xmax = 1;
   hout = savedraw(800, t, c1, "scattermomentum", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+
+  nbin = 50; xmin = 0; xmax = 2;
   hout = savedraw(801, t, c1, "recoilmomentum", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+
+  nbin = 50; xmin = 0; xmax = 1;
+  hout = savedraw(802, t, c1, "mesonmomentum", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+
+  nbin = 60; xmin = 0; xmax = 180;
+  hout = savedraw(803, t, c1, "scattertheta", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+  hout = savedraw(804, t, c1, "recoiltheta", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
+  hout = savedraw(805, t, c1, "mesontheta", basecut+" && "+selcut, opt, nbin, xmin, xmax); lout->Add(hout);
 
   Draw2DM(t, c1, lout, basecut);
 }
@@ -354,7 +370,7 @@ void summaryConfig(TList *lout, const TString tag, const TString sID, const TStr
   style::PadSetup(c0);
   c0->SetBottomMargin(0.18);
   c0->SetRightMargin(0.03);
-  c0->SetTopMargin(0.03);
+  c0->SetTopMargin(0.09);
   
   gStyle->SetOptStat(0);
 
@@ -362,7 +378,8 @@ void summaryConfig(TList *lout, const TString tag, const TString sID, const TStr
   style::ResetStyle(lg,0.3);
   lg->SetHeader(gConfig);
   
-  TString opt="hist C ";
+  //TString opt="hist C ";
+  TString opt="hist ";
 
   TString beam;
   TString slen;
@@ -499,8 +516,14 @@ void overdraw(const TString sin)
   summaryConfig(lout, "Wrest", "400", "#it{W}_{rest} (GeV/#it{c}^{2})");
   summaryConfig(lout, "xrest", "600", "#it{x}_{rest}");
   summaryConfig(lout, "Q2", "700", "Q^{2} (GeV^{2})");
+  summaryConfig(lout, "q0", "701", "q_{0} (GeV)");
+  summaryConfig(lout, "q3", "702", "q_{3} (GeV/#it{c})");
   summaryConfig(lout, "scattermomentum", "800", "#it{k}' (GeV/#it{c})");
-  summaryConfig(lout, "recoilmomentum", "801", "#it{k}' (GeV/#it{c})");
+  summaryConfig(lout, "recoilmomentum", "801", "#it{p}_{p} (GeV/#it{c})");
+  summaryConfig(lout, "mesonmomentum", "802", "#it{p}_{#pi} (GeV/#it{c})");
+  summaryConfig(lout, "scattertheta", "803", "#it{#theta}' (deg)");
+  summaryConfig(lout, "recoiltheta", "804", "#it{#theta}_{p} (deg)");
+  summaryConfig(lout, "mesontheta", "805", "#it{#theta}_{#pi} (deg)");
   summary_RecoilM(lout);
   
   TFile * fout=new TFile(gOutdir+"summary.root","recreate");

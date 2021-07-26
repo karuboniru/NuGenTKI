@@ -342,7 +342,9 @@ void AnaUtils::Calc()
     dummyW = lvq+dummyP;
     Wrest = dummyW.M();
     xrest = Q2/2/(dummyP.Dot(lvq));
-    
+    q0 = lvq.E();
+    q3 = lvq.P();
+      
     dummyW = lvq+(*iniNfullp);
     Wtrue = dummyW.M();
     xBj = Q2/2/(iniNfullp->Dot(lvq));

@@ -91,6 +91,8 @@ namespace TreeIO
   double Wtrue;
   double xBj;
   double xrest;
+  double q0;
+  double q3;
   double Q2;
   
   double baryonmomentum;
@@ -289,6 +291,8 @@ TTree * GetTree(const analysis ana, const experiment exp)
 
   tout->Branch("Wrest",&Wrest);
   tout->Branch("xrest",&xrest);
+  tout->Branch("q0",&q0);
+  tout->Branch("q3",&q3);
   tout->Branch("Q2",&Q2);
   tout->Branch("baryonmass",&baryonmass);
 
