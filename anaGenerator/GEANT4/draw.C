@@ -108,7 +108,7 @@ void sub2DM(TTree *t, TCanvas *c1, TList *lout, const TString basecut, const TSt
     slen="#pi^{0} p p";
   }
   else if(tag.Contains("Pion_TwoP")){
-    slen="#pi^{0} p p";
+    slen="#pi^{+} p p";
   }
   else{
     printf("wrong tag! %s\n", c1->GetName()); exit(1);
@@ -119,7 +119,7 @@ void sub2DM(TTree *t, TCanvas *c1, TList *lout, const TString basecut, const TSt
   TLatex * lh = new TLatex(0.2, 0.83, gConfig);
   style::ResetStyle(lh);
   
-  TLatex * lt = new TLatex(0.65, 0.83, slen);
+  TLatex * lt = new TLatex(0.66, 0.83, slen);
   style::ResetStyle(lt);
 
   lh->Draw();
