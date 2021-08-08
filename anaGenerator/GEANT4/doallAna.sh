@@ -1,6 +1,8 @@
 mkexe.sh anaGenerator -I${NUGENTKI}/include -lstyle -I${NUGENTKI}/style  -L${NUGENTKI}/style || exit
 
-for TESTBEAM in list/Filelist_GEANT4_Piplus_Ar_1GeVc_1b.txt list/Filelist_GEANT4_Electron_Ar1GeV_v010000xstat.txt list/Filelist_GEANT4_Electron_Ar500MeV.txt
+for TESTBEAM in list/Filelist*
+
+#list/Filelist_GEANT4_Piplus_Ar_1GeVc_1b.txt list/Filelist_GEANT4_Electron_Ar1GeV_v010000xstat.txt list/Filelist_GEANT4_Electron_Ar500MeV.txt
 do
 
 ntostop=

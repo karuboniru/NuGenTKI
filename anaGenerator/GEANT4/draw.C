@@ -1,4 +1,7 @@
+#include "TLorentzVector.h"
+
 #include "style.h"
+#include "AnaUtils.h"
 
 TString gOutdir;
 TString gConfig;
@@ -503,8 +506,14 @@ void summary_RecoilM(TList *lout)
 
 void overdraw(const TString sin)
 {
-  TFile * fin = new TFile(sin);
-  TTree * tree = (TTree*)fin->Get("tree");
+  TChain * tree = new TChain("tree");
+
+  if(sin.Contains(".root")){
+    tree->AddFile(sin);
+  }
+  else{
+    tree = AnaUtils::InputROOTFiles(sin, "tree");
+  }
 
   TList * lout = new TList;
   subdrawPiZero_OneP(tree, lout);
