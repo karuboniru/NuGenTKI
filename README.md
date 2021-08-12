@@ -17,4 +17,6 @@ style/, bin/, and include/AnaFunctions.h are from TKI. Need to link it to NuGenT
    ```
   cd $NUGENTKI_PARENT/NuGenTKI
   ln -s $TKI_PARENT/TKI
+  cd TKI/style
+  ./do.sh
    ```
