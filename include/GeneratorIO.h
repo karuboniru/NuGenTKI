@@ -631,7 +631,7 @@ bool FLUKAProceed(const int evt, const TLorentzVector *tmpbeam, const int tmppdg
       }
       else{
         printf("GeneratorIO::FLUKAProceed multiple large nuclei! %d %f %d %d\n", targetA, targetM, AstarPDG, tmppdg); tmpsecondary->Print();
-        exit(1);
+        //exit(1);//let it pass, only seen 2 tmppdg = 9999 cases in FLUKA
       }
       return false;//only skip Astar
     }

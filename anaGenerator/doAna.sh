@@ -1,3 +1,5 @@
+date
+
 fin=$1
 
 readlink -f $fin
@@ -14,6 +16,8 @@ echo anamode ${anamode}
 echo ntostop ${ntostop}
 
 ./anaGenerator ${tag} ${fin}  ${anamode} ${ntostop}
+
+date
 
 exit
 

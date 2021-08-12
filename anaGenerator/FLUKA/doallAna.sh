@@ -1,4 +1,4 @@
-export TESTBEAM="list/Filelist_FLUKA_Pion_v01GeVc.txt"
+export TESTBEAM="list/Filelist_FLUKA_Pion_v01GeVc_14files.txt"
 #"list/Filelist_GEANT4_Electron_1GeV_v010000xstat.txt"
 #"list/Filelist_GEANT4_Electron_v010000xstat.txt"
 #
@@ -7,7 +7,7 @@ export TESTBEAM="list/Filelist_FLUKA_Pion_v01GeVc.txt"
 ntostop=
 #10000000
 
-tag=TESTBEAM_Piplus-1GeVc-Ar_HASthreshold_WrestXrestQ2SPK
+tag=TESTBEAM_Piplus-1GeVc-Ar_IsGoodFilter-allowMultiHeavyNuclei_HASthreshold_WrestXrestQ2SPK
 #TESTBEAM_Ar_10000xstat_HASthreshold_Allisgood
 #TESTBEAM_testElectron1GeVV0_10000xstat_0threshold
 

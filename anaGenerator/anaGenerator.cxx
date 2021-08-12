@@ -29,6 +29,7 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
   int ientry = 0;
   int isInteractionCounter = 0;
   int isInelas = 0;
+  int isTargetAtRest = 0;
   int zeroNucleiCounter = 0;
   int singleNucleiCounter = 0;
   int multiNucleiCounter = 0;
@@ -65,13 +66,19 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
     if(nIne==0){
       continue;
     }
-    isInelas++;
-    hcounter->Fill(3);//only inelastic
-
+    
     const int interType = ReadFLUKA::TypeIne[0];
     if(nIne!=1 || interType!=101){//expect to have only 1 inelastic interaction per event
-      printf("strange nIne or interType %d %d\n", nIne, interType); exit(1);
+      printf("strange nIne or interType %d %d\n", nIne, interType);
+      if(interType==102){//seldom, but not sure what that is
+        continue;
+      }
+      else{
+        exit(1);
+      }
     }
+    isInelas++;
+    hcounter->Fill(3);//only inelastic
 
     const int beam = ReadFLUKA::IdIne[0];
     if(beam!=211){
@@ -107,8 +114,11 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
       (x,y,z,t)=(0.000000,0.000000,0.000000,37.215539) (P,eta,phi,E)=(0.000000,1.475926,1.165905,37.215539)
      */
     if(totEvtP.P()>1E-6){
-      printf("initial target not at rest run %d event %d\n", ReadFLUKA::RunNum, ReadFLUKA::EveNum); totEvtP.Print(); exit(1);
+      printf("initial target not at rest run %d event %d\n", ReadFLUKA::RunNum, ReadFLUKA::EveNum); totEvtP.Print(); //exit(1);
+      continue;
     }
+    isTargetAtRest++;
+    hcounter->Fill(4);
     
     htargetM->Fill(totEvtP.M());
     if(fabs(totEvtP.M()-37.2)>1){
@@ -119,19 +129,19 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
       printf("unknown Ar-40!"); totEvtP.Print(); exit(1);
     }
     isAr40++;
-    hcounter->Fill(4);
+    hcounter->Fill(5);
     
     if(failCounter==0){//all are processed and therefore there is no nuclei skipped.
       zeroNucleiCounter++;
-      hcounter->Fill(5);
+      hcounter->Fill(6);
     }
     else if(failCounter==1){
       singleNucleiCounter++;
-      hcounter->Fill(6);
+      hcounter->Fill(7);
     }
     else{//>=2
       multiNucleiCounter++;
-      hcounter->Fill(7);
+      hcounter->Fill(8);
     }
 
     if(1){//fill all fail cases//if(failCounter==1){
@@ -144,7 +154,8 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
   style::PrintStat("All entries", ientry, ientry);
   style::PrintStat("Interactions", ientry, isInteractionCounter);
   style::PrintStat("Inelastic", isInteractionCounter, isInelas);
-  style::PrintStat("Ar40", isInelas, isAr40);
+  style::PrintStat("Target at rest", isInelas, isTargetAtRest);
+  style::PrintStat("Ar40", isTargetAtRest, isAr40);
   style::PrintStat("zero nuclei", isAr40, zeroNucleiCounter);
   style::PrintStat("single nuclei", isAr40, singleNucleiCounter);
   style::PrintStat("multi nuclei", isAr40, multiNucleiCounter);
