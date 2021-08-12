@@ -1,4 +1,4 @@
-mkexe.sh draw -lstyle -I${NUGENTKI}/style -L${NUGENTKI}/style
+mkexe.sh draw -lstyle -I${NUGENTKI}/style -L${NUGENTKI}/style || exit
 
 task=_WrestXrestQ2SPK
 outdir=outplot/outdraw${task}

@@ -6,7 +6,7 @@
 namespace GeneratorUtils
 {
 
-int GetNpi(const int npar)
+int GetNpi(const ULong64_t npar)
 {
   //all requiring at least 1 proton
   if(npar>=101 &&npar<=109){
@@ -23,7 +23,7 @@ int GetNpi(const int npar)
   }
 }
 
-bool CutNpi(const TString cuttag, const int npar)
+bool CutNpi(const TString cuttag, const ULong64_t npar)
 {
   if(cuttag==""){
     return true;
@@ -71,7 +71,7 @@ void SetStringBaseCut(TString & modecut, const int minmode, const int maxmode)
   modecut = Form("(evtMode>=%d && evtMode<=%d)", minmode, maxmode);
 }
 
-bool SetTopoCut(const int anaid, int & minnp, int & maxnp)
+bool SetTopoCut(const int anaid, ULong64_t & minnp, ULong64_t & maxnp)
 {
   minnp = -999;
   maxnp = -999;

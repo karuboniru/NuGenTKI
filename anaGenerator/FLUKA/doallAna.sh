@@ -13,7 +13,7 @@ tag=TESTBEAM_Piplus-1GeVc-Ar_HASthreshold_WrestXrestQ2SPK
 
 ####################################
 
-mkexe.sh anaGenerator -I${NUGENTKI}/include -lstyle -I${NUGENTKI}/style  -L${NUGENTKI}/style || return 1
+mkexe.sh anaGenerator -I${NUGENTKI}/include -lstyle -I${NUGENTKI}/style  -L${NUGENTKI}/style || exit
 
 #exit
 

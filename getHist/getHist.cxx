@@ -53,7 +53,7 @@ void getHist(const TString fn, const TString tag, const int anaid)
   const int pdsmax[]={10000, 1, 2, 3, 4, 5};
   const Int_t nmode = sizeof(modes)/sizeof(TString);
 
-  int minnp, maxnp;
+  ULong64_t minnp, maxnp;
   const bool isTopoTask = GeneratorUtils::SetTopoCut(anaid, minnp, maxnp);
 
   const TString npiDecomp[]={"","_0pi","_1pi","_Mpi","_other"};
@@ -125,7 +125,7 @@ void getHist(const TString fn, const TString tag, const int anaid)
         
         TString modecut;
         GeneratorUtils::SetStringBaseCut(modecut, pdsmin[imode], pdsmax[imode]);
-        printf("\n\n************************************** modecut: \"%s\" mode %d %d basecut: \"%s\" np %d %d\n\n\n", modecut.Data(), pdsmin[imode], pdsmax[imode], basecut.Data(), minnp, maxnp);
+        printf("\n\n************************************** modecut: \"%s\" mode %d %d basecut: \"%s\" np %lld %lld\n\n\n", modecut.Data(), pdsmin[imode], pdsmax[imode], basecut.Data(), minnp, maxnp);
 
         const int nhist = hhs.size();
         for(int ii=0; ii<nhist; ii++){

@@ -19,7 +19,8 @@ namespace HistIO
 {
   //============================================ variables and histograms ===================================== 
   double perweight, beamE;
-  int targetZ, evtMode, npar;
+  int targetZ, evtMode;
+  ULong64_t npar;
 
   TH1D * hbeamE  = 0x0;
 

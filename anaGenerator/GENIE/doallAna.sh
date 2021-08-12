@@ -32,7 +32,7 @@ tag=MINERvAGENIE_V3OOB_LE_test5_
 
 ####################################
 
-mkexe.sh anaGenerator -I${NUGENTKI}/include
+mkexe.sh anaGenerator -I${NUGENTKI}/include -lstyle -I${NUGENTKI}/style  -L${NUGENTKI}/style || exit
 
 #exit
 

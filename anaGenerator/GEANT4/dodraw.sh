@@ -1,4 +1,4 @@
-mkexe.sh draw -lstyle -I${NUGENTKI}/style -L${NUGENTKI}/style -I${NUGENTKI}/include
+mkexe.sh draw -lstyle -I${NUGENTKI}/style -L${NUGENTKI}/style || exit
 
 task=_IsGoodFilter_Wrest_xrest_Q2_SPK_All_10files_10b
 

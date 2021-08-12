@@ -41,7 +41,7 @@ tag=MINERvALE_GiBUU_newE${nfile}_
 
 ####################################
 
-mkexe.sh anaGenerator -I${NUGENTKI}/include
+mkexe.sh anaGenerator -I${NUGENTKI}/include -lstyle -I${NUGENTKI}/style  -L${NUGENTKI}/style || exit
 
 #exit
 
