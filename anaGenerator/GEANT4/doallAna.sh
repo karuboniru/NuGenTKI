@@ -9,7 +9,7 @@ ntostop=
 #11900000
 #10000000
 
-tag=TESTBEAM_HASthreshold${ntostop}_WrestXrestQ2SPKAll_$(echo $TESTBEAM | awk -F\/ '{print $2}'| awk -F\. '{print $1}')
+tag=TESTBEAM_IsGoodFilter_HASthreshold_${ntostop}_WrestXrestQ2SPKAll_$(echo $TESTBEAM | awk -F\/ '{print $2}'| awk -F\. '{print $1}')
 
 ####################################
 

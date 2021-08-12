@@ -285,7 +285,12 @@ bool AnaUtils::IsGood()
   else if(anamode==TESTBEAM){
     //accept Npmpi
     //1p
-    if(1)//accept all (nPion+nPiZero) ==1 && (nProton==1||nProton==2) )    
+    //if(1)//accept all (nPion+nPiZero) ==1 && (nProton==1||nProton==2) )    
+    if( 
+       GetNBkgs() == 0 &&
+       ( GetNProtons()==1 || GetNProtons()==2 ) &&
+       ( GetNPions()+GetNPiZeros()<=2 )
+        )
       return true;
     else
       return false;
