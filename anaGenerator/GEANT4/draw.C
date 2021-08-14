@@ -559,6 +559,11 @@ int main(int argc, char * argv[])
   else if(sin.Contains("FLUKA")){
     gConfig += "FLUKA ";
     gOutdir+="FLUKA_";
+
+    if(sin.Contains("NOFSI")){
+      gConfig.ReplaceAll("FLUKA","FLUKAnoFSI");
+      gOutdir.ReplaceAll("FLUKA","FLUKAnoFSI");
+    }
   }
   else{
     printf("Unknown generator! %s\n", sin.Data()); exit(1);

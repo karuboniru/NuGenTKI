@@ -1,11 +1,13 @@
 mkexe.sh draw -I${NUGENTKI}/include -lstyle -I${NUGENTKI}/style -L${NUGENTKI}/style || exit
 
-task=_IsGoodFilter_WrestXrestQ2SPK
+task=_NOFSI_IsGoodFilter_WrestXrestQ2SPK
 outdir=outplot/outdraw${task}
 
 mkdir -p ${outdir}
 
-for infile in outplot/outAna11_TESTBEAM_Piplus-1GeVc-Ar_IsGoodFilter-allowMultiHeavyNuclei_HASthreshold_WrestXrestQ2SPKTESTBEAM_Filelist_FLUKA_Pion_v01GeVc_14files.root
+for infile in outplot/outAna11_TESTBEAM_Piplus-1GeVc-Ar_NOFSI_IsGoodFilter_HASthreshold_WrestXrestQ2SPKTESTBEAM_Filelist_FLUKA_Pion_v01GeVc_NOFSI_10files.root
+    #outplot/outAna11_TESTBEAM_Piplus-1GeVc-Ar_IsGoodFilter_HASthreshold_WrestXrestQ2SPKTESTBEAM_Filelist_FLUKA_Pion_v01GeVc_18files.root
+    
     #outplot/outAna11_TESTBEAM_Piplus-1GeVc-Ar_HASthreshold_WrestXrestQ2SPKTESTBEAM_Filelist_FLUKA_Pion_v01GeVc.root
     #outplot/outAna11_TESTBEAM_Piplus-1GeVc-Ar_HASthreshold_WrestXrestTESTBEAM_Filelist_FLUKA_Pion_v01GeVc.root
     #outplot/outAna11_TESTBEAM_Piplus-1GeVc-Ar_HASthresholdTESTBEAM_Filelist_FLUKA_Pion_v01GeVc.root
