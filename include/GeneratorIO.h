@@ -618,7 +618,11 @@ bool FLUKAProceed(const int evt, const TLorentzVector *tmpbeam, const int tmppdg
 
   if( abs(tmppdg) > 9000 ){
     if(tmpsecondary->M() < 1){
-      printf("too light nucleus!! %d %f\n", tmppdg, tmpsecondary->M()); tmpsecondary->Print(); exit(1);
+      printf("too light nucleus!! %d %f\n", tmppdg, tmpsecondary->M()); tmpsecondary->Print();
+      return false;
+      //exit(1);//let it pass, only seen in FLUKA no FSI
+      //too light nucleus!! -9000000 0.000000
+      //(x,y,z,t)=(0.000000,0.000000,0.000000,0.000000) (P,eta,phi,E)=(0.000000,0.000000,0.000000,0.000000)
     }
 
     const int targetA = AnaFunctions::getTargetA(targetZ);

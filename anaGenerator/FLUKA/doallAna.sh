@@ -1,4 +1,5 @@
-export TESTBEAM=list/Filelist_FLUKA_Pion_v01GeVc_NOFSI_10files.txt
+export TESTBEAM=list/Filelist_FLUKA_Pion_v01GeVc_NOFSI_10file.txt
+#list/Filelist_FLUKA_Pion_v01GeVc_NOFSI_10files.txt
 #"list/Filelist_FLUKA_Pion_v01GeVc_18files.txt"
 
 #"list/Filelist_GEANT4_Electron_1GeV_v010000xstat.txt"
@@ -9,7 +10,7 @@ export TESTBEAM=list/Filelist_FLUKA_Pion_v01GeVc_NOFSI_10files.txt
 ntostop=
 #10000000
 
-tag=TESTBEAM_Piplus-1GeVc-Ar_NOFSI_IsGoodFilter_HASthreshold_WrestXrestQ2SPK
+tag=TESTBEAM_Piplus-1GeVc-Ar_NOFSI10Files_IsGoodFilter_HASthreshold_WrestXrestQ2SPK
 #TESTBEAM_Ar_10000xstat_HASthreshold_Allisgood
 #TESTBEAM_testElectron1GeVV0_10000xstat_0threshold
 

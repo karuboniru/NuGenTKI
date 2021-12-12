@@ -115,7 +115,7 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
      */
     if(totEvtP.P()>1E-6){
       printf("initial target not at rest run %d event %d\n", ReadFLUKA::RunNum, ReadFLUKA::EveNum); totEvtP.Print(); //exit(1);
-      continue;
+      //test do not skip for nofsi: continue;
     }
     isTargetAtRest++;
     hcounter->Fill(4);
@@ -126,7 +126,8 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
     }
     else if(fabs(totEvtP.M()-37.2)>2E-1){
       //unknown Ar-40!(x,y,z,t)=(-0.000000,0.000000,-0.000000,37.305117) (P,eta,phi,E)=(0.000000,-1.605495,2.266529,37.305117)
-      printf("unknown Ar-40!"); totEvtP.Print(); exit(1);
+      printf("unknown Ar-40!"); totEvtP.Print();
+      //test do not exit for nofsi: exit(1);
     }
     isAr40++;
     hcounter->Fill(5);
