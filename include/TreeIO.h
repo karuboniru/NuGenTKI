@@ -221,10 +221,10 @@ TTree * GetTree(const analysis ana, const experiment exp)
     tout->Branch("iniNcharge",&iniNcharge);
     tout->Branch("perweight",&perweight);
     tout->Branch("filecount",&filecount);
-    tout->Branch("run",&run);
     tout->Branch("prod",&prod);
   }
 
+  tout->Branch("run",&run);
   tout->Branch("event",&event);
   tout->Branch("targetZ",&targetZ);
   tout->Branch("evtMode",&evtMode);

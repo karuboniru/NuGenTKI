@@ -114,7 +114,7 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
       (x,y,z,t)=(0.000000,0.000000,0.000000,37.215539) (P,eta,phi,E)=(0.000000,1.475926,1.165905,37.215539)
      */
     if(totEvtP.P()>1E-6){
-      printf("initial target not at rest run %d event %d\n", ReadFLUKA::RunNum, ReadFLUKA::EveNum); totEvtP.Print(); //exit(1);
+      //printf("initial target not at rest run %d event %d\n", ReadFLUKA::RunNum, ReadFLUKA::EveNum); totEvtP.Print(); //exit(1);
       //test do not skip for nofsi: continue;
     }
     isTargetAtRest++;
