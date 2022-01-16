@@ -95,7 +95,7 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
     for(int ii=0; ii<tmpnp; ii++){
       const TLorentzVector tmpSecP(ReadFLUKA::PSec[ii][0], ReadFLUKA::PSec[ii][1], ReadFLUKA::PSec[ii][2], ReadFLUKA::PSec[ii][3]);
       totEvtP += tmpSecP;
-      const bool kProceed = GeneratorIO::FLUKAProceed(ReadFLUKA::EveNum, &tmpBeamP, ReadFLUKA::IdSecIne[ii], &tmpSecP);
+      const bool kProceed = GeneratorIO::FLUKAProceed(ReadFLUKA::RunNum, ReadFLUKA::EveNum, &tmpBeamP, ReadFLUKA::IdSecIne[ii], &tmpSecP);
       if(kProceed){
         AnaUtils::MainProceed();
       }
