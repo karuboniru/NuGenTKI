@@ -597,8 +597,8 @@ bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const
       return false;    //only skip Astar, all other small nuclei are needed for signal calculation
     }
   }
-  
-  (*lineFullMom) = (*tmpSecondary);
+
+  (*lineFullMom) = getSmearVector(tmppdg, tmpSecondary);
 
   GEANT4FLUKASetID(tmppdg, eventID);
   return true;
@@ -642,7 +642,7 @@ bool FLUKAProceed(const int tmprun, const int evt, const TLorentzVector *tmpbeam
     }
   }
 
-  (*lineFullMom) = (*tmpsecondary);
+  (*lineFullMom) = getSmearVector(tmppdg, tmpsecondary);
 
   GEANT4FLUKASetID(tmppdg, evt);
   

@@ -233,7 +233,8 @@ void subdrawPiZero_OneP(TTree * t, TList *lout)
   savedraw(iplot++, t, c1, sigdef, basecut+" && "+selcut);//purity 99.52
 #endif
 
-  PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 36.293, 36.318);
+  //PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 36.293, 36.318);
+  PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35.8, 37.2);
 }
 
 
@@ -266,7 +267,8 @@ void subdrawPion_OneP(TTree * t, TList *lout)
   savedraw(iplot++, t, c1, sigdef,basecut+" && "+selcut);//purity 99.98
 #endif
 
-  PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 36.293, 36.318);
+  //PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 36.293, 36.318);
+  PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35.8, 37.2);
 }
 
 
@@ -301,7 +303,8 @@ void subdrawPiZero_TwoP(TTree * t, TList *lout)
   savedraw(iplot++, t, c1, sigdef,basecut+" && "+selcut);//99.43%
 #endif
 
-  PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35.365, 35.415);
+  //PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35.365, 35.415);
+  PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35, 36.2);
 }
 
 
@@ -333,7 +336,8 @@ void subdrawPion_TwoP(TTree * t, TList *lout)
   savedraw(iplot++, t, c1, sigdef,basecut+" && "+selcut);//purity 99.59%
 #endif
 
-  PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35.365, 35.415);
+  //PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35.365, 35.415);
+  PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35, 36.2);
 }
 
 void summaryConfig(TList *lout, const TString tag, const TString sID, const TString xtit, const double xmin=-999, const double xmax=-999)
@@ -615,5 +619,7 @@ int main(int argc, char * argv[])
   style::fgkXTitleOffset = 1.1;
 
   overdraw(sin);
+
+  printf("draw done\n");
   return 0;
 }
