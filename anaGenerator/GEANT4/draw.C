@@ -608,7 +608,23 @@ int main(int argc, char * argv[])
   else{
     printf("Unknown beam energy! %s\n", sin.Data()); exit(1);
   }
-  
+
+  if(sin.Contains("smearBit1")){
+    gConfig += "#sigma_{p} ";
+    gOutdir+="_smearP_";
+  }
+  else if(sin.Contains("smearBit2")){
+    gConfig += "#sigma_{#theta} ";
+    gOutdir+="_smearTheta_";
+  }
+  else if(sin.Contains("smearBit4")){
+    gConfig += "#sigma_{#phi} ";
+    gOutdir+="_smearPhi_";
+  }
+  else if(sin.Contains("smearBit7")){
+    gConfig += "#sigma_{p#theta#phi} ";
+    gOutdir+="_smearFull_";
+  }
   
   printf("\n\n=============================== Drawing %s input %s output %s ===============================\n", gConfig.Data(), sin.Data(), gOutdir.Data());
 

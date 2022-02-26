@@ -10,12 +10,15 @@ anamode=$3
 
 ntostop=$4
 
+smearBit=$5
+
 echo fin ${fin}
 echo tag ${tag}
 echo anamode ${anamode}
 echo ntostop ${ntostop}
+echo smearBit ${smearBit}
 
-./anaGenerator ${tag} ${fin}  ${anamode} ${ntostop}
+./anaGenerator ${tag} ${fin}  ${anamode} ${ntostop} ${smearBit}
 
 date
 

@@ -22,6 +22,8 @@ using namespace std;
 using namespace ReadGENIE;
 using namespace ReadFLUKA;
 
+int gSmearBit = 0;
+
 void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM, const int nEntryToStop = -999)
 {
   ReadFLUKA::SetChain(ch);
@@ -95,7 +97,7 @@ void FLUKAReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM,
     for(int ii=0; ii<tmpnp; ii++){
       const TLorentzVector tmpSecP(ReadFLUKA::PSec[ii][0], ReadFLUKA::PSec[ii][1], ReadFLUKA::PSec[ii][2], ReadFLUKA::PSec[ii][3]);
       totEvtP += tmpSecP;
-      const bool kProceed = GeneratorIO::FLUKAProceed(ReadFLUKA::RunNum, ReadFLUKA::EveNum, &tmpBeamP, ReadFLUKA::IdSecIne[ii], &tmpSecP);
+      const bool kProceed = GeneratorIO::FLUKAProceed(ReadFLUKA::RunNum, ReadFLUKA::EveNum, &tmpBeamP, ReadFLUKA::IdSecIne[ii], &tmpSecP, gSmearBit);
       if(kProceed){
         AnaUtils::MainProceed();
       }
@@ -227,7 +229,7 @@ void GEANT4ReadChain(TChain * ch, TTree * tout, TH1I * hcounter, TH1D * htargetM
         totEvtP += tmpSecP;
       }
       
-      const bool kProceed = GeneratorIO::GEANT4Proceed(ReadGEANT4::EventID, interType, (*ReadGEANT4::PDGcode)[ii], &tmpSecP);
+      const bool kProceed = GeneratorIO::GEANT4Proceed(ReadGEANT4::EventID, interType, (*ReadGEANT4::PDGcode)[ii], &tmpSecP, gSmearBit);
       if(kProceed){
         AnaUtils::MainProceed();
       }
@@ -525,9 +527,11 @@ int GiBUUReadFile(const TString filelist, TTree * tout, const int nFileToStop)
   return totnrun;
 }
 
-void anaGenerator(const TString tag, const TString filelist, const int tmpana, const int nToStop=-999)
+void anaGenerator(const TString tag, const TString filelist, const int tmpana, const int nToStop=-999, const int smearBit=0)
 {
-  cout<<"please check "<<tag<<" "<<filelist<<" "<<tmpana<<endl;
+  gSmearBit = smearBit;
+
+  cout<<"please check "<<tag<<" "<<filelist<<" "<<tmpana<<" smearBit "<<gSmearBit<<endl;
 
   TreeIO::experiment kExp = TreeIO::kNONE;
   if(filelist.Contains("MINERvA")){
@@ -619,12 +623,15 @@ void anaGenerator(const TString tag, const TString filelist, const int tmpana, c
 
 int main(int argc, char* argv[])
 {
-  //void anaGenerator(const TString tag, const TString filelist, const int tmpana, const int nToStop)
+  //void anaGenerator(const TString tag, const TString filelist, const int tmpana, const int nToStop=-999, const int smearBit=0)
   if(argc==4){
     anaGenerator(argv[1], argv[2], atoi(argv[3]));
   }
-  else if(argc==5){
+  else if(argc==5){//last is nstop
     anaGenerator(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]));
+  }
+  else if(argc==6){//last is smearbit
+    anaGenerator(argv[1], argv[2], atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
   }
   else{
     printf("wrong argc %d\n", argc); return 1;

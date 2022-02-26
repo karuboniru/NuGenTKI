@@ -546,7 +546,7 @@ void GENIESetID(const int pdg, const double tmptote)
   }
 }
 
-bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const TLorentzVector * tmpSecondary)
+bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const TLorentzVector * tmpSecondary, const int smearBit)
 {
   //missing iniN-->
   //<---
@@ -598,13 +598,13 @@ bool GEANT4Proceed(const int eventID, const int tmpMode, const int tmppdg, const
     }
   }
 
-  (*lineFullMom) = getSmearVector(tmppdg, tmpSecondary);
+  (*lineFullMom) = getSmearVector(tmppdg, tmpSecondary, smearBit);
 
   GEANT4FLUKASetID(tmppdg, eventID);
   return true;
 }
 
-bool FLUKAProceed(const int tmprun, const int evt, const TLorentzVector *tmpbeam, const int tmppdg, const TLorentzVector *tmpsecondary)
+bool FLUKAProceed(const int tmprun, const int evt, const TLorentzVector *tmpbeam, const int tmppdg, const TLorentzVector *tmpsecondary, const int smearBit)
 {
   //printf("test EveNum %d beamm %f secondary pdg %d Px %f Py %f Pz %f E %f M %f\n", evt, beamfull->M(), tmppdg, tmpfull->Px(), tmpfull->Py(), tmpfull->Pz(), tmpfull->E(), tmpfull->M());
 
@@ -642,7 +642,7 @@ bool FLUKAProceed(const int tmprun, const int evt, const TLorentzVector *tmpbeam
     }
   }
 
-  (*lineFullMom) = getSmearVector(tmppdg, tmpsecondary);
+  (*lineFullMom) = getSmearVector(tmppdg, tmpsecondary, smearBit);
 
   GEANT4FLUKASetID(tmppdg, evt);
   
