@@ -234,7 +234,8 @@ void subdrawPiZero_OneP(TTree * t, TList *lout)
 #endif
 
   //PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 36.293, 36.318);
-  PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35.8, 37.2);
+  //PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35.8, 37.2);
+  PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 36.1, 36.6);
 }
 
 
@@ -268,7 +269,8 @@ void subdrawPion_OneP(TTree * t, TList *lout)
 #endif
 
   //PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 36.293, 36.318);
-  PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35.8, 37.2);
+  //PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 35.8, 37.2);
+  PhysicsBlock(t, c1, lout, basecut, sigdef, selcut, 50, 36.1, 36.6);
 }
 
 

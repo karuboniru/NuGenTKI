@@ -13,11 +13,12 @@ ntostop=-999
 #11900000
 #10000000
 
-for smearBit in 1 2 4 7
+for smearBit in 1
+    #11 2 4 7
 do
     echo ${smearBit}
 
-tag=tmptmpTESTBEAM_smearBit${smearBit}_IsGoodFilter_HASthreshold_${ntostop}_WrestXrestQ2SPKAll_$(echo $TESTBEAM | awk -F\/ '{print $2}'| awk -F\. '{print $1}')
+tag=TESTBEAM_2-2-5percentsmearBit${smearBit}_IsGoodFilter_HASthreshold_${ntostop}_WrestXrestQ2SPKAll_$(echo $TESTBEAM | awk -F\/ '{print $2}'| awk -F\. '{print $1}')
 
 ####################################
 
