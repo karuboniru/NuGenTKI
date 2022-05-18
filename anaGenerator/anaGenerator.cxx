@@ -526,6 +526,136 @@ int GiBUUReadFile(const TString filelist, TTree * tout, const int nFileToStop)
   cout<<"Final file count "<<filecount<<" total line count "<<totlinecount<<" total nrun "<<totnrun<<endl;
   return totnrun;
 }
+void NuWroReadChain(TChain *ch, TTree *tout, TH1F *&hCCrate, const int nEntryToStop = 10)
+{
+  cout << "precessing NuWro Chain" << endl;
+
+  ReadGENIE::SetChain(ch); // use same code as readGENIE
+
+  int ientry = 0;
+  while (ch->GetEntry(ientry))
+  {
+    // EvtNum = ientry;
+    if (ientry % 100000 == 0)
+    {
+      printf("myEntries %d\n", ientry);
+    }
+
+    if (nEntryToStop > 0)
+    {
+      if (ientry >= nEntryToStop)
+      {
+        printf("\n\n\n************************  NuWro Breaking after %d entries ***********************************************\n\n", nEntryToStop);
+        break;
+      }
+    }
+
+    // do it before the loop continues for any reason
+    ientry++;
+    // cout << "ientry " << ientry << endl;
+    //====================================== core loop ======================================
+
+    //===========================================================================
+    // ignore the CC check here, We should disable NC in neut/nuwro side.
+    // or check ecode here, if NC, ignore it
+    // checking NC is not a good idea, since checking ecode is complex.
+    //===========================================================================
+    const TString ecode_str = gEvtCode->GetString();
+    const int code = ecode_str.Atoi();
+    // if(ecode.Contains("Weak[NC]")){//skip NC
+    //   continue;
+    // }
+    // else if(!ecode.Contains("Weak[CC]")){
+    //   printf("not cc!!! %s\n", ecode.Data()); exit(1);
+    // }
+    if (!hCCrate)
+    {
+      hCCrate = new TH1F("hCCrate", "", 100000, 0, 100); // 1MeV per bin
+    }
+
+    const double tmpenu = StdHepP4[0][3];
+    hCCrate->Fill(tmpenu);
+    beamfullp->SetXYZT(StdHepP4[0][0], StdHepP4[0][1], StdHepP4[0][2], StdHepP4[0][3]);
+
+    beamE = StdHepP4[0][3];
+
+    const int tmpevent = EvtNum;
+    const int tmpprod = -999; // not needing G2NeutEvtCode anymore, no need to modify GENIE code; abs(G2NeutEvtCode);
+    // const double tmppw = 1;   //to-do EvtXSec;
+    npar = 0;
+    const int tmpnp = StdHepN;
+
+    // printf("\ntest ientry %d tmpevent %d tmpprod %d tmpenu %f tmppw %f tmpnp %d\n", ientry, tmpevent, tmpprod, tmpenu, tmppw, tmpnp);
+
+    AnaUtils::Ini();
+    int targetid = StdHepPdg[1];
+    // cout << "targetid = " << targetid << endl;
+    // const bool isHydrogen = targetid == 1000010010; //special case
+
+    // int idxIni = -999;
+    // int idxRESnucleon = -999;
+    // int idxRESpi = -999;
+    // int idxDelta = -999;
+    bool muon_found = false;
+    iniNfullp->SetXYZT(0, 0, 0, 0);
+
+    for (int ii = 0; ii < tmpnp; ii++)
+    {
+      const int tmpid = StdHepPdg[ii];
+
+      if ((abs(tmpid) == 12 || abs(tmpid) == 14 || abs(tmpid) == 16) && ii >= 2)
+      {
+        // charm decay to neutrino
+        // dirty hack
+        continue;
+      }
+      if (abs(tmpid) == 13 && muon_found)
+      {
+        // skip non CC muon
+        // dirty hack, should be fixed in the future
+        continue;
+      }
+      if (abs(tmpid) == 13)
+      {
+        muon_found = true;
+      }
+
+      if (tmpid > 1000000000 && ii > 2)
+      { // skip nucleus
+        continue;
+      }
+      if (StdHepStatus[ii] == 2) // ignore before fsi particle
+        continue;
+      const GeneratorIO::dtype IniOrFinaltype = StdHepStatus[ii] == 0 ? GeneratorIO::kINI : GeneratorIO::kFINAL;
+      // const GeneratorIO::dtype RESdtype = ReadGENIE::GetRESTypeNuWro(ii, code, IniOrFinaltype, idxIni, idxDelta, idxRESnucleon, idxRESpi);
+      // cout << "found restype" << RESdtype << endl;
+      // const double tmpKNsrc = ReadGENIE::GetKNsource(ii, IniOrFinaltype, idxDelta); //proton 1; pion -1
+      // cout << "tmpKNsrc:" << tmpKNsrc << endl;
+
+      const double tmpmom1 = StdHepP4[ii][0];
+      const double tmpmom2 = StdHepP4[ii][1];
+      const double tmpmom3 = StdHepP4[ii][2];
+      const double tmptote = StdHepP4[ii][3];
+
+      // test
+      // const TVector3 tmpvec(tmpmom1, tmpmom2, tmpmom3); printf("test particle %d %f %f %f %f %d mom %f theta %f\n", ii, tmpmom1, tmpmom2, tmpmom3, tmptote, tmpid, tmpvec.Mag(), tmpvec.Theta()*TMath::RadToDeg());
+
+      // if(ecode.Contains("QES")){ cout<<"test event "<<tmpevent<<" ii "<<ii<<" IniOrFinaltype "<<IniOrFinaltype<<" idxIni "<<idxIni<<" ecode "<<ecode<<" status "<<StdHepStatus[ii]<<" pdg "<<StdHepPdg[ii]<<" scat "<<StdHepRescat[ii]<<" StdHepFd "<<StdHepFd[ii]<<" StdHepLd "<<StdHepLd[ii]<<" RESdtype "<<RESdtype<<" "<<endl;}
+
+      if (GeneratorIO::NuWroProceed(code, tmpevent, tmpprod, tmpenu, tmpmom1, tmpmom2, tmpmom3, tmptote, tmpid, targetid, IniOrFinaltype, EvtWght, missE))
+      {
+        // if (ii>=2)
+        AnaUtils::MainProceed();
+      } // isOK
+
+      // loop over particle
+
+      // AnaUtils::DoFill(tout);
+    } // loop over event
+    AnaUtils::DoFill(tout);
+    // cout << "All entries " << ientry << endl;
+  }
+}
 
 void anaGenerator(const TString tag, const TString filelist, const int tmpana, const int nToStop=-999, const int smearBit=0)
 {
@@ -587,6 +717,15 @@ void anaGenerator(const TString tag, const TString filelist, const int tmpana, c
     }
     else{
       cout<<"No generator identified for FLUKA!! "<<filelist<<endl;
+      exit(1);
+    }
+  }else if(filelist.Contains("NuWro")){
+    TChain * rootFileInput = AnaUtils::InputROOTFiles(filelist, "nRooTracker");
+    if(rootFileInput){
+      NuWroReadChain(rootFileInput, tout, hCCrate, nToStop);
+    }
+    else{
+      cout<<"No generator identified for NuWro!! "<<filelist<<endl;
       exit(1);
     }
   }

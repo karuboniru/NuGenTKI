@@ -648,7 +648,119 @@ bool FLUKAProceed(const int tmprun, const int evt, const TLorentzVector *tmpbeam
   
   return true;
 }
+void NuWroSetID(const int pdg, const double tmptote)
+{
+  //GiBUU: tmpid, lineCharge -> lineIsBkgParticle, lineMass, linePID, globalMuonCharge, LOWRECOIL_parbit, lineRawID
+  //GENIE: pdg -> lineCharge,   lineIsBkgParticle, lineMass, linePID, globalMuonCharge, LOWRECOIL_parbit, lineRawID
+  // cout << "NuWroSetID " << pdg << " " << tmptote << endl;
+  const int tmppdg = abs(pdg);
 
+  lineIsBkgParticle = false;
+
+  if (tmppdg >= 5000)
+  {
+    printf("GeneratorIO::GENIESetID bad pdg %d\n", pdg);
+    exit(1);
+  }
+
+  //two quarks (meson) 3 digits http://pdg.lbl.gov/2007/reviews/montecarlorpp.pdf  The general form is a 7–digit number: ±n nr nL nq1 nq2 nq3 nJ
+  if (
+      (tmppdg > 99 && tmppdg < 1000) ||
+      (tmppdg == 22 || tmppdg == 11) ||
+      (tmppdg > 3000 && tmppdg < 5000)
+      //diquark !
+      || (tmppdg == 2103) || (tmppdg == 2203))
+  {
+    lineIsBkgParticle = true;
+  }
+
+  //allow electron and photon below 10MeV
+  lineIsMMECCQEBkg = false;
+  if (
+      (tmppdg > 99 && tmppdg < 1000) ||
+      (tmppdg == 22 && tmptote > 0.01) ||
+      (tmppdg > 3000 && tmppdg < 5000))
+  {
+    lineIsMMECCQEBkg = true;
+  }
+
+  lineCharge = (pdg > 0 ? 1 : -1);
+
+  linePID = 0;
+  lineMass = 0;
+  lineRawID = tmppdg;
+
+  if (tmppdg == 13)
+  {
+    lineCharge *= -1;
+    linePID = MUONBIT;
+    lineMass = MuonMass();
+
+    //no need to reset muon charge for event, should be the same for the whole sample
+    if (globalMuonCharge == -999)
+    {
+      globalMuonCharge = lineCharge;
+    }
+    else if (globalMuonCharge != lineCharge)
+    {
+      cout << "\n\n ************** Muon charge not consistent! " << globalMuonCharge << " " << lineCharge << endl
+           << endl;
+      // exit(1);
+    }
+  }
+  else if (tmppdg == 11)
+  {
+    lineCharge *= -1;
+    linePID = ELECTRONBIT;
+    lineMass = ElectronMass();
+    LOWRECOIL_parbit += ELECTRONBIT;
+  }
+  else if (tmppdg == 2212)
+  {
+    linePID = PROTONBIT;
+    lineMass = ProtonMass();
+    LOWRECOIL_parbit += PROTONBIT;
+  }
+  else if (tmppdg == 211)
+  {
+    linePID = PIONBIT;
+    lineMass = PionMass();
+    LOWRECOIL_parbit += PIONBIT;
+  }
+  else if (tmppdg == 321)
+  {
+    linePID = KAONBIT;
+    lineMass = KaonMass();
+    LOWRECOIL_parbit += KAONBIT;
+  }
+  //neutrals now
+  else if (tmppdg == 111)
+  {
+    lineCharge = 0;
+    linePID = PIZEROBIT;
+    lineMass = PiZeroMass();
+    LOWRECOIL_parbit += PIZEROBIT;
+  }
+  else if (tmppdg == 130 || tmppdg == 310 || tmppdg == 311)
+  {
+    lineCharge = 0;
+    linePID = KAONBIT;
+    LOWRECOIL_parbit += KAONBIT;
+  }
+  else if (tmppdg == 2112)
+  {
+    lineCharge = 0;
+    linePID = NEUTRONBIT;
+    lineMass = NeutronMass();
+    LOWRECOIL_parbit += NEUTRONBIT;
+  }
+  else if (tmppdg == 22)
+  {
+    lineCharge = 0;
+    linePID = GAMMABIT;
+    LOWRECOIL_parbit += GAMMABIT;
+  }
+}
 bool GENIEProceed(const dtype IniOrFinaltype, const dtype RESdtype, const TString code, const int tmpevent, const int tmpprod, const double tmpenu, const double tmppw, const double tmpmom1, const double tmpmom2, const double tmpmom3, const double tmptote, const int tmpid, const double tmpKNsrc)
 {
   if(IniOrFinaltype==kINI){
@@ -720,7 +832,108 @@ bool GENIEProceed(const dtype IniOrFinaltype, const dtype RESdtype, const TStrin
   pionfullp->Print();
   */
 }
+void SetNuWroMode(const int mode)
+{
+  // const int mode = code.Atoi();
+  // cout << "mode = " << mode << endl;
+  switch (mode)
+  {
+  case 1:
+    evtMode = kQE;
+    break;
+  case 11:
+    evtMode = kRES;
+    break;
+  case 26:
+    evtMode = kDIS;
+    break;
+  case 2:
+    evtMode = k2P2H;
+    break;
+  case 16:
+    // evtMode = ;
+  default:
+    evtMode = kALL;
+    break;
+  }
+}
+void SetNuWroTarget(const int tmptarget)
+{
+  // cout << "SetNuWroTarget " << tmptarget << endl;
+  targetZ = -999;
+  switch (tmptarget)
+  {
+  case 1000060120:
+    targetZ = 6;
+    break;
+  case 2212:
+  case 1000010010:
+    targetZ = 1;
+    break;
+  case 1000180400:
+    //argon
+    //Atomic number18
+    //Standard atomic weight (±)39.948(1)[1]
+    targetZ = 18;
+    break;
+  case 1000080160:
+    //oxygen
+    targetZ = 8;
+    break;
+  case 1000260560:
+    //Fe
+    //Atomic number26
+    //Standard atomic weight (±)55.845(2)[1]
+    targetZ = 26;
+    break;
+  case 1000822070:
+    //Pb
+    //Atomic number82
+    //Standard atomic weight (±)207.2(1)[1]
+    targetZ = 82;
+    break;
+  default:
 
+    printf("unknown tmptargetZ: %d \n", tmptarget);
+    targetZ = 6;
+    break;
+  }
+}
+bool NuWroProceed(const int code, const int tmpevent, const int tmpprod, const double tmpenu, const double tmpmom1, const double tmpmom2, const double tmpmom3, const double tmptote, const int tmpid, const int tmptarget, const GeneratorIO::dtype IniOrFinaltype, const double wgt, const double missE)
+{
+  if (IniOrFinaltype == kINI && tmpid != 14)
+  {
+    *iniNfullp += TLorentzVector(tmpmom1, tmpmom2, tmpmom3, tmptote+missE);
+   
+    return false;
+  }
+  if (IniOrFinaltype == kINI && tmpid == 14)
+  {
+    beamfullp->SetXYZT(tmpmom1, tmpmom2, tmpmom3, tmptote);
+    beamE = tmptote;
+    return false;
+  }
+  else if (IniOrFinaltype == kFINAL)
+  {
+
+    xsec = wgt;
+    perweight = 1;
+    lineFullMom->SetXYZT(tmpmom1, tmpmom2, tmpmom3, tmptote);
+
+    event = tmpevent;
+    SetNuWroTarget(tmptarget);
+
+    prod = tmpprod;
+
+    NuWroSetID(tmpid, tmptote);
+    SetNuWroMode(code);
+
+    //MainProceed();
+    return true;
+  }
+  else
+    return false;
+}
 //end of namespace
 }
 

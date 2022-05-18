@@ -33,7 +33,17 @@ void getHist(const TString fn, const TString tag, const int anaid)
   TString nuExp;
   int nuPDG, tarA;
   const TString gen = GeneratorUtils::SetEnv(fn, nuExp, nuPDG, tarA);
-  const double histnormFactor = GeneratorUtils::GetHistNormPerNucleus(fin, nuPDG, tarA, gen, anaid);
+  // const double histnormFactor = GeneratorUtils::GetHistNormPerNucleus(fin, nuPDG, tarA, gen, anaid);
+  double histnormFactor{};
+  if (fn.Contains("NuWro")) {
+    double EventRate = ((TH1F *)fin->Get("hCCrate"))-> GetSumOfWeights();
+    tree->Draw("xsec>>htemp1", "", "gOff");
+    TH1F *htemp1 = (TH1F *)gDirectory->Get("htemp1");
+    double xsecs = htemp1->GetMean();
+    histnormFactor = EventRate / (xsecs * 1e-38);
+  }else{
+    histnormFactor = GeneratorUtils::GetHistNormPerNucleus(fin, nuPDG, tarA, gen, anaid);
+  }
 
   //=======================================================================<
 

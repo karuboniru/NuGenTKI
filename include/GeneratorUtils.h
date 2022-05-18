@@ -158,6 +158,9 @@ TString SetEnv(const TString fn, TString & nuExp, int & nuPDG, int & tarA)
     }
 
     gen="GiBUU";
+  } else if (fn.Contains("NuWro"))
+  {
+    gen="NuWro";
   }
   else{
     printf("wrong generator name in file name! %s\n", fn.Data());

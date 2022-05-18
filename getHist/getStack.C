@@ -76,8 +76,12 @@ void getStack(const TString fin, const TString anaid, const TString tag, const T
       
       //scale for CH target!
       //hh[ii]->Scale(1./12.); printf("Scaling to per nucleon in C,  C should have been full nucleus and combined !!\n");
-      hh[ii]->Scale(1./13.); printf("Scaling to per nucleon in CH,  C and H should have been full nucleus and combined !!\n");
-      
+      if (fin.Contains("NuWro")) // For NuWro, xsec given is already per nucleon
+      {
+        hh[ii]->Scale(12./13.); printf("Scaling to per nucleon in CH,  C and H should have been per nucleon and combined !!\n");
+      }else{
+        hh[ii]->Scale(1./13.); printf("Scaling to per nucleon in CH,  C and H should have been full nucleus and combined !!\n");
+      }
       lout->Add(hh[ii]);
       //hh[ii]->SetLineWidth(0.5);
       hh[ii]->SetLineStyle(kSolid);

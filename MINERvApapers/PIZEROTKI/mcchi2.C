@@ -295,6 +295,18 @@ int mcchi2(const int opt, const TString sgen, const TString pint)
     leghead="GENIE v2.12.10-TJ";
     histname = filehead(filehead.First("/")+1, 1000)+"/"+varname[ivar];
     legtag.push_back("");
+  }else if (sgen=="NuWro"){
+    if(pint=="0pi"){
+      filehead = "data/MINERvANuWroGFS0PIa9t1nuCarbon";
+    }
+    else if(pint=="pi0"){
+      filehead = "data/MINERvANuWroGFSPIZEROa7t4nuCarbon";
+    }
+    filetag.push_back("");
+
+    leghead="NuWro";
+    histname = filehead(filehead.First("/")+1, 1000)+"/"+varname[ivar];
+    legtag.push_back("");
   }
   else{
     cout<<"wrong sgen 1 "<<sgen<<endl; exit(1);
@@ -554,8 +566,9 @@ int main()
 
   vector<TString> sgen;
 
-  sgen.push_back("PRD");
-  sgen.push_back("oobgibuu");
+  // sgen.push_back("PRD");
+  // sgen.push_back("oobgibuu");
+  sgen.push_back("NuWro");
   //sgen.push_back("geniev3oob");
   //sgen.push_back("geniev2DC");
   //sgen.push_back("genieV2RG");

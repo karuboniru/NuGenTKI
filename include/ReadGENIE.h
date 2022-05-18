@@ -2,6 +2,7 @@
 #define __READGENIE_H__
 
 #include "GeneratorIO.h"
+#include <TObjString.h>
 
 namespace ReadGENIE
 {
@@ -17,6 +18,7 @@ namespace ReadGENIE
   Double_t        EvtXSec;
   Double_t        EvtDXSec;
   Double_t        EvtWght;
+  Double_t        missE; // used for NuWro
 
   Double_t        EvtProb;
   Double_t        EvtVtx[4];
@@ -42,6 +44,7 @@ namespace ReadGENIE
   TBranch        *b_EvtXSec;
   TBranch        *b_EvtDXSec;
   TBranch        *b_EvtWght;
+  TBranch        *b_missE;
 
   TBranch        *b_EvtProb;
   TBranch        *b_EvtVtx;
@@ -72,6 +75,7 @@ void SetChain(TChain *ch)
   ch->SetBranchAddress("EvtXSec", &EvtXSec, &b_EvtXSec);
   ch->SetBranchAddress("EvtDXSec", &EvtDXSec, &b_EvtDXSec);
   ch->SetBranchAddress("EvtWght", &EvtWght, &b_EvtWght);
+  ch->SetBranchAddress("missE", &missE, &b_missE);
 
   ch->SetBranchAddress("EvtProb", &EvtProb, &b_EvtProb);
   ch->SetBranchAddress("EvtVtx", EvtVtx, &b_EvtVtx);

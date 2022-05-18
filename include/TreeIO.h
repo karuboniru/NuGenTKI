@@ -117,6 +117,7 @@ namespace TreeIO
   double event_IApN;      //event_ means the calculation us all particles, including those not selected in Proceed()
   double event_recoilM;   //event_ means the calculation us all particles, including those not selected in Proceed()
   double event_recoilP;   //event_ means the calculation us all particles, including those not selected in Proceed()
+  double xsec; // cross section data from NuWro, should be same for all events in a run, slightly different for between runs.
   
  /*
    double scattercostheta;
@@ -314,6 +315,7 @@ TTree * GetTree(const analysis ana, const experiment exp)
   tout->Branch("event_IApN",&event_IApN);
   tout->Branch("event_recoilM",&event_recoilM);
   tout->Branch("event_recoilP",&event_recoilP);
+  tout->Branch("xsec", &xsec);
 #endif
 
 #if __OPENCLR__
